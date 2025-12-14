@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHIP Dataset Visualization</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-viz="transistors">
+    <!-- UI Overlay -->
+    <div id="ui-container">
+        <div id="sidebar">
+            <h1><a href="index.html" style="color: white; text-decoration: none;">CHIP Dataset Visualization</a></h1>
+            
+            <div id="info-panel">
+                <p id="axis-info">Loading...</p>
+                <p class="controls-hint">Left Click: Rotate | Right Click: Pan | Scroll: Zoom</p>
+            </div>
+
+            <div id="legend">
+                <!-- Legend items will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <div id="tooltip"></div>
+
+    <!-- Import maps polyfill -->
+    <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <!-- PapaParse for CSV parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
