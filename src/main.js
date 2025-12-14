@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 // Configuration
-const DATA_URL = './data/EfficiencyAnalysis - The CHIP Dataset.csv';
+const DATA_URL = '../data/EfficiencyAnalysis - The CHIP Dataset.csv';
 
 // Global State
 let scene, camera, renderer, controls;
