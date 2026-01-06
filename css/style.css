@@ -502,3 +502,54 @@
     letter-spacing: 1px;
     box-shadow: none;
 }
+
+
+/*** Section 5: D3 Visualizations - PUE Charts ***/
+#viz-pue-timeline,
+#viz-pue-sites,
+#viz-pue-regions {
+    position: relative;
+}
+
+#viz-pue-timeline svg,
+#viz-pue-sites svg,
+#viz-pue-regions svg {
+    font-family: 'Open Sans', sans-serif;
+}
+
+#viz-pue-timeline .dot {
+    transition: all 0.2s ease;
+}
+
+#viz-pue-timeline .dot:hover {
+    filter: drop-shadow(0 0 5px rgba(13, 110, 253, 0.5));
+}
+
+#viz-pue-sites .bar,
+#viz-pue-regions .bar {
+    transition: all 0.3s ease;
+}
+
+#viz-pue-sites .bar:hover,
+#viz-pue-regions .bar:hover {
+    filter: brightness(1.1);
+    cursor: pointer;
+}
+
+.chart-tooltip {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.2s ease;
+}
+
+#yearSelector {
+    max-width: 150px;
+}
+
+#viz-pue-stats .bg-white {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#viz-pue-stats .bg-white:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}

@@ -244,16 +244,49 @@
                 <h1 class="mb-5">Big Picture: Data Center Efficiency & Its Limits</h1>
                 <p class="fs-5 mb-4">While companies like Google continuously improve efficiency, total energy consumption keeps increasing due to rising global data demand.</p>
             </div>
-            <div class="row g-5">
-                 <div class="col-lg-12 wow fadeIn" data-wow-delay="0.5s">
-                    <div class="bg-light p-4 rounded shadow-sm text-center">
-                        <h4 class="mb-3">Efficiency Gains vs Data Growth</h4>
-                        <div id="viz-global-trend" style="min-height: 400px;">
-                            <!-- D3 Visualization: Dual-axis chart -->
-                            <p class="text-muted">PUE trends vs Global Traffic growth...</p>
+            <div class="row g-4">
+                <!-- PUE Timeline Chart -->
+                <div class="col-lg-8 wow fadeIn" data-wow-delay="0.3s">
+                    <div class="bg-light p-4 rounded shadow-sm">
+                        <h4 class="mb-3">Google Data Center PUE Evolution (2011-2025)</h4>
+                        <p class="text-muted small mb-3">Power Usage Effectiveness: Lower is better (1.0 = perfect efficiency)</p>
+                        <div id="viz-pue-timeline" style="min-height: 400px;">
+                            <!-- D3 Visualization: PUE Timeline Chart -->
                         </div>
                     </div>
-                 </div>
+                </div>
+                <!-- PUE Stats Cards -->
+                <div class="col-lg-4 wow fadeIn" data-wow-delay="0.5s">
+                    <div class="bg-light p-4 rounded shadow-sm mb-4">
+                        <h5 class="mb-3"><i class="fas fa-chart-line text-primary me-2"></i>Key Statistics</h5>
+                        <div id="viz-pue-stats">
+                            <!-- D3 Visualization: PUE Stats -->
+                        </div>
+                    </div>
+                    <div class="bg-light p-4 rounded shadow-sm">
+                        <h5 class="mb-3"><i class="fas fa-globe text-primary me-2"></i>Regional Comparison</h5>
+                        <div id="viz-pue-regions" style="min-height: 200px;">
+                            <!-- D3 Visualization: Regional PUE Comparison -->
+                        </div>
+                    </div>
+                </div>
+                <!-- Site Comparison Chart -->
+                <div class="col-lg-12 wow fadeIn" data-wow-delay="0.7s">
+                    <div class="bg-light p-4 rounded shadow-sm">
+                        <h4 class="mb-3">PUE by Data Center Location</h4>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="yearSelector" class="form-label">Select Year:</label>
+                                <select id="yearSelector" class="form-select">
+                                    <!-- Options populated by D3 -->
+                                </select>
+                            </div>
+                        </div>
+                        <div id="viz-pue-sites" style="min-height: 350px;">
+                            <!-- D3 Visualization: Site Comparison Bar Chart -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -379,6 +412,7 @@
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="lib/wow/wow.min.js"></script>
     <script src="lib/easing/easing.min.js"></script>
     <script src="lib/waypoints/waypoints.min.js"></script>
@@ -389,6 +423,7 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+    <script src="js/d3charts.js"></script>
 </body>
 
 </html>
