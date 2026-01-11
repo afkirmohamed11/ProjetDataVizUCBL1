@@ -325,6 +325,20 @@
     box-shadow: 0 0 60px rgba(0, 0, 0, .1);
 }
 
+/* Center number inside the circular service icon */
+.service-item .service-text .service-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.service-item .service-text .service-icon .service-icon-number {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--secondary);
+    line-height: 1;
+}
+
 .service-item .service-text h5,
 .service-item .service-text p {
     transition: .5s;
