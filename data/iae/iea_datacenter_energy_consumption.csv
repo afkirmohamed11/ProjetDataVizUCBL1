@@ -1,0 +1,13 @@
+﻿Category,Value,Unit,Notes
+Data centre electricity consumption (2022),240-340 TWh,TWh,Excludes cryptocurrency mining
+Data centre electricity consumption - Low estimate,240 TWh,TWh,Lower bound estimate
+Data centre electricity consumption - High estimate,340 TWh,TWh,Upper bound estimate
+Cryptocurrency mining (2022),110 TWh,TWh,0.4% of annual global electricity demand
+Data transmission networks (2022),260-360 TWh,TWh,Mobile networks ~2/3 of total
+Data transmission networks - Low estimate,260 TWh,TWh,Lower bound estimate
+Data transmission networks - High estimate,360 TWh,TWh,Upper bound estimate
+Global electricity share - Data centres,1-1.3%,% of global electricity,Global final electricity demand
+Global electricity share - Networks,1-1.5%,% of global electricity,Global electricity use
+Ireland data centre share (2022),18%,% of national electricity,Tripled since 2015
+Ireland projected share (2031),28%,% of national demand,Including other large energy users
+Denmark projected data centre share (2030),15%,% of national electricity,Six times increase from current levels
