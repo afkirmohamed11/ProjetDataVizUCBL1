@@ -175,7 +175,7 @@
                 .attr('x', containerWidth / 2)
                 .attr('y', 35)
                 .attr('text-anchor', 'middle')
-                .style('font-size', '18px')
+                .style('font-size', '20px')
                 .style('font-weight', 'bold')
                 .text('The Efficiency Leap: Performance Per Watt Over Time');
 
@@ -278,7 +278,7 @@
                 .attr('x', containerWidth / 2)
                 .attr('y', 35)
                 .attr('text-anchor', 'middle')
-                .style('font-size', '18px')
+                .style('font-size', '20px')
                 .style('font-weight', 'bold')
                 .text('Energy Proportionality: Old Server (2010) vs Modern Server (2024)');
 
@@ -411,7 +411,7 @@
                 .attr('x', containerWidth / 2)
                 .attr('y', 35)
                 .attr('text-anchor', 'middle')
-                .style('font-size', '18px')
+                .style('font-size', '20px')
                 .style('font-weight', 'bold')
                 .text('Density vs Waste: Cores vs Idle Power (colored by Performance)');
 
