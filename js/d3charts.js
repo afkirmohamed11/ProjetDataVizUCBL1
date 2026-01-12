@@ -145,33 +145,31 @@ function createEnergySplitDonut(data) {
         .attr('fill', '#666')
         .text('TWh Total');
 
-    // Legend
-    var legend = svg.append('g')
-        .attr('transform', 'translate(10, ' + (height - 60) + ')');
+    // Legend - positioned below chart
+    var legendContainer = container.append('div')
+        .style('display', 'flex')
+        .style('justify-content', 'center')
+        .style('gap', '20px')
+        .style('flex-wrap', 'wrap')
+        .style('margin-top', '10px');
 
-    pieData.forEach(function(d, i) {
-        var legendItem = legend.append('g')
-            .attr('transform', 'translate(' + (i * 110) + ', 0)');
+    pieData.forEach(function(d) {
+        var item = legendContainer.append('div')
+            .style('display', 'flex')
+            .style('align-items', 'center')
+            .style('gap', '8px');
 
-        legendItem.append('rect')
-            .attr('width', 12)
-            .attr('height', 12)
-            .attr('rx', 2)
-            .attr('fill', d.color);
+        item.append('div')
+            .style('width', '14px')
+            .style('height', '14px')
+            .style('background-color', d.color)
+            .style('border-radius', '3px');
 
-        legendItem.append('text')
-            .attr('x', 16)
-            .attr('y', 10)
-            .attr('font-size', '9px')
-            .attr('fill', '#333')
-            .text(d.label);
-
-        legendItem.append('text')
-            .attr('x', 16)
-            .attr('y', 22)
-            .attr('font-size', '9px')
-            .attr('fill', '#666')
-            .text(d.value + ' TWh');
+        item.append('span')
+            .style('font-size', '12px')
+            .style('color', '#333')
+            .style('font-weight', '500')
+            .html(d.label + ' <span style="color:#666;font-weight:400">(' + d.value + ' TWh)</span>');
     });
 }
 
