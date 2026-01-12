@@ -2648,7 +2648,7 @@ function createEmissionsRankingChart(awsData, azureData, gcpData) {
 // Section 6 (Motassim): UCBL1 Data Center: A Case Study
 
 
-// Section 7 (): What We Can Do: Solutions & Future Roadmap
+// Section 7 (Akkouh): What We Can Do: Solutions & Future Roadmap
 
 
 // ===========================================
