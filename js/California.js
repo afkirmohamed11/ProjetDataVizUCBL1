@@ -1419,33 +1419,6 @@
             .duration(transitionDuration)
             .delay(500)
             .style('opacity', 1);
-
-        // Legend
-        const legend = svg.append('g').attr('transform', `translate(0, -35)`);
-        
-        legend.append('rect')
-            .attr('width', 18)
-            .attr('height', 18)
-            .attr('fill', '#666')
-            .attr('fill-opacity', 0.5)
-            .attr('rx', 3);
-        legend.append('text')
-            .attr('x', 24)
-            .attr('y', 14)
-            .text('Low Estimate')
-            .style('font-size', '13px');
-
-        legend.append('rect')
-            .attr('x', 140)
-            .attr('width', 18)
-            .attr('height', 18)
-            .attr('fill', '#666')
-            .attr('rx', 3);
-        legend.append('text')
-            .attr('x', 164)
-            .attr('y', 14)
-            .text('High Estimate')
-            .style('font-size', '13px');
     }
 
     function renderMethodologyDetails(data) {
