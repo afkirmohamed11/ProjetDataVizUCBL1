@@ -1,0 +1,34 @@
+﻿region_code,region_name,country,grid_region,emission_factor,source
+Central US,Iowa,United States,MRO,0.000426254,EPA
+East US,Virginia,United States,SERC,0.000379069,EPA
+East US 2,Virginia,United States,SERC,0.000379069,EPA
+East US 3,Georgia,United States,SERC,0.000379069,EPA
+North Central US,Illinois,United States,RFC,0.000410608,EPA
+South Central US,Texas,United States,TRE,0.000373231,EPA
+West Central US,Wyoming,United States,WECC,0.000322167,EPA
+West US,California,United States,WECC,0.000322167,EPA
+West US 2,Washington,United States,WECC,0.000322167,EPA
+West US 3,Arizona,United States,WECC,0.000322167,EPA
+East Asia,Hong Kong,Hong Kong,National,0.00071,carbonfootprint.com
+Southeast Asia,Singapore,Singapore,National,0.000408,carbonfootprint.com
+Australia East,New South Wales,Australia,National,0.00079,carbonfootprint.com
+Australia South East,Victoria,Australia,National,0.00096,carbonfootprint.com
+Japan West,Osaka,Japan,National,0.0004658,carbonfootprint.com
+Japan East,Tokyo,Japan,National,0.0004658,carbonfootprint.com
+Korea East,Seoul,South Korea,National,0.0004156,carbonfootprint.com
+India West,Mumbai,India,National,0.0007082,carbonfootprint.com
+India Central,Pune,India,National,0.0007082,carbonfootprint.com
+North Europe,Ireland,Ireland,National,0.0002786,EEA
+West Europe,Netherlands,Netherlands,National,0.0003284,EEA
+France Central,Paris,France,National,5.128e-05,carbonfootprint.com
+Sweden Central,Gävle,Sweden,National,5.67e-06,carbonfootprint.com
+Switzerland North,Zürich,Switzerland,National,5.67e-06,carbonfootprint.com
+UK South,London,United Kingdom,National,0.000225,EEA
+UK West,Cardiff,United Kingdom,National,0.000228,EEA
+Germany West Central,Frankfurt,Germany,National,0.00033866,carbonfootprint.com
+Norway East,Oslo,Norway,National,7.62e-06,carbonfootprint.com
+South Africa North,Johannesburg,South Africa,National,0.0009006,carbonfootprint.com
+UAE North,Dubai,UAE,National,0.0004041,carbonfootprint.com
+Canada Central,Toronto,Canada,National,0.00012,carbonfootprint.com
+Canada East,Quebec City,Canada,National,0.00012,carbonfootprint.com
+Brazil South,São Paulo,Brazil,National,6.17e-05,carbonfootprint.com
