@@ -1,0 +1,28 @@
+﻿region_code,region_name,country,emission_factor_with_cfe,emission_factor_raw,cfe_percent,source
+us-central1,Iowa,United States,3.178e-05,0.000454,93,Google
+us-east1,South Carolina,United States,0.0003504,0.00048,27,Google
+us-east4,Northern Virginia,United States,0.00015162,0.000361,58,Google
+us-west1,Oregon,United States,7.8e-06,7.8e-05,90,Google
+us-west2,Los Angeles,United States,0.00011638,0.000253,54,Google
+us-west3,Salt Lake City,United States,0.00038376,0.000533,28,Google
+us-west4,Las Vegas,United States,0.00036855,0.000455,19,Google
+asia-east1,Taiwan,Taiwan,0.0004428,0.00054,18,Google
+asia-east2,Hong Kong,Hong Kong,0.000453,0.000453,0,Google
+asia-northeast1,Tokyo,Japan,0.00048752,0.000554,12,Google
+asia-northeast2,Osaka,Japan,0.00048752,0.000442,0,Google
+asia-northeast3,Seoul,South Korea,0.00031533,0.000457,31,Google
+asia-south1,Mumbai,India,0.00063448,0.000721,12,Google
+asia-south2,Delhi,India,0.000657,0.000657,0,Google
+asia-southeast1,Singapore,Singapore,0.00047328,0.000493,4,Google
+asia-southeast2,Jakarta,Indonesia,0.000647,0.000647,0,Google
+australia-southeast1,Sydney,Australia,0.00064703,0.000727,11,Google
+australia-southeast2,Melbourne,Australia,0.000691,0.000691,0,Google
+europe-central2,Warsaw,Poland,0.000622,0.000622,0,Google
+europe-north1,Finland,Finland,7.98e-06,0.000133,94,Google
+europe-west1,Belgium,Belgium,4.452e-05,0.000212,79,Google
+europe-west2,London,United Kingdom,9.471e-05,0.000231,59,Google
+europe-west3,Frankfurt,Germany,0.00010841,0.000293,63,Google
+europe-west4,Netherlands,Netherlands,0.000164,0.00041,60,Google
+europe-west6,Zurich,Switzerland,8.7e-05,8.7e-05,0,Google
+northamerica-northeast1,Montreal,Canada,2.7e-05,2.7e-05,0,Google
+southamerica-east1,São Paulo,Brazil,1.236e-05,0.000103,88,Google

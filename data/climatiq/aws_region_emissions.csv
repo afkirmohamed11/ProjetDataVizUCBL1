@@ -1,0 +1,26 @@
+﻿region_code,region_name,country,grid_region,emission_factor,source
+us-east-1,N. Virginia,United States,SERC,0.000379069,EPA
+us-east-2,Ohio,United States,RFC,0.000410608,EPA
+us-west-1,N. California,United States,WECC,0.000322167,EPA
+us-west-2,Oregon,United States,WECC,0.000322167,EPA
+us-gov-east-1,AWS GovCloud East,United States,SERC,0.000379069,EPA
+us-gov-west-1,AWS GovCloud West,United States,WECC,0.000322167,EPA
+af-south-1,Cape Town,South Africa,National,0.0009006,carbonfootprint.com
+ap-east-1,Hong Kong,Hong Kong,National,0.00071,carbonfootprint.com
+ap-south-1,Mumbai,India,National,0.0007082,carbonfootprint.com
+ap-northeast-3,Osaka,Japan,National,0.0004658,carbonfootprint.com
+ap-northeast-2,Seoul,South Korea,National,0.0004156,carbonfootprint.com
+ap-southeast-1,Singapore,Singapore,National,0.000408,carbonfootprint.com
+ap-southeast-2,Sydney,Australia,National,0.00076,carbonfootprint.com
+ap-northeast-1,Tokyo,Japan,National,0.0004658,carbonfootprint.com
+ca-central-1,Montreal,Canada,National,0.00012,carbonfootprint.com
+cn-north-1,Beijing,China,National,0.0005374,carbonfootprint.com
+cn-northwest-1,Ningxia,China,National,0.0005374,carbonfootprint.com
+eu-central-1,Frankfurt,Germany,National,0.000311,EEA
+eu-west-1,Ireland,Ireland,National,0.0002786,EEA
+eu-west-2,London,England,National,0.000225,EEA
+eu-south-1,Milan,Italy,National,0.0002134,EEA
+eu-west-3,Paris,France,National,5.11e-05,EEA
+eu-north-1,Stockholm,Sweden,National,8.8e-06,EEA
+me-south-1,Bahrain,Bahrain,National,0.0005059,carbonfootprint.com
+sa-east-1,São Paulo,Brazil,National,6.17e-05,carbonfootprint.com
