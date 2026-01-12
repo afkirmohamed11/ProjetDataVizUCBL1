@@ -7,6 +7,475 @@
 
 
 // Section 3 (): When Data Leaves Your Device: Network & Cloud
+// ========================================================================
+
+// Wait for DOM to load - Section 3
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof d3 === 'undefined') {
+        console.error('D3.js not loaded');
+        return;
+    }
+    
+    // Only run if Section 3 elements exist
+    if (!document.getElementById('viz-energy-split')) {
+        return;
+    }
+
+    // Initialize Section 3 visualizations
+    initSection3();
+});
+
+function initSection3() {
+    // Load Section 3 data files
+    Promise.all([
+        d3.csv('data/iae/iea_datacenter_energy_consumption.csv'),
+        d3.csv('data/iae/iea_global_digital_energy_trends_2015_2022.csv')
+    ]).then(function(datasets) {
+        var energyConsumption = datasets[0];
+        var digitalTrends = datasets[1];
+
+        console.log('Section 3 Data loaded:', { energyConsumption, digitalTrends });
+
+        // Create visualizations
+        createEnergySplitDonut(energyConsumption);
+        createDigitalGrowthChart(digitalTrends);
+        createEnergyGrowthChart(digitalTrends);
+    }).catch(function(error) {
+        console.error('Error loading Section 3 data:', error);
+    });
+}
+
+// Donut Chart: Energy Split (Data Centers vs Networks vs Crypto)
+function createEnergySplitDonut(data) {
+    var container = d3.select('#viz-energy-split');
+    container.selectAll('*').remove();
+    
+    var width = 340;
+    var height = 280;
+    var radius = Math.min(width, height) / 2 - 20;
+
+    var svg = container.append('svg')
+        .attr('viewBox', '0 0 ' + width + ' ' + height)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .style('width', '100%')
+        .style('max-width', '400px')
+        .style('display', 'block')
+        .style('margin', '0 auto');
+    
+    var g = svg.append('g')
+        .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
+
+    // Prepare data for donut chart (using mid-range values)
+    var pieData = [
+        { label: 'Data Centres', value: 290, color: '#06A3DA' },
+        { label: 'Networks', value: 310, color: '#F57E20' },
+        { label: 'Crypto Mining', value: 110, color: '#6c757d' }
+    ];
+
+    var total = d3.sum(pieData, function(d) { return d.value; });
+
+    var pie = d3.pie()
+        .value(function(d) { return d.value; })
+        .sort(null)
+        .padAngle(0.02);
+
+    var arc = d3.arc()
+        .innerRadius(radius * 0.55)
+        .outerRadius(radius);
+
+    var arcHover = d3.arc()
+        .innerRadius(radius * 0.55)
+        .outerRadius(radius + 8);
+
+    // Draw slices
+    var slices = g.selectAll('.slice')
+        .data(pie(pieData))
+        .enter()
+        .append('g')
+        .attr('class', 'slice');
+
+    slices.append('path')
+        .attr('d', arc)
+        .attr('fill', function(d) { return d.data.color; })
+        .style('opacity', 0.9)
+        .style('cursor', 'pointer')
+        .on('mouseover', function(event, d) {
+            d3.select(this)
+                .transition()
+                .duration(200)
+                .attr('d', arcHover)
+                .style('opacity', 1);
+        })
+        .on('mouseout', function(event, d) {
+            d3.select(this)
+                .transition()
+                .duration(200)
+                .attr('d', arc)
+                .style('opacity', 0.9);
+        });
+
+    // Add labels on slices
+    slices.append('text')
+        .attr('transform', function(d) {
+            var pos = arc.centroid(d);
+            return 'translate(' + pos[0] + ',' + pos[1] + ')';
+        })
+        .attr('text-anchor', 'middle')
+        .attr('fill', 'white')
+        .attr('font-size', '11px')
+        .attr('font-weight', '600')
+        .text(function(d) { 
+            var pct = ((d.data.value / total) * 100).toFixed(0);
+            return pct + '%';
+        });
+
+    // Center text
+    g.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('dy', '-0.3em')
+        .attr('font-size', '22px')
+        .attr('font-weight', '700')
+        .attr('fill', '#333')
+        .text('~710');
+
+    g.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('dy', '1.2em')
+        .attr('font-size', '11px')
+        .attr('fill', '#666')
+        .text('TWh Total');
+
+    // Legend - positioned below chart
+    var legendContainer = container.append('div')
+        .style('display', 'flex')
+        .style('justify-content', 'center')
+        .style('gap', '20px')
+        .style('flex-wrap', 'wrap')
+        .style('margin-top', '10px');
+
+    pieData.forEach(function(d) {
+        var item = legendContainer.append('div')
+            .style('display', 'flex')
+            .style('align-items', 'center')
+            .style('gap', '8px');
+
+        item.append('div')
+            .style('width', '14px')
+            .style('height', '14px')
+            .style('background-color', d.color)
+            .style('border-radius', '3px');
+
+        item.append('span')
+            .style('font-size', '12px')
+            .style('color', '#333')
+            .style('font-weight', '500')
+            .html(d.label + ' <span style="color:#666;font-weight:400">(' + d.value + ' TWh)</span>');
+    });
+}
+
+// Bar Chart: Digital Growth (2015 vs 2022)
+function createDigitalGrowthChart(data) {
+    var container = d3.select('#viz-digital-growth');
+    container.selectAll('*').remove();
+    
+    var margin = { top: 20, right: 20, bottom: 50, left: 60 };
+    var width = 400 - margin.left - margin.right;
+    var height = 260 - margin.top - margin.bottom;
+
+    var svg = container.append('svg')
+        .attr('viewBox', '0 0 400 260')
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .style('width', '100%')
+        .append('g')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    // Prepare data - filter for digital growth metrics
+    var chartData = [
+        { label: 'Internet\nUsers (B)', value2015: 3.0, value2022: 5.3, unit: 'B' },
+        { label: 'Traffic\n(ZB)', value2015: 0.6, value2022: 4.4, unit: 'ZB' },
+        { label: 'DC Work-\nloads (M)', value2015: 180, value2022: 800, unit: 'M' }
+    ];
+
+    // For traffic, scale to show difference better
+    var x0 = d3.scaleBand()
+        .domain(chartData.map(function(d) { return d.label; }))
+        .range([0, width])
+        .padding(0.3);
+
+    var x1 = d3.scaleBand()
+        .domain(['2015', '2022'])
+        .range([0, x0.bandwidth()])
+        .padding(0.1);
+
+    // Normalize values for visualization (scale to 0-100)
+    var maxVals = chartData.map(function(d) { return Math.max(d.value2015, d.value2022); });
+    
+    var y = d3.scaleLinear()
+        .domain([0, 100])
+        .range([height, 0]);
+
+    // Gridlines
+    svg.append('g')
+        .attr('class', 'grid')
+        .call(d3.axisLeft(y)
+            .tickSize(-width)
+            .tickFormat('')
+            .ticks(5)
+        )
+        .selectAll('line')
+        .style('stroke', '#e0e0e0')
+        .style('stroke-dasharray', '3,3');
+
+    // Draw bars
+    var groups = svg.selectAll('.bar-group')
+        .data(chartData)
+        .enter()
+        .append('g')
+        .attr('class', 'bar-group')
+        .attr('transform', function(d) { return 'translate(' + x0(d.label) + ',0)'; });
+
+    // 2015 bars
+    groups.append('rect')
+        .attr('x', x1('2015'))
+        .attr('y', function(d, i) { 
+            var normalized = (d.value2015 / maxVals[i]) * 80;
+            return y(normalized); 
+        })
+        .attr('width', x1.bandwidth())
+        .attr('height', function(d, i) { 
+            var normalized = (d.value2015 / maxVals[i]) * 80;
+            return height - y(normalized); 
+        })
+        .attr('fill', '#6c757d')
+        .attr('rx', 3);
+
+    // 2022 bars
+    groups.append('rect')
+        .attr('x', x1('2022'))
+        .attr('y', function(d, i) { 
+            var normalized = (d.value2022 / maxVals[i]) * 80;
+            return y(normalized); 
+        })
+        .attr('width', x1.bandwidth())
+        .attr('height', function(d, i) { 
+            var normalized = (d.value2022 / maxVals[i]) * 80;
+            return height - y(normalized); 
+        })
+        .attr('fill', '#06A3DA')
+        .attr('rx', 3);
+
+    // Value labels on bars
+    groups.append('text')
+        .attr('x', x1('2015') + x1.bandwidth() / 2)
+        .attr('y', function(d, i) { 
+            var normalized = (d.value2015 / maxVals[i]) * 80;
+            return y(normalized) - 5; 
+        })
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '9px')
+        .attr('fill', '#666')
+        .text(function(d) { return d.value2015; });
+
+    groups.append('text')
+        .attr('x', x1('2022') + x1.bandwidth() / 2)
+        .attr('y', function(d, i) { 
+            var normalized = (d.value2022 / maxVals[i]) * 80;
+            return y(normalized) - 5; 
+        })
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '9px')
+        .attr('font-weight', '600')
+        .attr('fill', '#06A3DA')
+        .text(function(d) { return d.value2022; });
+
+    // X axis
+    svg.append('g')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(x0).tickSize(0))
+        .selectAll('text')
+        .style('font-size', '9px')
+        .style('text-anchor', 'middle')
+        .each(function(d) {
+            var el = d3.select(this);
+            var lines = d.split('\n');
+            el.text('');
+            lines.forEach(function(line, i) {
+                el.append('tspan')
+                    .attr('x', 0)
+                    .attr('dy', i === 0 ? '0.6em' : '1.1em')
+                    .text(line);
+            });
+        });
+
+    svg.select('.domain').remove();
+
+    // Legend
+    var legend = svg.append('g')
+        .attr('transform', 'translate(' + (width - 100) + ', -5)');
+
+    legend.append('rect').attr('width', 12).attr('height', 12).attr('fill', '#6c757d').attr('rx', 2);
+    legend.append('text').attr('x', 16).attr('y', 10).text('2015').attr('font-size', '10px');
+    legend.append('rect').attr('x', 55).attr('width', 12).attr('height', 12).attr('fill', '#06A3DA').attr('rx', 2);
+    legend.append('text').attr('x', 71).attr('y', 10).text('2022').attr('font-size', '10px');
+
+    // Growth % labels
+    groups.append('text')
+        .attr('x', x0.bandwidth() / 2)
+        .attr('y', height + 40)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '10px')
+        .attr('font-weight', '600')
+        .attr('fill', '#28a745')
+        .text(function(d) { 
+            var growth = ((d.value2022 - d.value2015) / d.value2015 * 100).toFixed(0);
+            return '+' + growth + '%';
+        });
+}
+
+// Bar Chart: Energy Growth (2015 vs 2022)
+function createEnergyGrowthChart(data) {
+    var container = d3.select('#viz-energy-growth');
+    container.selectAll('*').remove();
+    
+    var margin = { top: 20, right: 20, bottom: 50, left: 60 };
+    var width = 400 - margin.left - margin.right;
+    var height = 260 - margin.top - margin.bottom;
+
+    var svg = container.append('svg')
+        .attr('viewBox', '0 0 400 260')
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .style('width', '100%')
+        .append('g')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    // Energy data (TWh)
+    var chartData = [
+        { label: 'Data\nCenters', value2015: 200, value2022: 290, color2022: '#06A3DA' },
+        { label: 'Networks', value2015: 220, value2022: 310, color2022: '#F57E20' },
+        { label: 'Crypto\nMining', value2015: 4, value2022: 110, color2022: '#6c757d' }
+    ];
+
+    var x0 = d3.scaleBand()
+        .domain(chartData.map(function(d) { return d.label; }))
+        .range([0, width])
+        .padding(0.3);
+
+    var x1 = d3.scaleBand()
+        .domain(['2015', '2022'])
+        .range([0, x0.bandwidth()])
+        .padding(0.1);
+
+    var y = d3.scaleLinear()
+        .domain([0, 350])
+        .range([height, 0]);
+
+    // Gridlines
+    svg.append('g')
+        .attr('class', 'grid')
+        .call(d3.axisLeft(y)
+            .tickSize(-width)
+            .tickFormat('')
+            .ticks(5)
+        )
+        .selectAll('line')
+        .style('stroke', '#e0e0e0')
+        .style('stroke-dasharray', '3,3');
+
+    // Y axis
+    svg.append('g')
+        .call(d3.axisLeft(y).ticks(5).tickFormat(function(d) { return d; }))
+        .selectAll('text')
+        .style('font-size', '10px');
+
+    svg.append('text')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', -45)
+        .attr('x', -height / 2)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '10px')
+        .attr('fill', '#666')
+        .text('Energy (TWh)');
+
+    svg.select('.domain').remove();
+
+    // Draw bars
+    var groups = svg.selectAll('.bar-group')
+        .data(chartData)
+        .enter()
+        .append('g')
+        .attr('class', 'bar-group')
+        .attr('transform', function(d) { return 'translate(' + x0(d.label) + ',0)'; });
+
+    // 2015 bars
+    groups.append('rect')
+        .attr('x', x1('2015'))
+        .attr('y', function(d) { return y(d.value2015); })
+        .attr('width', x1.bandwidth())
+        .attr('height', function(d) { return height - y(d.value2015); })
+        .attr('fill', '#adb5bd')
+        .attr('rx', 3);
+
+    // 2022 bars
+    groups.append('rect')
+        .attr('x', x1('2022'))
+        .attr('y', function(d) { return y(d.value2022); })
+        .attr('width', x1.bandwidth())
+        .attr('height', function(d) { return height - y(d.value2022); })
+        .attr('fill', function(d) { return d.color2022; })
+        .attr('rx', 3);
+
+    // Value labels
+    groups.append('text')
+        .attr('x', x1('2015') + x1.bandwidth() / 2)
+        .attr('y', function(d) { return y(d.value2015) - 5; })
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '9px')
+        .attr('fill', '#666')
+        .text(function(d) { return d.value2015; });
+
+    groups.append('text')
+        .attr('x', x1('2022') + x1.bandwidth() / 2)
+        .attr('y', function(d) { return y(d.value2022) - 5; })
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '9px')
+        .attr('font-weight', '600')
+        .attr('fill', function(d) { return d.color2022; })
+        .text(function(d) { return d.value2022; });
+
+    // X axis
+    svg.append('g')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(x0).tickSize(0))
+        .selectAll('text')
+        .style('font-size', '9px')
+        .each(function(d) {
+            var el = d3.select(this);
+            var lines = d.split('\n');
+            el.text('');
+            lines.forEach(function(line, i) {
+                el.append('tspan')
+                    .attr('x', 0)
+                    .attr('dy', i === 0 ? '0.6em' : '1.1em')
+                    .text(line);
+            });
+        });
+
+    // Growth % labels
+    groups.append('text')
+        .attr('x', x0.bandwidth() / 2)
+        .attr('y', height + 40)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '10px')
+        .attr('font-weight', '600')
+        .attr('fill', function(d) {
+            var growth = (d.value2022 - d.value2015) / d.value2015 * 100;
+            return growth > 100 ? '#dc3545' : '#28a745';
+        })
+        .text(function(d) { 
+            var growth = ((d.value2022 - d.value2015) / d.value2015 * 100).toFixed(0);
+            return '+' + growth + '%';
+        });
+}
 
 
 // Section 4 (Afkir): Servers & Data Centers: The Engines Behind the Internet (Californie & Portugal) 
@@ -91,12 +560,16 @@ function createPueTimelineChart(data) {
     var margin = {top: 50, right: 40, bottom: 45, left: 55};
     var width = container.offsetWidth - margin.left - margin.right;
     var height = 260 - margin.top - margin.bottom;
+    var totalWidth = width + margin.left + margin.right;
+    var totalHeight = height + margin.top + margin.bottom;
 
-    // Create SVG
+    // Create SVG with viewBox for responsiveness
     var svg = d3.select(container)
         .append('svg')
-        .attr('width', width + margin.left + margin.right)
-        .attr('height', height + margin.top + margin.bottom)
+        .attr('viewBox', '0 0 ' + totalWidth + ' ' + totalHeight)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .style('width', '100%')
+        .style('height', 'auto')
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
@@ -181,8 +654,8 @@ function createPueTimelineChart(data) {
             .on('mouseover', function(event, d) {
                 d3.select(this).transition().duration(150).attr('r', 9);
                 tooltip.style('opacity', 1)
-                    .html('<div style="font-size:14px;font-weight:bold;margin-bottom:3px">' + d.Year + '</div>' +
-                          '<div>PUE: <span style="color:#3498db;font-weight:bold">' + d.Average_PUE.toFixed(2) + '</span></div>')
+                    .html('<div style="font-size:15px;font-weight:bold;margin-bottom:4px">' + d.Year + '</div>' +
+                          '<div style="font-size:14px">PUE: <span style="color:#3498db;font-weight:bold">' + d.Average_PUE.toFixed(2) + '</span></div>')
                     .style('left', (event.pageX + 15) + 'px')
                     .style('top', (event.pageY - 40) + 'px');
             })
@@ -197,13 +670,15 @@ function createPueTimelineChart(data) {
         .attr('transform', 'translate(0,' + height + ')')
         .call(d3.axisBottom(x).tickFormat(d3.format('d')).ticks(6))
         .selectAll('text')
-        .style('font-size', '10px');
+        .style('font-size', '12px')
+        .style('font-weight', '500');
 
     // Y Axis
     svg.append('g')
         .call(d3.axisLeft(y).ticks(5))
         .selectAll('text')
-        .style('font-size', '10px');
+        .style('font-size', '12px')
+        .style('font-weight', '500');
 
     // Axis labels
     svg.append('text')
@@ -211,16 +686,18 @@ function createPueTimelineChart(data) {
         .attr('y', -40)
         .attr('x', -height / 2)
         .attr('text-anchor', 'middle')
-        .style('font-size', '11px')
-        .style('fill', '#555')
+        .style('font-size', '13px')
+        .style('font-weight', 'bold')
+        .style('fill', '#475569')
         .text('Average PUE');
 
     svg.append('text')
         .attr('x', width / 2)
-        .attr('y', height + 35)
+        .attr('y', height + 38)
         .attr('text-anchor', 'middle')
-        .style('font-size', '11px')
-        .style('fill', '#555')
+        .style('font-size', '13px')
+        .style('font-weight', 'bold')
+        .style('fill', '#475569')
         .text('Year');
 
     // Improvement badge - positioned inside the chart area
@@ -229,19 +706,27 @@ function createPueTimelineChart(data) {
     var improvement = ((firstPue - lastPue) / firstPue * 100).toFixed(0);
 
     svg.append('rect')
-        .attr('x', width - 95)
+        .attr('x', width - 110)
         .attr('y', -40)
-        .attr('width', 95)
-        .attr('height', 26)
-        .attr('fill', '#27ae60')
-        .attr('rx', 13);
+        .attr('width', 110)
+        .attr('height', 30)
+        .attr('fill', 'url(#badgeGradient)')
+        .attr('rx', 15);
+
+    // Badge gradient
+    var badgeGradient = defs.append('linearGradient')
+        .attr('id', 'badgeGradient')
+        .attr('x1', '0%').attr('y1', '0%')
+        .attr('x2', '100%').attr('y2', '0%');
+    badgeGradient.append('stop').attr('offset', '0%').attr('stop-color', '#10b981');
+    badgeGradient.append('stop').attr('offset', '100%').attr('stop-color', '#059669');
 
     svg.append('text')
-        .attr('x', width - 47)
-        .attr('y', -22)
+        .attr('x', width - 55)
+        .attr('y', -20)
         .attr('text-anchor', 'middle')
         .style('fill', 'white')
-        .style('font-size', '11px')
+        .style('font-size', '12px')
         .style('font-weight', 'bold')
         .text('↓ ' + improvement + '% improved');
 
@@ -249,15 +734,17 @@ function createPueTimelineChart(data) {
     var tooltip = d3.select('body').append('div')
         .attr('class', 'section5-tooltip')
         .style('position', 'absolute')
-        .style('background', 'rgba(255,255,255,0.95)')
+        .style('background', 'linear-gradient(145deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.98) 100%)')
         .style('border', '2px solid #3498db')
-        .style('color', '#333')
-        .style('padding', '10px 14px')
-        .style('border-radius', '8px')
-        .style('font-size', '12px')
+        .style('color', '#1e293b')
+        .style('padding', '12px 16px')
+        .style('border-radius', '12px')
+        .style('font-size', '13px')
         .style('pointer-events', 'none')
         .style('opacity', 0)
-        .style('box-shadow', '0 4px 15px rgba(0,0,0,0.15)');
+        .style('box-shadow', '0 8px 32px rgba(0,0,0,0.18)')
+        .style('backdrop-filter', 'blur(8px)')
+        .style('z-index', '9999');
 }
 
 // ============================================================
@@ -303,11 +790,15 @@ function createComparisonChart(pueHistory, providerPue) {
     var margin = {top: 20, right: 15, bottom: 35, left: 15};
     var width = container.offsetWidth - margin.left - margin.right;
     var height = 250 - margin.top - margin.bottom;
+    var totalWidth = width + margin.left + margin.right;
+    var totalHeight = height + margin.top + margin.bottom;
 
     var svg = d3.select(container)
         .append('svg')
-        .attr('width', width + margin.left + margin.right)
-        .attr('height', height + margin.top + margin.bottom)
+        .attr('viewBox', '0 0 ' + totalWidth + ' ' + totalHeight)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .style('width', '100%')
+        .style('height', 'auto')
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
@@ -396,8 +887,9 @@ function createComparisonChart(pueHistory, providerPue) {
         .attr('x', function(d) { return x(d.name) + x.bandwidth() / 2; })
         .attr('y', height + 20)
         .attr('text-anchor', 'middle')
-        .style('font-size', '10px')
-        .style('fill', '#555')
+        .style('font-size', '12px')
+        .style('font-weight', '600')
+        .style('fill', '#475569')
         .text(function(d) { return d.name; });
 
     // Efficiency comparison text
@@ -408,21 +900,23 @@ function createComparisonChart(pueHistory, providerPue) {
         .attr('x', width / 2)
         .attr('y', height + 32)
         .attr('text-anchor', 'middle')
-        .style('font-size', '9px')
-        .style('fill', '#27ae60')
+        .style('font-size', '11px')
+        .style('fill', '#10b981')
         .style('font-weight', 'bold')
-        .text('Cloud providers ' + savings + '% more efficient');
+        .text('☁️ Cloud providers ' + savings + '% more efficient');
 
     // Tooltip
     var tooltip = d3.select('body').append('div')
         .style('position', 'absolute')
-        .style('background', 'rgba(0,0,0,0.8)')
+        .style('background', 'linear-gradient(145deg, rgba(30,41,59,0.95) 0%, rgba(15,23,42,0.95) 100%)')
         .style('color', 'white')
-        .style('padding', '8px 12px')
-        .style('border-radius', '4px')
-        .style('font-size', '12px')
+        .style('padding', '10px 14px')
+        .style('border-radius', '10px')
+        .style('font-size', '13px')
         .style('pointer-events', 'none')
-        .style('opacity', 0);
+        .style('opacity', 0)
+        .style('box-shadow', '0 6px 24px rgba(0,0,0,0.25)')
+        .style('z-index', '9999');
 }
 
 // ============================================================
@@ -449,8 +943,10 @@ function createDonutChart(data) {
 
     var svg = d3.select(container)
         .append('svg')
-        .attr('width', width)
-        .attr('height', height)
+        .attr('viewBox', '0 0 ' + width + ' ' + height)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .style('width', '100%')
+        .style('height', 'auto')
         .append('g')
         .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
 
@@ -513,24 +1009,25 @@ function createDonutChart(data) {
     // Center text
     var centerText = svg.append('text')
         .attr('text-anchor', 'middle')
-        .attr('y', -12)
-        .style('font-size', '12px')
-        .style('fill', '#666')
+        .attr('y', -14)
+        .style('font-size', '13px')
+        .style('font-weight', '600')
+        .style('fill', '#64748b')
         .text('Total');
 
     var centerValue = svg.append('text')
         .attr('text-anchor', 'middle')
-        .attr('y', 8)
-        .style('font-size', '18px')
+        .attr('y', 10)
+        .style('font-size', '22px')
         .style('font-weight', 'bold')
-        .style('fill', '#333')
+        .style('fill', '#1e293b')
         .text(total.toFixed(1) + ' TWh');
 
     var centerPercent = svg.append('text')
         .attr('text-anchor', 'middle')
-        .attr('y', 26)
-        .style('font-size', '10px')
-        .style('fill', '#888')
+        .attr('y', 28)
+        .style('font-size', '11px')
+        .style('fill', '#94a3b8')
         .text('Big Tech Energy');
 
     // Legend below
@@ -538,15 +1035,17 @@ function createDonutChart(data) {
         .style('display', 'flex')
         .style('flex-wrap', 'wrap')
         .style('justify-content', 'center')
-        .style('gap', '8px')
-        .style('margin-top', '10px');
+        .style('gap', '10px')
+        .style('margin-top', '12px');
 
     data.forEach(function(d) {
         legend.append('div')
             .style('display', 'flex')
             .style('align-items', 'center')
-            .style('font-size', '11px')
-            .html('<span style="width:12px;height:12px;background:' + colors[d.Company] + ';border-radius:3px;margin-right:5px;display:inline-block"></span>' + d.Company);
+            .style('font-size', '12px')
+            .style('font-weight', '500')
+            .style('color', '#475569')
+            .html('<span style="width:14px;height:14px;background:' + colors[d.Company] + ';border-radius:4px;margin-right:6px;display:inline-block;box-shadow:0 2px 4px rgba(0,0,0,0.1)"></span>' + d.Company);
     });
 }
 
@@ -570,43 +1069,43 @@ function createProviderGauges(data) {
         'Azure': '#00A4EF'
     };
 
-    // Create gauge for each provider - adjusted for col-4 layout
+    // Create gauge for each provider - enhanced styling for col-4 layout
     var gaugeContainer = d3.select(container)
         .append('div')
         .style('display', 'flex')
         .style('justify-content', 'space-around')
         .style('align-items', 'center')
         .style('flex-wrap', 'wrap')
-        .style('gap', '10px')
-        .style('padding', '20px 10px');
+        .style('gap', '15px')
+        .style('padding', '25px 15px');
 
     data.forEach(function(d) {
         var gauge = gaugeContainer.append('div')
             .style('text-align', 'center')
-            .style('flex', '1 1 100px')
-            .style('min-width', '100px')
-            .style('max-width', '130px');
+            .style('flex', '1 1 110px')
+            .style('min-width', '110px')
+            .style('max-width', '140px');
 
-        var size = 60;
+        var size = 65;
         var svg = gauge.append('svg')
-            .attr('width', size * 2 + 15)
-            .attr('height', size + 30)
+            .attr('width', size * 2 + 20)
+            .attr('height', size + 35)
             .style('display', 'block')
             .style('margin', '0 auto');
 
         var g = svg.append('g')
-            .attr('transform', 'translate(' + (size + 7) + ',' + size + ')');
+            .attr('transform', 'translate(' + (size + 10) + ',' + size + ')');
 
         // Background arc
         var bgArc = d3.arc()
-            .innerRadius(size - 12)
+            .innerRadius(size - 14)
             .outerRadius(size - 3)
             .startAngle(-Math.PI / 2)
             .endAngle(Math.PI / 2);
 
         g.append('path')
             .attr('d', bgArc)
-            .attr('fill', '#e0e0e0');
+            .attr('fill', '#e8e8e8');
 
         // Value arc (PUE 1.0 to 1.5 mapped to the arc)
         var scale = d3.scaleLinear()
@@ -615,7 +1114,7 @@ function createProviderGauges(data) {
             .clamp(true);
 
         var valueArc = d3.arc()
-            .innerRadius(size - 12)
+            .innerRadius(size - 14)
             .outerRadius(size - 3)
             .startAngle(-Math.PI / 2)
             .endAngle(scale(d.pue));
@@ -624,30 +1123,31 @@ function createProviderGauges(data) {
             .attr('d', valueArc)
             .attr('fill', colors[d.provider]);
 
-        // PUE value
+        // PUE value - larger text
         g.append('text')
             .attr('text-anchor', 'middle')
-            .attr('y', -8)
-            .style('font-size', '16px')
+            .attr('y', -6)
+            .style('font-size', '20px')
             .style('font-weight', 'bold')
             .style('fill', colors[d.provider])
             .text(d.pue.toFixed(2));
 
-        // Provider name
+        // Provider name - larger
         g.append('text')
             .attr('text-anchor', 'middle')
-            .attr('y', 8)
-            .style('font-size', '11px')
-            .style('fill', '#666')
+            .attr('y', 12)
+            .style('font-size', '13px')
+            .style('font-weight', '500')
+            .style('fill', '#555')
             .text(d.provider);
     });
 
-    // Best badge
+    // Best badge - enhanced
     var best = data.reduce(function(a, b) { return a.pue < b.pue ? a : b; });
     d3.select(container).append('div')
         .style('text-align', 'center')
-        .style('margin-top', '8px')
-        .html('<span style="background:#27ae60;color:white;padding:5px 14px;border-radius:15px;font-size:12px;font-weight:500">🏆 ' + best.provider + ' most efficient</span>');
+        .style('margin-top', '12px')
+        .html('<span style="background:#27ae60;color:white;padding:8px 18px;border-radius:20px;font-size:13px;font-weight:600;display:inline-block">🏆 ' + best.provider + ' most efficient</span>');
 }
 
 // ============================================================
@@ -675,15 +1175,19 @@ function createScatterPlot(data) {
         else d.continent = 'Other';
     });
 
-    // Dimensions - more compact for narrower container
-    var margin = {top: 15, right: 15, bottom: 45, left: 50};
-    var width = container.offsetWidth - margin.left - margin.right;
-    var height = 290 - margin.top - margin.bottom;
+    // Dimensions - responsive with viewBox
+    var margin = {top: 20, right: 20, bottom: 50, left: 55};
+    var width = 500;
+    var height = 320;
+    var innerWidth = width - margin.left - margin.right;
+    var innerHeight = height - margin.top - margin.bottom;
 
     var svg = d3.select(container)
         .append('svg')
-        .attr('width', width + margin.left + margin.right)
-        .attr('height', height + margin.top + margin.bottom)
+        .attr('viewBox', '0 0 ' + width + ' ' + height)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .style('width', '100%')
+        .style('height', 'auto')
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
@@ -702,16 +1206,16 @@ function createScatterPlot(data) {
     // Scales
     var x = d3.scaleLinear()
         .domain([0, 100])
-        .range([0, width]);
+        .range([0, innerWidth]);
 
     var y = d3.scaleLinear()
         .domain([0, 700])
-        .range([height, 0]);
+        .range([innerHeight, 0]);
 
     // Grid
     svg.append('g')
         .attr('opacity', 0.08)
-        .call(d3.axisLeft(y).tickSize(-width).tickFormat(''));
+        .call(d3.axisLeft(y).tickSize(-innerWidth).tickFormat(''));
 
     // Green zone highlight
     svg.append('rect')
@@ -723,7 +1227,7 @@ function createScatterPlot(data) {
     svg.append('text')
         .attr('x', x(80)).attr('y', y(650))
         .attr('text-anchor', 'middle')
-        .style('font-size', '9px')
+        .style('font-size', '11px')
         .style('fill', '#27ae60')
         .style('font-weight', 'bold')
         .text('🌱 Green Zone');
@@ -762,30 +1266,30 @@ function createScatterPlot(data) {
 
     // Axes
     svg.append('g')
-        .attr('transform', 'translate(0,' + height + ')')
+        .attr('transform', 'translate(0,' + innerHeight + ')')
         .call(d3.axisBottom(x).ticks(5).tickFormat(function(d) { return d + '%'; }))
-        .selectAll('text').style('font-size', '10px');
+        .selectAll('text').style('font-size', '12px');
 
     svg.append('g')
         .call(d3.axisLeft(y).ticks(5))
-        .selectAll('text').style('font-size', '10px');
+        .selectAll('text').style('font-size', '12px');
 
     // Axis labels
     svg.append('text')
-        .attr('x', width / 2)
-        .attr('y', height + 38)
+        .attr('x', innerWidth / 2)
+        .attr('y', innerHeight + 42)
         .attr('text-anchor', 'middle')
-        .style('font-size', '11px')
+        .style('font-size', '13px')
         .style('font-weight', 'bold')
         .style('fill', '#555')
         .text('Carbon-Free Energy (%)');
 
     svg.append('text')
         .attr('transform', 'rotate(-90)')
-        .attr('y', -42)
-        .attr('x', -height / 2)
+        .attr('y', -45)
+        .attr('x', -innerHeight / 2)
         .attr('text-anchor', 'middle')
-        .style('font-size', '11px')
+        .style('font-size', '13px')
         .style('font-weight', 'bold')
         .style('fill', '#555')
         .text('Carbon Intensity (gCO₂/kWh)');
@@ -795,8 +1299,8 @@ function createScatterPlot(data) {
         .style('display', 'flex')
         .style('flex-wrap', 'wrap')
         .style('justify-content', 'center')
-        .style('gap', '8px')
-        .style('margin-top', '10px');
+        .style('gap', '12px')
+        .style('margin-top', '12px');
 
     var continents = ['Europe', 'North America', 'Asia', 'Australia', 'South America'];
     continents.forEach(function(c) {
@@ -806,8 +1310,8 @@ function createScatterPlot(data) {
         legendContainer.append('div')
             .style('display', 'flex')
             .style('align-items', 'center')
-            .style('font-size', '10px')
-            .html('<span style="width:10px;height:10px;background:' + continentColors[c] + ';border-radius:50%;margin-right:4px;display:inline-block"></span>' + c);
+            .style('font-size', '12px')
+            .html('<span style="width:12px;height:12px;background:' + continentColors[c] + ';border-radius:50%;margin-right:6px;display:inline-block"></span>' + c);
     });
 
     // Tooltip
@@ -955,18 +1459,20 @@ function createWorldMap(awsData, azureData, gcpData, worldData) {
         worldData: worldData
     };
 
-    // Dimensions
-    var width = container.offsetWidth;
-    var height = 340;
+    // Dimensions - responsive with viewBox
+    var width = 600;
+    var height = 350;
 
     var svg = d3.select(container)
         .append('svg')
-        .attr('width', width)
-        .attr('height', height);
+        .attr('viewBox', '0 0 ' + width + ' ' + height)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .style('width', '100%')
+        .style('height', 'auto');
 
     // Projection
     var projection = d3.geoNaturalEarth1()
-        .scale(width / 5)
+        .scale(width / 4.5)
         .translate([width / 2, height / 2]);
 
     var path = d3.geoPath().projection(projection);
@@ -1084,13 +1590,21 @@ function updateMapStats(regions) {
     // Format average emission intelligently
     var avgEmissionStr = avgEmission < 1 ? avgEmission.toFixed(2) : avgEmission.toFixed(0);
 
+    // Horizontal layout for stats
     statsContainer.innerHTML = 
-        '<div class="mb-2"><strong>Total Regions</strong><div class="h5 mb-0 text-primary">' + totalCount + '</div></div>' +
-        '<div class="mb-1"><span style="color:#FF9900">AWS:</span> ' + awsCount + '</div>' +
-        '<div class="mb-1"><span style="color:#00A4EF">Azure:</span> ' + azureCount + '</div>' +
-        '<div class="mb-1"><span style="color:#27ae60">GCP:</span> ' + gcpCount + '</div>' +
-        '<hr class="my-2">' +
-        '<div><strong>Avg Emissions</strong><div class="small text-muted">' + avgEmissionStr + ' gCO₂/kWh</div></div>';
+        '<div class="stat-block">' +
+            '<div class="stat-label">Regions</div>' +
+            '<div class="stat-value">' + totalCount + '</div>' +
+        '</div>' +
+        '<div class="provider-counts">' +
+            '<div class="provider-row"><span class="provider-dot" style="background:#FF9900"></span><span class="provider-name">AWS</span><span class="provider-count">' + awsCount + '</span></div>' +
+            '<div class="provider-row"><span class="provider-dot" style="background:#00A4EF"></span><span class="provider-name">Azure</span><span class="provider-count">' + azureCount + '</span></div>' +
+            '<div class="provider-row"><span class="provider-dot" style="background:#27ae60"></span><span class="provider-name">GCP</span><span class="provider-count">' + gcpCount + '</span></div>' +
+        '</div>' +
+        '<div class="stat-block">' +
+            '<div class="stat-label">Avg Emissions</div>' +
+            '<div class="stat-value-sm">' + avgEmissionStr + ' <span class="stat-unit">gCO₂/kWh</span></div>' +
+        '</div>';
 }
 
 // Setup map filter checkboxes (external panel)
@@ -1189,11 +1703,15 @@ function createEmissionsRankingChart(awsData, azureData, gcpData) {
     var totalWidth = container.offsetWidth - margin.left - margin.right;
     var height = 140 - margin.top - margin.bottom;
     var halfWidth = (totalWidth - 60) / 2; // Gap in middle
+    var svgWidth = totalWidth + margin.left + margin.right;
+    var svgHeight = height + margin.top + margin.bottom;
 
     var svg = d3.select(container)
         .append('svg')
-        .attr('width', totalWidth + margin.left + margin.right)
-        .attr('height', height + margin.top + margin.bottom)
+        .attr('viewBox', '0 0 ' + svgWidth + ' ' + svgHeight)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .style('width', '100%')
+        .style('height', 'auto')
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
@@ -1222,9 +1740,9 @@ function createEmissionsRankingChart(awsData, azureData, gcpData) {
         .attr('x', halfWidth / 2)
         .attr('y', -5)
         .attr('text-anchor', 'middle')
-        .style('font-size', '11px')
+        .style('font-size', '13px')
         .style('font-weight', 'bold')
-        .style('fill', '#27ae60')
+        .style('fill', '#10b981')
         .text('🌱 Greenest Regions');
 
     // Right section title
@@ -1232,9 +1750,9 @@ function createEmissionsRankingChart(awsData, azureData, gcpData) {
         .attr('x', halfWidth + 60 + halfWidth / 2)
         .attr('y', -5)
         .attr('text-anchor', 'middle')
-        .style('font-size', '11px')
+        .style('font-size', '13px')
         .style('font-weight', 'bold')
-        .style('fill', '#e74c3c')
+        .style('fill', '#ef4444')
         .text('⚠️ Highest Emissions');
 
     // Draw greenest bars (left side)
@@ -1262,8 +1780,9 @@ function createEmissionsRankingChart(awsData, azureData, gcpData) {
         .append('text')
         .attr('x', function(d) { return xGreen(d.emission) + 5; })
         .attr('y', function(d) { return yGreen(d.region) + yGreen.bandwidth() / 2 + 4; })
-        .style('font-size', '9px')
-        .style('fill', '#333')
+        .style('font-size', '11px')
+        .style('font-weight', '500')
+        .style('fill', '#1e293b')
         .text(function(d) { 
             var emissionStr = d.emission < 1 ? d.emission.toFixed(2) : d.emission.toFixed(0);
             return d.region + ' (' + emissionStr + ')'; 
@@ -1294,35 +1813,38 @@ function createEmissionsRankingChart(awsData, azureData, gcpData) {
         .data(highest)
         .enter()
         .append('text')
-        .attr('x', function(d) { return rightOffset + xHigh(d.emission) + 5; })
-        .attr('y', function(d) { return yHigh(d.region) + yHigh.bandwidth() / 2 + 4; })
-        .style('font-size', '9px')
-        .style('fill', '#333')
+        .attr('x', function(d) { return rightOffset + xHigh(d.emission) + 8; })
+        .attr('y', function(d) { return yHigh(d.region) + yHigh.bandwidth() / 2 + 5; })
+        .style('font-size', '11px')
+        .style('font-weight', '500')
+        .style('fill', '#1e293b')
         .text(function(d) { return d.region + ' (' + d.emission.toFixed(0) + ')'; });
 
     // Center legend
-    var legendY = height / 2 - 25;
-    var legendX = halfWidth + 10;
+    var legendY = innerHeight / 2 - 30;
+    var legendX = halfWidth + 20;
 
     svg.append('text')
         .attr('x', legendX + 20)
         .attr('y', legendY)
-        .style('font-size', '8px')
-        .style('fill', '#666')
+        .style('font-size', '11px')
+        .style('fill', '#64748b')
         .style('font-weight', 'bold')
         .text('gCO₂/kWh');
 
     ['AWS', 'Azure', 'GCP'].forEach(function(p, i) {
         svg.append('circle')
-            .attr('cx', legendX + 5)
-            .attr('cy', legendY + 15 + i * 14)
-            .attr('r', 4)
-            .attr('fill', providerColors[p]);
+            .attr('cx', legendX + 8)
+            .attr('cy', legendY + 18 + i * 18)
+            .attr('r', 7)
+            .attr('fill', providerColors[p])
+            .style('filter', 'drop-shadow(0 2px 3px rgba(0,0,0,0.2))');
         svg.append('text')
-            .attr('x', legendX + 12)
-            .attr('y', legendY + 18 + i * 14)
-            .style('font-size', '8px')
-            .style('fill', '#555')
+            .attr('x', legendX + 20)
+            .attr('y', legendY + 22 + i * 18)
+            .style('font-size', '12px')
+            .style('font-weight', '600')
+            .style('fill', '#475569')
             .text(p);
     });
 }
