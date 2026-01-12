@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCBL1 Data Center Analytics</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="../css/d3s6.css">
+</head>
+<body>
+
+    <h1>🏢 UCBL1 Data Center - Energy Analytics Dashboard</h1>
+    <p class="subtitle">Comprehensive 10-month analysis of facility energy consumption and efficiency metrics</p>
+    
+    <!-- Filter Panel -->
+    <div class="filter-panel">
+        <div class="filter-header">
+            <div class="filter-title">
+                <span>🎛️</span> Dashboard Filters
+            </div>
+            <button class="filter-reset" onclick="resetFilters()">↺ Reset All</button>
+        </div>
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">Time Range</label>
+                <div class="filter-range">
+                    <select id="monthStart" class="filter-select" onchange="applyFilters()">
+                        <option value="0">JAN</option>
+                        <option value="1">FEV</option>
+                        <option value="2">MAR</option>
+                        <option value="3">AVR</option>
+                        <option value="4">MAI</option>
+                        <option value="5">JUN</option>
+                        <option value="6">JUL</option>
+                        <option value="7">AOU</option>
+                        <option value="8">SEP</option>
+                        <option value="9">OCT</option>
+                    </select>
+                    <span>to</span>
+                    <select id="monthEnd" class="filter-select" onchange="applyFilters()">
+                        <option value="0">JAN</option>
+                        <option value="1">FEV</option>
+                        <option value="2">MAR</option>
+                        <option value="3">AVR</option>
+                        <option value="4">MAI</option>
+                        <option value="5">JUN</option>
+                        <option value="6">JUL</option>
+                        <option value="7">AOU</option>
+                        <option value="8">SEP</option>
+                        <option value="9" selected>OCT</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Top Consumers</label>
+                <select id="topN" class="filter-select" onchange="applyFilters()">
+                    <option value="5">Top 5</option>
+                    <option value="10" selected>Top 10</option>
+                    <option value="15">Top 15</option>
+                    <option value="20">All (Top 20)</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Heatmap Threshold (kWh)</label>
+                <div class="filter-range">
+                    <input type="number" id="heatmapMin" class="filter-input" value="0" min="0" step="100" style="width: 80px;" onchange="applyFilters()">
+                    <span>min</span>
+                </div>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Energy Categories</label>
+                <div class="filter-checkbox-group" id="categoryFilters">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+        <div class="active-filters" id="activeFilters" style="display: none;">
+            <span>Active:</span>
+            <div id="activeFilterTags"></div>
+        </div>
+    </div>
+    
+    <div class="grid">
+        <div class="card">
+            <h2>1. Total Facility Trend</h2>
+            <p class="card-description">📈 Monthly energy consumption evolution showing facility-wide usage patterns</p>
+            <div id="c1" class="chart-container"></div>
+            <div id="l1" class="legend"></div>
+        </div>
+
+        <div class="card">
+            <h2>2. Energy Share by Group</h2>
+            <p class="card-description">🥧 Distribution of total energy consumption across functional categories</p>
+            <div id="c2" class="chart-container"></div>
+            <div id="l2" class="legend"></div>
+        </div>
+
+        <div class="card">
+            <h2>3. Efficiency: Cooling vs IT Load</h2>
+            <p class="card-description">⚡ Comparison of IT infrastructure load against cooling requirements</p>
+            <div id="c3" class="chart-container"></div>
+            <div id="l3" class="legend"></div>
+        </div>
+
+        <div class="card">
+            <h2>4. Redundancy Balance (Voie A vs B)</h2>
+            <p class="card-description">⚖️ Power distribution across redundant supply pathways</p>
+            <div id="c4" class="chart-container"></div>
+            <div id="l4" class="legend"></div>
+        </div>
+
+        <div class="card">
+            <h2>5. Water-Energy Nexus</h2>
+            <p class="card-description">💧 Correlation between cooling electricity and water consumption</p>
+            <div id="c5" class="chart-container"></div>
+            <div id="l5" class="legend"></div>
+        </div>
+
+        <div class="card">
+            <h2>6. Top Energy Consumers</h2>
+            <p class="card-description">🔝 Highest consuming meters ranked by total period usage (use filter to adjust count)</p>
+            <div id="c6" class="chart-container"></div>
+        </div>
+
+        <div class="card full-width">
+            <h2>7. Monthly Intensity Heatmap</h2>
+            <p class="card-description">🗓️ Energy intensity across all meters over time - darker colors indicate higher consumption</p>
+            <div id="c7" class="chart-container" style="height: 500px;"></div>
+            <div id="l7" class="color-scale"></div>
+        </div>
+    </div>
+
+    <div id="tooltip" class="tooltip"></div>
+
+    <script src="../js/sec6v2.js"></script>
+</body>
+</html>

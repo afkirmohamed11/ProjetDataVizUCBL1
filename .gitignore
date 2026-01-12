@@ -2,3 +2,7 @@
 test_boavizta_api.py
 analyze_nulls.py
 data_cleaning_enrichment.ipynb
+# data/ucbl1
+experiments/
+data/californie/exceltocsv.ipynb
+data/portugal/2agosto -dic 2021.csv

@@ -1,0 +1,5 @@
+month;potencia_mean;potencia_max;energia_max;ESP32_temp_mean;WORKSTATION_CPU_mean;WORKSTATION_CPU_POWER_mean;month_name
+8;98.16;208.5;224.73;28.51;3.7;26.63;August
+9;100.89;210.2;279.9;26.61;5.74;37.5;September
+11;113.54;223.3;432.5;51.57;7.02;37.35;November
+12;96.21;219.0;441.43;50.51;5.37;35.24;December

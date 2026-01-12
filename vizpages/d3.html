@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualization</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .chart-section { margin-bottom: 40px; }
+        .chart-section h2 { margin: 0 0 10px; font-size: 20px; }
+        .d3-tooltip {
+            transition: opacity 0.2s ease;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>D3 Data Visualizations</h1>
+
+    <div class="chart-section">
+        <h2>Monthly Energy Consumption</h2>
+        <div id="monthly-consumption"></div>
+    </div>
+
+    <div class="chart-section">
+        <h2>Energy Consumption by Meter</h2>
+        <div id="meter-breakdown"></div>
+    </div>
+
+    <div class="chart-section">
+        <h2>Heatmap: Meter vs Month</h2>
+        <div id="heatmap"></div>
+    </div>
+    
+    <div class="chart-section">
+        <h2>Annual Total</h2>
+        <div id="kpi-total"></div>
+    </div>
+
+    <div class="chart-section">
+        <h2>Seasonality: Baseline vs Extra</h2>
+        <div id="monthly-seasonality"></div>
+    </div>
+
+    <div class="chart-section">
+        <h2>Meter Volatility</h2>
+        <div id="meter-volatility"></div>
+    </div>
+
+    <div class="chart-section">
+        <h2>Pareto: Cumulative Consumption</h2>
+        <div id="pareto-chart"></div>
+    </div>
+
+    <div class="chart-section">
+        <h2>Load Profile KPIs</h2>
+        <div id="load-profile-kpis"></div>
+    </div>
+
+    <script src="../js/sec6.js"></script>
+</body>
+</html>
