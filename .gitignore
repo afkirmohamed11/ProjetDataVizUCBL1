@@ -2,6 +2,7 @@
 test_boavizta_api.py
 analyze_nulls.py
 data_cleaning_enrichment.ipynb
+data/terminals/*.csv
 # data/ucbl1
 experiments/
 data/californie/exceltocsv.ipynb
