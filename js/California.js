@@ -1193,3 +1193,307 @@
     }
 
 })();
+
+// ============================================================
+// METHODOLOGY COMPARISON (TableA1)
+// ============================================================
+
+(function() {
+    'use strict';
+
+    const margin = { top: 50, right: 30, bottom: 60, left: 70 };
+    const transitionDuration = 750;
+
+    const colors = {
+        lbnl: '#3498db',
+        epri: '#e74c3c',
+        integrated: '#2ecc71'
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadMethodologyData();
+    });
+
+    function loadMethodologyData() {
+        d3.text('data/californie/tableA1.csv').then(text => {
+            const data = parseMethodologyCSV(text);
+            renderMethodologyChart(data);
+            renderMethodologyDetails(data);
+        }).catch(error => {
+            console.error('Error loading tableA1:', error);
+        });
+    }
+
+    function parseMethodologyCSV(text) {
+        const lines = text.trim().split('\n');
+        const delimiter = lines[0].includes(';') ? ';' : ',';
+        
+        const data = {
+            lbnl: { name: 'LBNL', color: colors.lbnl },
+            epri: { name: 'EPRI', color: colors.epri },
+            integrated: { name: 'Integrated Model', color: colors.integrated }
+        };
+
+        lines.slice(1).forEach(line => {
+            const values = line.split(delimiter).map(v => v.trim());
+            const param = values[0];
+            
+            if (param === 'Growth Rate (Low)') {
+                data.lbnl.lowRate = parsePercent(values[1]);
+                data.epri.lowRate = parsePercent(values[2]);
+                data.integrated.lowRate = parsePercent(values[3]);
+            } else if (param === 'Growth Rate (High)') {
+                data.lbnl.highRate = parsePercent(values[1]);
+                data.epri.highRate = parsePercent(values[2]);
+                data.integrated.highRate = parsePercent(values[3]);
+            } else if (param === 'Primary Drivers') {
+                data.lbnl.drivers = values[1];
+                data.epri.drivers = values[2];
+                data.integrated.drivers = values[3];
+            } else if (param === 'Time Horizon') {
+                data.lbnl.horizon = values[1];
+                data.epri.horizon = values[2];
+                data.integrated.horizon = values[3];
+            } else if (param === 'Methodology') {
+                data.lbnl.methodology = values[1];
+                data.epri.methodology = values[2];
+                data.integrated.methodology = values[3];
+            }
+        });
+
+        return data;
+    }
+
+    function parsePercent(val) {
+        if (!val) return 0;
+        val = val.replace('%', '').trim();
+        let num = parseFloat(val);
+        // If value is like 0.13 or 0.27, convert to percentage
+        if (num < 1 && num > 0) {
+            num = num * 100;
+        }
+        return num;
+    }
+
+    function renderMethodologyChart(data) {
+        const container = document.getElementById('methodology-chart');
+        if (!container) return;
+        container.innerHTML = '';
+
+        const rect = container.getBoundingClientRect();
+        const width = rect.width - margin.left - margin.right;
+        const height = 350 - margin.top - margin.bottom;
+
+        const svg = d3.select(container)
+            .append('svg')
+            .attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom)
+            .append('g')
+            .attr('transform', `translate(${margin.left},${margin.top})`);
+
+        const models = ['lbnl', 'epri', 'integrated'];
+        const modelNames = ['LBNL', 'EPRI', 'Integrated'];
+
+        // Prepare chart data
+        const chartData = models.map((m, i) => ({
+            model: modelNames[i],
+            key: m,
+            low: data[m].lowRate,
+            high: data[m].highRate,
+            color: data[m].color
+        }));
+
+        // X Scale
+        const x0 = d3.scaleBand()
+            .domain(modelNames)
+            .range([0, width])
+            .padding(0.3);
+
+        const x1 = d3.scaleBand()
+            .domain(['low', 'high'])
+            .range([0, x0.bandwidth()])
+            .padding(0.1);
+
+        // Y Scale
+        const maxVal = d3.max(chartData, d => Math.max(d.low, d.high));
+        const y = d3.scaleLinear()
+            .domain([0, maxVal * 1.2])
+            .range([height, 0]);
+
+        // Grid
+        svg.append('g')
+            .attr('class', 'grid')
+            .style('stroke-dasharray', '3,3')
+            .style('opacity', 0.3)
+            .call(d3.axisLeft(y).ticks(5).tickSize(-width).tickFormat(''));
+
+        // X Axis
+        svg.append('g')
+            .attr('transform', `translate(0,${height})`)
+            .call(d3.axisBottom(x0))
+            .selectAll('text')
+            .style('font-size', '14px')
+            .style('font-weight', 'bold');
+
+        // Y Axis
+        svg.append('g')
+            .call(d3.axisLeft(y).ticks(5).tickFormat(d => d + '%'))
+            .selectAll('text')
+            .style('font-size', '13px');
+
+        svg.append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('y', -55)
+            .attr('x', -height / 2)
+            .attr('text-anchor', 'middle')
+            .style('font-size', '14px')
+            .style('font-weight', 'bold')
+            .text('Annual Growth Rate (%)');
+
+        // Create bar groups
+        const groups = svg.selectAll('.model-group')
+            .data(chartData)
+            .enter()
+            .append('g')
+            .attr('class', 'model-group')
+            .attr('transform', d => `translate(${x0(d.model)},0)`);
+
+        // Low bars (lighter)
+        groups.append('rect')
+            .attr('class', 'bar-low')
+            .attr('x', x1('low'))
+            .attr('width', x1.bandwidth())
+            .attr('y', height)
+            .attr('height', 0)
+            .attr('fill', d => d.color)
+            .attr('fill-opacity', 0.5)
+            .attr('rx', 4)
+            .transition()
+            .duration(transitionDuration)
+            .attr('y', d => y(d.low))
+            .attr('height', d => height - y(d.low));
+
+        // High bars (solid)
+        groups.append('rect')
+            .attr('class', 'bar-high')
+            .attr('x', x1('high'))
+            .attr('width', x1.bandwidth())
+            .attr('y', height)
+            .attr('height', 0)
+            .attr('fill', d => d.color)
+            .attr('rx', 4)
+            .transition()
+            .duration(transitionDuration)
+            .delay(200)
+            .attr('y', d => y(d.high))
+            .attr('height', d => height - y(d.high));
+
+        // Value labels - Low
+        groups.append('text')
+            .attr('class', 'label-low')
+            .attr('x', x1('low') + x1.bandwidth() / 2)
+            .attr('y', d => y(d.low) - 8)
+            .attr('text-anchor', 'middle')
+            .attr('fill', d => d.color)
+            .style('font-size', '13px')
+            .style('font-weight', 'bold')
+            .style('opacity', 0)
+            .text(d => d.low.toFixed(1) + '%')
+            .transition()
+            .duration(transitionDuration)
+            .delay(400)
+            .style('opacity', 1);
+
+        // Value labels - High
+        groups.append('text')
+            .attr('class', 'label-high')
+            .attr('x', x1('high') + x1.bandwidth() / 2)
+            .attr('y', d => y(d.high) - 8)
+            .attr('text-anchor', 'middle')
+            .attr('fill', d => d.color)
+            .style('font-size', '13px')
+            .style('font-weight', 'bold')
+            .style('opacity', 0)
+            .text(d => d.high.toFixed(1) + '%')
+            .transition()
+            .duration(transitionDuration)
+            .delay(500)
+            .style('opacity', 1);
+
+        // Legend
+        const legend = svg.append('g').attr('transform', `translate(0, -35)`);
+        
+        legend.append('rect')
+            .attr('width', 18)
+            .attr('height', 18)
+            .attr('fill', '#666')
+            .attr('fill-opacity', 0.5)
+            .attr('rx', 3);
+        legend.append('text')
+            .attr('x', 24)
+            .attr('y', 14)
+            .text('Low Estimate')
+            .style('font-size', '13px');
+
+        legend.append('rect')
+            .attr('x', 140)
+            .attr('width', 18)
+            .attr('height', 18)
+            .attr('fill', '#666')
+            .attr('rx', 3);
+        legend.append('text')
+            .attr('x', 164)
+            .attr('y', 14)
+            .text('High Estimate')
+            .style('font-size', '13px');
+    }
+
+    function renderMethodologyDetails(data) {
+        const container = document.getElementById('methodology-details');
+        if (!container) return;
+
+        const models = [
+            { key: 'lbnl', name: 'LBNL', icon: 'fa-microscope' },
+            { key: 'epri', name: 'EPRI', icon: 'fa-chart-line' },
+            { key: 'integrated', name: 'Integrated Model', icon: 'fa-balance-scale' }
+        ];
+
+        let html = '';
+
+        models.forEach(model => {
+            const d = data[model.key];
+            html += `
+                <div class="card mb-3 border-0 shadow-sm" style="border-left: 4px solid ${d.color} !important;">
+                    <div class="card-body py-3">
+                        <h5 class="card-title mb-2" style="color: ${d.color}">
+                            <i class="fas ${model.icon} me-2"></i>${model.name}
+                        </h5>
+                        <div class="row">
+                            <div class="col-6">
+                                <small class="text-muted d-block">Methodology</small>
+                                <strong>${d.methodology || 'N/A'}</strong>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted d-block">Time Horizon</small>
+                                <strong>${d.horizon || 'N/A'}</strong>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-muted d-block">Primary Drivers</small>
+                            <span class="badge bg-light text-dark">${d.drivers || 'N/A'}</span>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-muted d-block">Growth Rate Range</small>
+                            <span class="badge" style="background-color: ${d.color}; color: white;">
+                                ${d.lowRate.toFixed(1)}% - ${d.highRate.toFixed(1)}%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+})();
