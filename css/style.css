@@ -1,10 +1,16 @@
 /********** Template CSS **********/
-/* TODO : use compatible colors with theme */
+/* Minimal Light Theme Palette */
 :root {
-    --primary: #5096d7;
-    --secondary: #90f272;
-    --light: #F7F7F7;
-    --dark: #404A3D;
+    --primary: #4A6FA5;
+    --secondary: #88C9A1;
+    --light: #F8FAFB;
+    --dark: #2D3748;
+    --gray-100: #F7FAFC;
+    --gray-200: #EDF2F7;
+    --gray-300: #E2E8F0;
+    --gray-500: #A0AEC0;
+    --gray-600: #718096;
+    --accent: #E8B4B8;
 }
 
 .back-to-top {
@@ -323,6 +329,20 @@
     border-radius: 140px;
     overflow: hidden;
     box-shadow: 0 0 60px rgba(0, 0, 0, .1);
+}
+
+/* Center number inside the circular service icon */
+.service-item .service-text .service-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.service-item .service-text .service-icon .service-icon-number {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--secondary);
+    line-height: 1;
 }
 
 .service-item .service-text h5,
@@ -658,4 +678,37 @@
 
 #viz-pue-map circle.datacenter {
     transition: r 0.2s ease, opacity 0.3s ease;
+}
+/* 3D Visualization Styles */
+#servers-3d-viz {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 20px auto;
+}
+
+.data-point {
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.data-point:hover {
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+}
+
+.efficiency-curve {
+    pointer-events: none;
+}
+
+.tooltip {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    max-width: 250px;
+    word-wrap: break-word;
+}
+
+#servers-3d-container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-radius: 8px;
+    padding: 15px;
 }
