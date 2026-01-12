@@ -304,22 +304,50 @@
                     </div>
                 </div>
                 
-                <!-- Row 2: Map + Renewable Chart + Scatter -->
-                <!-- World Map with integrated filter -->
+                <!-- Row 2: Emissions Ranking Chart (fills the gap) -->
+                <div class="col-12 wow fadeIn" data-wow-delay="0.55s">
+                    <div class="viz-card">
+                        <h5 class="mb-2"><i class="fas fa-bolt text-warning me-2"></i>Cloud Region Carbon Emissions: Best vs Worst</h5>
+                        <p class="text-muted small mb-2">Comparing the cleanest and highest emission data center regions across AWS, Azure & GCP</p>
+                        <div id="viz-renewable-compare" style="min-height: 180px;">
+                            <!-- D3 Visualization: Emissions Ranking Chart -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Map + Filter + Scatter -->
+                <!-- World Map -->
                 <div class="col-lg-5 wow fadeIn" data-wow-delay="0.6s">
                     <div class="viz-card">
                         <h5 class="mb-2"><i class="fas fa-map-marked-alt text-primary me-2"></i>Global Cloud Data Centers</h5>
                         <div id="viz-pue-map" style="min-height: 380px;">
-                            <!-- D3 Visualization: World Map with filter inside -->
+                            <!-- D3 Visualization: World Map -->
                         </div>
                     </div>
                 </div>
-                <!-- NEW: Renewable Energy Comparison Chart -->
+                <!-- Map Filter & Stats Panel -->
                 <div class="col-lg-2 wow fadeIn" data-wow-delay="0.65s">
                     <div class="viz-card h-100">
-                        <h6 class="mb-2"><i class="fas fa-leaf text-success me-2"></i>Renewable %</h6>
-                        <div id="viz-renewable-compare" style="min-height: 350px;">
-                            <!-- D3 Visualization: Renewable Energy Comparison -->
+                        <h6 class="mb-3"><i class="fas fa-filter text-primary me-2"></i>Filter Providers</h6>
+                        <div id="viz-map-filters">
+                            <div class="mb-3">
+                                <label class="form-check mb-2">
+                                    <input type="checkbox" class="form-check-input provider-filter" value="AWS" checked>
+                                    <span class="form-check-label" style="color:#FF9900;font-weight:600">● AWS</span>
+                                </label>
+                                <label class="form-check mb-2">
+                                    <input type="checkbox" class="form-check-input provider-filter" value="Azure" checked>
+                                    <span class="form-check-label" style="color:#00A4EF;font-weight:600">● Azure</span>
+                                </label>
+                                <label class="form-check mb-2">
+                                    <input type="checkbox" class="form-check-input provider-filter" value="GCP" checked>
+                                    <span class="form-check-label" style="color:#27ae60;font-weight:600">● GCP</span>
+                                </label>
+                            </div>
+                            <hr>
+                            <div id="viz-map-stats" class="small">
+                                <!-- Stats populated by JS -->
+                            </div>
                         </div>
                     </div>
                 </div>

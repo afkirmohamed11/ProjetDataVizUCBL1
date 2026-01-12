@@ -59,7 +59,7 @@ function initSection5() {
         createProviderGauges(providerPue);
         createWorldMap(awsRegions, azureRegions, gcpRegions, worldData);
         createScatterPlot(gcpCfe);
-        createRenewableChart(techEnergy);
+        createEmissionsRankingChart(awsRegions, azureRegions, gcpRegions);
 
         // Hide the filter bar (not needed for these simpler charts)
         var filterBar = document.getElementById('pue-filters');
@@ -950,9 +950,6 @@ function createWorldMap(awsData, azureData, gcpData, worldData) {
     var width = container.offsetWidth;
     var height = 340;
 
-    // Make container relative for absolute positioned elements
-    d3.select(container).style('position', 'relative');
-
     var svg = d3.select(container)
         .append('svg')
         .attr('width', width)
@@ -1042,221 +1039,260 @@ function createWorldMap(awsData, azureData, gcpData, worldData) {
         .style('box-shadow', '0 4px 15px rgba(0,0,0,0.2)')
         .style('z-index', '9999');
 
-    // Add filter panel INSIDE the map container
-    var filterPanel = d3.select(container)
-        .append('div')
-        .attr('class', 'map-filter-panel');
+    // Setup external filter (in the side panel)
+    setupMapFilters();
+    updateMapStats(mappedRegions);
+}
 
-    filterPanel.append('div')
-        .style('font-weight', 'bold')
-        .style('margin-bottom', '8px')
-        .style('font-size', '11px')
-        .html('<i class="fas fa-filter" style="color:#5096d7;margin-right:5px"></i>Filter');
+// Update map statistics panel (external)
+function updateMapStats(regions) {
+    var statsContainer = document.getElementById('viz-map-stats');
+    if (!statsContainer) return;
 
-    var providers = [
-        {name: 'AWS', color: '#FF9900'},
-        {name: 'Azure', color: '#00A4EF'},
-        {name: 'GCP', color: '#27ae60'}
-    ];
+    var awsCount = regions.filter(function(d) { return d.provider === 'AWS'; }).length;
+    var azureCount = regions.filter(function(d) { return d.provider === 'Azure'; }).length;
+    var gcpCount = regions.filter(function(d) { return d.provider === 'GCP'; }).length;
+    var totalCount = regions.length;
+    var avgEmission = d3.mean(regions, function(d) { return d.emission; }) || 0;
 
-    providers.forEach(function(p) {
-        var label = filterPanel.append('label');
-        label.append('input')
-            .attr('type', 'checkbox')
-            .attr('class', 'map-filter-cb')
-            .attr('value', p.name)
-            .attr('checked', true)
-            .on('change', function() {
-                var isVisible = this.checked;
-                d3.selectAll('.provider-' + p.name)
-                    .transition()
-                    .duration(300)
-                    .attr('opacity', isVisible ? 0.85 : 0)
-                    .attr('r', isVisible ? 6 : 0);
-                updateStatsBadge();
-            });
-        label.append('span')
-            .style('color', p.color)
-            .style('font-weight', '600')
-            .text(' ● ' + p.name);
+    statsContainer.innerHTML = 
+        '<div class="mb-2"><strong>Total Regions</strong><div class="h5 mb-0 text-primary">' + totalCount + '</div></div>' +
+        '<div class="mb-1"><span style="color:#FF9900">AWS:</span> ' + awsCount + '</div>' +
+        '<div class="mb-1"><span style="color:#00A4EF">Azure:</span> ' + azureCount + '</div>' +
+        '<div class="mb-1"><span style="color:#27ae60">GCP:</span> ' + gcpCount + '</div>' +
+        '<hr class="my-2">' +
+        '<div><strong>Avg Emissions</strong><div class="small text-muted">' + avgEmission.toFixed(0) + ' gCO₂/kWh</div></div>';
+}
+
+// Setup map filter checkboxes (external panel)
+function setupMapFilters() {
+    var checkboxes = document.querySelectorAll('.provider-filter');
+    
+    checkboxes.forEach(function(cb) {
+        cb.addEventListener('change', function() {
+            var provider = this.value;
+            var isVisible = this.checked;
+            
+            // Show/hide points on map
+            d3.selectAll('.provider-' + provider)
+                .transition()
+                .duration(300)
+                .attr('opacity', isVisible ? 0.85 : 0)
+                .attr('r', isVisible ? 6 : 0);
+            
+            // Update stats with filtered data
+            if (mapGlobalData) {
+                var activeProviders = Array.from(document.querySelectorAll('.provider-filter:checked'))
+                    .map(function(c) { return c.value; });
+                
+                var filteredRegions = mapGlobalData.regions.filter(function(d) {
+                    return activeProviders.includes(d.provider);
+                });
+                
+                updateMapStats(filteredRegions);
+            }
+        });
     });
-
-    // Stats badge at bottom right
-    var statsBadge = d3.select(container)
-        .append('div')
-        .attr('class', 'map-stats-badge')
-        .attr('id', 'map-stats-badge');
-
-    function updateStatsBadge() {
-        var activeProviders = [];
-        d3.selectAll('.map-filter-cb').each(function() {
-            if (this.checked) activeProviders.push(this.value);
-        });
-        
-        var filteredRegions = mapGlobalData.regions.filter(function(d) {
-            return activeProviders.includes(d.provider);
-        });
-        
-        var avgEmission = d3.mean(filteredRegions, function(d) { return d.emission; }) || 0;
-        
-        statsBadge.html(
-            '<strong>' + filteredRegions.length + '</strong> regions | ' +
-            '<span style="color:#27ae60">Avg: ' + avgEmission.toFixed(0) + ' gCO₂/kWh</span>'
-        );
-    }
-
-    updateStatsBadge();
 }
 
 // ============================================================
-// Chart 6: Renewable Energy % Horizontal Bar Chart
+// Chart 6: Top Greenest vs Highest Emission Regions
 // Container: #viz-renewable-compare
 // ============================================================
-function createRenewableChart(data) {
+function createEmissionsRankingChart(awsData, azureData, gcpData) {
     var container = document.getElementById('viz-renewable-compare');
     if (!container) return;
     container.innerHTML = '';
 
-    // Parse and sort data
-    data.forEach(function(d) {
-        d.Energy_Consumption_TWh = +d.Energy_Consumption_TWh;
-        d.Renewable_Percentage = +d.Renewable_Percentage;
+    // Provider colors
+    var providerColors = {
+        'AWS': '#FF9900',
+        'Azure': '#00A4EF',
+        'GCP': '#27ae60'
+    };
+
+    // Combine all regions with emissions
+    var allRegions = [];
+    
+    awsData.forEach(function(d) {
+        var emission = +d.emission_factor * 1000;
+        if (!isNaN(emission) && emission > 0) {
+            allRegions.push({
+                provider: 'AWS',
+                region: d.region_name,
+                country: d.country,
+                emission: emission
+            });
+        }
+    });
+    
+    azureData.forEach(function(d) {
+        var emission = +d.emission_factor * 1000;
+        if (!isNaN(emission) && emission > 0) {
+            allRegions.push({
+                provider: 'Azure',
+                region: d.region_name,
+                country: d.country,
+                emission: emission
+            });
+        }
+    });
+    
+    gcpData.forEach(function(d) {
+        var emission = +d.emission_factor_raw * 1000;
+        if (!isNaN(emission) && emission > 0) {
+            allRegions.push({
+                provider: 'GCP',
+                region: d.region_name,
+                country: d.country,
+                emission: emission
+            });
+        }
     });
 
-    // Sort by renewable percentage
-    data = data.slice().sort(function(a, b) { return b.Renewable_Percentage - a.Renewable_Percentage; });
+    // Sort and get top 5 greenest and top 5 highest
+    allRegions.sort(function(a, b) { return a.emission - b.emission; });
+    var greenest = allRegions.slice(0, 5);
+    var highest = allRegions.slice(-5).reverse();
 
-    // Dimensions for narrow column
-    var margin = {top: 10, right: 15, bottom: 30, left: 70};
-    var width = container.offsetWidth - margin.left - margin.right;
-    var height = 320 - margin.top - margin.bottom;
+    // Dimensions
+    var margin = {top: 15, right: 20, bottom: 25, left: 10};
+    var totalWidth = container.offsetWidth - margin.left - margin.right;
+    var height = 140 - margin.top - margin.bottom;
+    var halfWidth = (totalWidth - 60) / 2; // Gap in middle
 
     var svg = d3.select(container)
         .append('svg')
-        .attr('width', width + margin.left + margin.right)
+        .attr('width', totalWidth + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    // Company colors
-    var colors = {
-        'Amazon': '#FF9900',
-        'Google': '#4285F4',
-        'Microsoft': '#00A4EF',
-        'Meta': '#0668E1',
-        'Apple': '#555555'
-    };
-
-    // Scales
-    var y = d3.scaleBand()
-        .domain(data.map(function(d) { return d.Company; }))
+    // Scales for greenest (left side, bars go right)
+    var yGreen = d3.scaleBand()
+        .domain(greenest.map(function(d) { return d.region; }))
         .range([0, height])
-        .padding(0.3);
+        .padding(0.2);
 
-    var x = d3.scaleLinear()
-        .domain([0, 100])
-        .range([0, width]);
+    var xGreen = d3.scaleLinear()
+        .domain([0, d3.max(greenest, function(d) { return d.emission; }) * 1.2])
+        .range([0, halfWidth]);
 
-    // Background bars (100%)
-    svg.selectAll('.bg-bar')
-        .data(data)
-        .enter()
-        .append('rect')
-        .attr('class', 'bg-bar')
-        .attr('x', 0)
-        .attr('y', function(d) { return y(d.Company); })
-        .attr('width', width)
-        .attr('height', y.bandwidth())
-        .attr('fill', '#f0f0f0')
-        .attr('rx', 4);
+    // Scales for highest (right side, bars go left)
+    var yHigh = d3.scaleBand()
+        .domain(highest.map(function(d) { return d.region; }))
+        .range([0, height])
+        .padding(0.2);
 
-    // Renewable percentage bars
-    svg.selectAll('.bar')
-        .data(data)
-        .enter()
-        .append('rect')
-        .attr('class', 'bar')
-        .attr('x', 0)
-        .attr('y', function(d) { return y(d.Company); })
-        .attr('width', 0)
-        .attr('height', y.bandwidth())
-        .attr('fill', function(d) { return colors[d.Company] || '#5096d7'; })
-        .attr('rx', 4)
-        .style('cursor', 'pointer')
-        .on('mouseover', function(event, d) {
-            d3.select(this).attr('opacity', 0.8);
-            tooltip.style('opacity', 1)
-                .html('<strong>' + d.Company + '</strong><br>' +
-                      'Renewable: <span style="color:' + colors[d.Company] + ';font-weight:bold">' + d.Renewable_Percentage + '%</span><br>' +
-                      'Total: ' + d.Energy_Consumption_TWh + ' TWh')
-                .style('left', (event.pageX + 10) + 'px')
-                .style('top', (event.pageY - 40) + 'px');
-        })
-        .on('mouseout', function() {
-            d3.select(this).attr('opacity', 1);
-            tooltip.style('opacity', 0);
-        })
-        .transition()
-        .duration(800)
-        .delay(function(d, i) { return i * 100; })
-        .attr('width', function(d) { return x(d.Renewable_Percentage); });
+    var xHigh = d3.scaleLinear()
+        .domain([0, d3.max(highest, function(d) { return d.emission; }) * 1.2])
+        .range([0, halfWidth]);
 
-    // Percentage labels inside bars
-    svg.selectAll('.pct-label')
-        .data(data)
-        .enter()
-        .append('text')
-        .attr('class', 'pct-label')
-        .attr('x', function(d) { return x(d.Renewable_Percentage) - 5; })
-        .attr('y', function(d) { return y(d.Company) + y.bandwidth() / 2 + 4; })
-        .attr('text-anchor', 'end')
+    // Left section title
+    svg.append('text')
+        .attr('x', halfWidth / 2)
+        .attr('y', -5)
+        .attr('text-anchor', 'middle')
         .style('font-size', '11px')
         .style('font-weight', 'bold')
-        .style('fill', 'white')
-        .style('opacity', 0)
-        .text(function(d) { return d.Renewable_Percentage + '%'; })
-        .transition()
-        .delay(1000)
-        .duration(300)
-        .style('opacity', 1);
+        .style('fill', '#27ae60')
+        .text('🌱 Greenest Regions');
 
-    // Y Axis (company names)
-    svg.append('g')
-        .call(d3.axisLeft(y).tickSize(0))
-        .selectAll('text')
-        .style('font-size', '10px')
-        .style('font-weight', '500');
-
-    svg.select('.domain').remove();
-
-    // X Axis
-    svg.append('g')
-        .attr('transform', 'translate(0,' + height + ')')
-        .call(d3.axisBottom(x).ticks(4).tickFormat(function(d) { return d + '%'; }))
-        .selectAll('text')
-        .style('font-size', '9px');
-
-    // Title at bottom
+    // Right section title
     svg.append('text')
-        .attr('x', width / 2)
-        .attr('y', height + 25)
+        .attr('x', halfWidth + 60 + halfWidth / 2)
+        .attr('y', -5)
         .attr('text-anchor', 'middle')
-        .style('font-size', '9px')
-        .style('fill', '#666')
-        .text('% Renewable Energy');
-
-    // Tooltip
-    var tooltip = d3.select('body').append('div')
-        .style('position', 'absolute')
-        .style('background', 'rgba(255,255,255,0.98)')
-        .style('border', '1px solid #ddd')
-        .style('padding', '10px 14px')
-        .style('border-radius', '8px')
         .style('font-size', '11px')
-        .style('pointer-events', 'none')
-        .style('opacity', 0)
-        .style('box-shadow', '0 4px 15px rgba(0,0,0,0.15)')
-        .style('z-index', '9999');
+        .style('font-weight', 'bold')
+        .style('fill', '#e74c3c')
+        .text('⚠️ Highest Emissions');
+
+    // Draw greenest bars (left side)
+    svg.selectAll('.green-bar')
+        .data(greenest)
+        .enter()
+        .append('rect')
+        .attr('class', 'green-bar')
+        .attr('x', 0)
+        .attr('y', function(d) { return yGreen(d.region); })
+        .attr('width', 0)
+        .attr('height', yGreen.bandwidth())
+        .attr('fill', function(d) { return providerColors[d.provider]; })
+        .attr('rx', 3)
+        .attr('opacity', 0.85)
+        .transition()
+        .duration(600)
+        .delay(function(d, i) { return i * 80; })
+        .attr('width', function(d) { return xGreen(d.emission); });
+
+    // Greenest labels
+    svg.selectAll('.green-label')
+        .data(greenest)
+        .enter()
+        .append('text')
+        .attr('x', function(d) { return xGreen(d.emission) + 5; })
+        .attr('y', function(d) { return yGreen(d.region) + yGreen.bandwidth() / 2 + 4; })
+        .style('font-size', '9px')
+        .style('fill', '#333')
+        .text(function(d) { return d.region + ' (' + d.emission.toFixed(0) + ')'; });
+
+    // Draw highest bars (right side)
+    var rightOffset = halfWidth + 60;
+    
+    svg.selectAll('.high-bar')
+        .data(highest)
+        .enter()
+        .append('rect')
+        .attr('class', 'high-bar')
+        .attr('x', rightOffset)
+        .attr('y', function(d) { return yHigh(d.region); })
+        .attr('width', 0)
+        .attr('height', yHigh.bandwidth())
+        .attr('fill', function(d) { return providerColors[d.provider]; })
+        .attr('rx', 3)
+        .attr('opacity', 0.85)
+        .transition()
+        .duration(600)
+        .delay(function(d, i) { return i * 80; })
+        .attr('width', function(d) { return xHigh(d.emission); });
+
+    // Highest labels
+    svg.selectAll('.high-label')
+        .data(highest)
+        .enter()
+        .append('text')
+        .attr('x', function(d) { return rightOffset + xHigh(d.emission) + 5; })
+        .attr('y', function(d) { return yHigh(d.region) + yHigh.bandwidth() / 2 + 4; })
+        .style('font-size', '9px')
+        .style('fill', '#333')
+        .text(function(d) { return d.region + ' (' + d.emission.toFixed(0) + ')'; });
+
+    // Center legend
+    var legendY = height / 2 - 25;
+    var legendX = halfWidth + 10;
+
+    svg.append('text')
+        .attr('x', legendX + 20)
+        .attr('y', legendY)
+        .style('font-size', '8px')
+        .style('fill', '#666')
+        .style('font-weight', 'bold')
+        .text('gCO₂/kWh');
+
+    ['AWS', 'Azure', 'GCP'].forEach(function(p, i) {
+        svg.append('circle')
+            .attr('cx', legendX + 5)
+            .attr('cy', legendY + 15 + i * 14)
+            .attr('r', 4)
+            .attr('fill', providerColors[p]);
+        svg.append('text')
+            .attr('x', legendX + 12)
+            .attr('y', legendY + 18 + i * 14)
+            .style('font-size', '8px')
+            .style('fill', '#555')
+            .text(p);
+    });
 }
 
 
