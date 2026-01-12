@@ -7,9 +7,9 @@
 
 // Visualization 1: GWP (CO2 Emissions) Analysis - Interactive Scatter Plot
 function createGWPAnalysis(containerId) {
-    const margin = { top: 60, right: 200, bottom: 80, left: 80 };
-    const width = 1200 - margin.left - margin.right;
-    const height = 650 - margin.top - margin.bottom;
+    const margin = { top: 80, right: 30, bottom: 100, left: 70 };
+    const width = 550 - margin.left - margin.right;
+    const height = 520 - margin.top - margin.bottom;
 
     const svg = d3.select(`#${containerId}`)
         .append("svg")
@@ -78,20 +78,20 @@ function createGWPAnalysis(containerId) {
         // Title
         svg.append("text")
             .attr("x", width / 2)
-            .attr("y", -35)
+            .attr("y", -50)
             .attr("text-anchor", "middle")
-            .attr("font-size", "20px")
+            .attr("font-size", "16px")
             .attr("font-weight", "bold")
             .attr("fill", "#2c3e50")
-            .text("🌍 Climate Impact: CO₂ Emissions vs Power Consumption");
+            .text("🌍 CO₂ Emissions vs Power (TDP)");
 
         svg.append("text")
             .attr("x", width / 2)
-            .attr("y", -12)
+            .attr("y", -30)
             .attr("text-anchor", "middle")
-            .attr("font-size", "13px")
+            .attr("font-size", "11px")
             .attr("fill", "#7f8c8d")
-            .text("Hover over points to see detailed information • Size = Number of cores");
+            .text("Hover for details • Size = cores");
 
         // Create tooltip
         const tooltip = d3.select("body")
@@ -170,42 +170,24 @@ function createGWPAnalysis(containerId) {
                 tooltip.style("visibility", "hidden");
             });
 
-        // Legend
-        const legend = svg.append("g")
-            .attr("transform", `translate(${width + 20}, 0)`);
-
-        legend.append("text")
-            .attr("y", -5)
-            .attr("font-size", "14px")
-            .attr("font-weight", "bold")
-            .attr("fill", "#2c3e50")
-            .text("Manufacturers");
+        // Simple inline legend at bottom
+        const legendGroup = svg.append("g")
+            .attr("transform", `translate(${width / 2 - manufacturers.length * 50}, ${height + 55})`);
 
         manufacturers.forEach((mfr, i) => {
-            const legendRow = legend.append("g")
-                .attr("transform", `translate(0, ${i * 25 + 15})`)
-                .style("cursor", "pointer")
-                .on("click", function() {
-                    const isActive = d3.select(this).classed("inactive");
-                    d3.select(this).classed("inactive", !isActive);
-                    circles.filter(d => d.manufacturer === mfr)
-                        .transition()
-                        .duration(300)
-                        .attr("opacity", isActive ? 0.75 : 0.1);
-                });
+            const item = legendGroup.append("g")
+                .attr("transform", `translate(${i * 100}, 0)`);
 
-            legendRow.append("circle")
-                .attr("cx", 8)
+            item.append("circle")
+                .attr("cx", 0)
                 .attr("cy", 0)
-                .attr("r", 7)
-                .attr("fill", colorScale(mfr))
-                .attr("stroke", "#fff")
-                .attr("stroke-width", 2);
+                .attr("r", 6)
+                .attr("fill", colorScale(mfr));
 
-            legendRow.append("text")
-                .attr("x", 22)
-                .attr("y", 5)
-                .attr("font-size", "12px")
+            item.append("text")
+                .attr("x", 12)
+                .attr("y", 4)
+                .attr("font-size", "11px")
                 .attr("fill", "#2c3e50")
                 .text(mfr);
         });
@@ -215,8 +197,8 @@ function createGWPAnalysis(containerId) {
 
 // Visualization 2: PE (Primary Energy) Analysis - Simple Horizontal Bar Chart
 function createPEAnalysis(containerId) {
-    const margin = { top: 70, right: 40, bottom: 100, left: 80 };
-    const width = 900 - margin.left - margin.right;
+    const margin = { top: 70, right: 30, bottom: 80, left: 70 };
+    const width = 550 - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
 
     const container = d3.select(`#${containerId}`);
@@ -327,11 +309,10 @@ function createPEAnalysis(containerId) {
             .on("mouseover", function(event, d) {
                 d3.select(this).attr("opacity", 0.8);
                 tooltip.html(`
-                    <strong style="font-size: 15px;">${d.name}</strong><br/>
-                    <span style="color: #95a5a6;">${d.count} CPUs analyzed</span><br/><br/>
-                    🏭 <strong>Avg Manufacturing:</strong> ${d.pe_embedded.toFixed(1)} kWh<br/>
-                    🔌 Avg Usage: ${d.pe_use.toFixed(1)} kWh<br/><br/>
-                    <strong>Avg Total: ${d.pe_total.toFixed(1)} kWh</strong>
+                    <strong style="font-size: 15px;">${d.name}</strong><br/><br/>
+                    🏭 <strong>Manufacturing:</strong> ${d.pe_embedded.toFixed(1)} kWh<br/>
+                    🔌 Usage: ${d.pe_use.toFixed(1)} kWh<br/><br/>
+                    <strong>Total: ${d.pe_total.toFixed(1)} kWh</strong>
                 `).style("visibility", "visible");
             })
             .on("mousemove", function(event) {
@@ -363,11 +344,10 @@ function createPEAnalysis(containerId) {
             .on("mouseover", function(event, d) {
                 d3.select(this).attr("opacity", 0.8);
                 tooltip.html(`
-                    <strong style="font-size: 15px;">${d.name}</strong><br/>
-                    <span style="color: #95a5a6;">${d.count} CPUs analyzed</span><br/><br/>
-                    🏭 Avg Manufacturing: ${d.pe_embedded.toFixed(1)} kWh<br/>
-                    🔌 <strong>Avg Usage:</strong> ${d.pe_use.toFixed(1)} kWh<br/><br/>
-                    <strong>Avg Total: ${d.pe_total.toFixed(1)} kWh</strong>
+                    <strong style="font-size: 15px;">${d.name}</strong><br/><br/>
+                    🏭 Manufacturing: ${d.pe_embedded.toFixed(1)} kWh<br/>
+                    🔌 <strong>Usage:</strong> ${d.pe_use.toFixed(1)} kWh<br/><br/>
+                    <strong>Total: ${d.pe_total.toFixed(1)} kWh</strong>
                 `).style("visibility", "visible");
             })
             .on("mousemove", function(event) {
@@ -409,18 +389,6 @@ function createPEAnalysis(containerId) {
             .attr("font-weight", "bold")
             .attr("fill", "#e74c3c")
             .text(d => `${d.pe_use.toFixed(0)}`);
-
-        // CPU count labels
-        svg.selectAll(".count-label")
-            .data(mfrData)
-            .enter()
-            .append("text")
-            .attr("x", d => xScale(d.name) + xScale.bandwidth() / 2)
-            .attr("y", height + 35)
-            .attr("text-anchor", "middle")
-            .attr("font-size", "11px")
-            .attr("fill", "#7f8c8d")
-            .text(d => `(${d.count} CPUs)`);
 
         // Legend
         const legend = svg.append("g")
@@ -533,11 +501,10 @@ function createADPAnalysis(containerId) {
                 tooltip.html(`
                     <strong style="font-size: 15px;">${d.data.name}</strong><br/>
                     <br/>
-                    📊 ${d.data.count} CPUs analyzed<br/>
-                    💎 Mean ADP: ${d.data.adp_total.toExponential(2)} kg Sb eq<br/>
+                    � Mean ADP: ${d.data.adp_total.toExponential(2)} kg Sb eq<br/>
                     <br/>
-                    <small>🏭 Avg Manufacturing: ${d.data.adp_embedded.toExponential(2)} kg (${embPct}%)<br/>
-                    🔌 Avg Usage: ${d.data.adp_use.toExponential(2)} kg (${usePct}%)</small>
+                    <small>🏭 Manufacturing: ${embPct}%<br/>
+                    🔌 Usage: ${usePct}%</small>
                 `).style("visibility", "visible");
             })
             .on("mousemove", function(event) {
@@ -552,34 +519,44 @@ function createADPAnalysis(containerId) {
                 tooltip.style("visibility", "hidden");
             });
 
-        // Labels on arcs
+        // Labels on arcs - show name and percentage
+        const totalADP = d3.sum(mfrData, d => d.adp_total);
         arcs.append("text")
             .attr("transform", d => `translate(${arc.centroid(d)})`)
             .attr("text-anchor", "middle")
-            .attr("font-size", "14px")
+            .attr("font-size", "13px")
             .attr("fill", "white")
             .attr("font-weight", "bold")
             .style("text-shadow", "1px 1px 2px rgba(0,0,0,0.5)")
-            .text(d => `${d.data.name}`);
+            .each(function(d) {
+                const pct = ((d.data.adp_total / totalADP) * 100).toFixed(1);
+                d3.select(this)
+                    .append("tspan")
+                    .attr("x", 0)
+                    .attr("dy", "-0.3em")
+                    .text(d.data.name);
+                d3.select(this)
+                    .append("tspan")
+                    .attr("x", 0)
+                    .attr("dy", "1.2em")
+                    .text(`${pct}%`);
+            });
 
-        // Center text - show values for each manufacturer
+        // Center text - simple label
         svg.append("text")
             .attr("text-anchor", "middle")
-            .attr("dy", "-15px")
-            .attr("font-size", "13px")
-            .attr("fill", "#7f8c8d")
-            .text("Mean ADP per CPU");
+            .attr("dy", "-5px")
+            .attr("font-size", "14px")
+            .attr("font-weight", "bold")
+            .attr("fill", "#2c3e50")
+            .text("ADP");
 
-        // Show each manufacturer's value in center
-        mfrData.forEach((d, i) => {
-            svg.append("text")
-                .attr("text-anchor", "middle")
-                .attr("dy", `${10 + i * 20}px`)
-                .attr("font-size", "12px")
-                .attr("font-weight", "bold")
-                .attr("fill", colorScale(d.name))
-                .text(`${d.name}: ${d.adp_total.toExponential(2)}`);
-        });
+        svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("dy", "15px")
+            .attr("font-size", "11px")
+            .attr("fill", "#7f8c8d")
+            .text("kg Sb eq");
 
         // Legend
         const legend = svg.append("g")
@@ -600,7 +577,7 @@ function createADPAnalysis(containerId) {
                 .attr("y", 14)
                 .attr("font-size", "12px")
                 .attr("fill", "#2c3e50")
-                .text(`${d.name} (${d.count} CPUs)`);
+                .text(d.name);
         });
 
     }).catch(error => console.error("Error:", error));
@@ -731,8 +708,10 @@ function createGPUvsCPU_PE(containerId) {
         const cpus = data.filter(d => d.type === 'CPU');
         const gpus = data.filter(d => d.type === 'GPU');
 
-        const avgCPU_PE = d3.mean(cpus, d => d.pe_total);
-        const avgGPU_PE = d3.mean(gpus, d => d.pe_total);
+        // Convert MJ to kWh (1 MJ = 0.2778 kWh)
+        const MJ_TO_KWH = 0.2778;
+        const avgCPU_PE = d3.mean(cpus, d => d.pe_total) * MJ_TO_KWH;
+        const avgGPU_PE = d3.mean(gpus, d => d.pe_total) * MJ_TO_KWH;
 
         // Title
         svg.append("text")
@@ -765,7 +744,7 @@ function createGPUvsCPU_PE(containerId) {
 
         // Y axis
         svg.append("g")
-            .call(d3.axisLeft(yScale).tickFormat(d => `${d} MJ`));
+            .call(d3.axisLeft(yScale).tickFormat(d => `${d.toFixed(0)} kWh`));
 
         // Bars with animation
         svg.selectAll(".bar")
@@ -794,7 +773,7 @@ function createGPUvsCPU_PE(containerId) {
             .attr("font-size", "20px")
             .attr("font-weight", "bold")
             .attr("fill", "#2c3e50")
-            .text(d => `${d.value.toFixed(0)} MJ`);
+            .text(d => `${d.value.toFixed(0)} kWh`);
 
         // X axis labels with icons
         svg.selectAll(".x-label")
@@ -986,9 +965,9 @@ function createEnvironmentalSimulator(containerId) {
 
         const barContainer = breakdownDiv.append("div").attr("id", "breakdown-bars");
 
-        // Equivalents (simpler)
+        // Equivalents (cleaner design)
         const equivDiv = resultsPanel.append("div")
-            .style("background", "#2c3e50")
+            .style("background", "linear-gradient(135deg, #27ae60, #2ecc71)")
             .style("color", "white")
             .style("padding", "15px 20px")
             .style("border-radius", "10px");
@@ -1034,10 +1013,13 @@ function createEnvironmentalSimulator(containerId) {
             const adp_total = adp_embedded + adp_use;
 
             // Update cards
+            // Convert MJ to kWh (1 MJ = 0.2778 kWh)
+            const pe_kWh = pe_total * 0.2778;
+            
             d3.select("#gwp-card .value").text(gwp_total.toFixed(1));
             d3.select("#gwp-card .unit").text("kg CO₂");
-            d3.select("#pe-card .value").text(pe_total.toFixed(0));
-            d3.select("#pe-card .unit").text("MJ");
+            d3.select("#pe-card .value").text(pe_kWh.toFixed(0));
+            d3.select("#pe-card .unit").text("kWh");
             d3.select("#adp-card .value").text(adp_total.toExponential(2));
             d3.select("#adp-card .unit").text("kg Sb eq");
 
