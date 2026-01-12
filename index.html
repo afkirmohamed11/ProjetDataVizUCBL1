@@ -433,7 +433,7 @@
             </div>
             <div class="row g-5">
                  <div class="col-lg-12 wow fadeIn" data-wow-delay="0.3s">
-                    <div class="bg-white p-4 rounded shadow-sm">
+                    <div class="bg-white p-4 rounded shadow-sm" style="overflow: hidden;">
                         <h4 class="mb-3">3D Energy Proportionality Analysis: SPECpower Dataset</h4>
                         <div id="servers-3d-container" style="min-height: 900px; overflow: hidden; position: relative;">
                             <!-- 3D Energy Proportionality Visualization will be rendered here -->
@@ -441,6 +441,96 @@
                         </div>
                     </div>
                  </div>
+            </div>
+
+            <!-- California Data Centers Environmental Impact -->
+            <div class="row g-5 mt-4">
+                <div class="col-lg-12 wow fadeIn" data-wow-delay="0.5s">
+                    <div class="bg-white p-4 rounded shadow-sm">
+                        <h4 class="mb-3">California Data Centers: Environmental Impact Over Time</h4>
+                        <p class="text-muted mb-4">A multi-dimensional view of carbon emissions, electricity consumption, water usage, and health costs from California data centers (2019-2028 projections).</p>
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold">Select Metrics to Display:</label>
+                                <div id="california-metric-toggles" class="d-flex flex-wrap gap-2">
+                                    <button class="btn btn-sm btn-primary active" data-metric="carbon">Carbon Emissions</button>
+                                    <button class="btn btn-sm btn-outline-primary" data-metric="electricity">Electricity</button>
+                                    <button class="btn btn-sm btn-outline-primary" data-metric="water">Water</button>
+                                    <button class="btn btn-sm btn-outline-primary" data-metric="health">Health Costs</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="california-impact-chart" style="min-height: 500px; position: relative;">
+                            <p class="text-muted text-center">Loading California impact visualization...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- California vs US Electricity Comparison -->
+            <div class="row g-5 mt-4">
+                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">
+                    <div class="bg-white p-4 rounded shadow-sm h-100">
+                        <h4 class="mb-3">California vs US Data Center Electricity</h4>
+                        <p class="text-muted mb-3">Comparing California's data center electricity consumption with the national total.</p>
+                        <div id="california-vs-us-chart" style="min-height: 400px; position: relative;">
+                            <p class="text-muted text-center">Loading comparison chart...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
+                    <div class="bg-white p-4 rounded shadow-sm h-100">
+                        <h4 class="mb-3">Emission Factors: California vs US</h4>
+                        <p class="text-muted mb-3">California's cleaner grid results in significantly lower emission factors.</p>
+                        <div id="emission-factors-chart" style="min-height: 400px; position: relative;">
+                            <p class="text-muted text-center">Loading emission factors chart...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Efficiency Metrics and Water Consumption -->
+            <div class="row g-5 mt-4">
+                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">
+                    <div class="bg-white p-4 rounded shadow-sm h-100">
+                        <h4 class="mb-3">Data Center Efficiency: PUE & WUE Trends</h4>
+                        <p class="text-muted mb-3">Power Usage Effectiveness (PUE) and Water Usage Effectiveness (WUE) over time.</p>
+                        <div id="efficiency-metrics-chart" style="min-height: 400px; position: relative;">
+                            <p class="text-muted text-center">Loading efficiency metrics...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
+                    <div class="bg-white p-4 rounded shadow-sm h-100">
+                        <h4 class="mb-3">Water Consumption Breakdown</h4>
+                        <p class="text-muted mb-3">On-site vs off-site water consumption in California data centers.</p>
+                        <div id="water-breakdown-chart" style="min-height: 400px; position: relative;">
+                            <p class="text-muted text-center">Loading water breakdown...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Costs and CA Share -->
+            <div class="row g-5 mt-4">
+                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">
+                    <div class="bg-white p-4 rounded shadow-sm h-100">
+                        <h4 class="mb-3">Health Costs: Scope 1 vs Scope 2</h4>
+                        <p class="text-muted mb-3">Direct (Scope 1) and indirect (Scope 2) health costs from data center emissions.</p>
+                        <div id="health-costs-chart" style="min-height: 400px; position: relative;">
+                            <p class="text-muted text-center">Loading health costs chart...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
+                    <div class="bg-white p-4 rounded shadow-sm h-100">
+                        <h4 class="mb-3">California's Share of State Electricity & Emissions</h4>
+                        <p class="text-muted mb-3">Data centers' growing share of California's total electricity and emissions.</p>
+                        <div id="ca-share-chart" style="min-height: 400px; position: relative;">
+                            <p class="text-muted text-center">Loading CA share chart...</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -969,12 +1059,11 @@
     <script src="lib/parallax/parallax.min.js"></script>
     <script src="lib/lightbox/js/lightbox.min.js"></script>
 
-    <!-- D3.js -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
     <!-- Custom Visualizations -->
     <script src="js/sec1.js"></script>
     <script src="js/serversDataCenters.js"></script>
     <script src="js/sec6v2.js"></script>
+    <script src="js/California.js"></script>
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
