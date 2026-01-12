@@ -59,6 +59,7 @@ function initSection5() {
         createProviderGauges(providerPue);
         createWorldMap(awsRegions, azureRegions, gcpRegions, worldData);
         createScatterPlot(gcpCfe);
+        createRenewableChart(techEnergy);
 
         // Hide the filter bar (not needed for these simpler charts)
         var filterBar = document.getElementById('pue-filters');
@@ -836,8 +837,8 @@ function createWorldMap(awsData, azureData, gcpData, worldData) {
 
     // Comprehensive coordinates for ALL regions
     var locationCoords = {
-        // US Regions
-        'N. Virginia': [-77.5, 39.0], 'Virginia': [-77.5, 39.0],
+        // US Regions (various naming conventions)
+        'N. Virginia': [-77.5, 39.0], 'Virginia': [-77.5, 39.0], 'Northern Virginia': [-77.5, 39.0],
         'Ohio': [-83.0, 40.0],
         'N. California': [-121.5, 38.5], 'California': [-119.4, 36.8],
         'Oregon': [-121.2, 45.6], 'Washington': [-122.3, 47.6],
@@ -847,43 +848,58 @@ function createWorldMap(awsData, azureData, gcpData, worldData) {
         'Wyoming': [-107.3, 43.0],
         'Arizona': [-111.9, 34.0],
         'Georgia': [-83.5, 32.8],
+        'South Carolina': [-80.9, 34.0],
+        'Los Angeles': [-118.2, 34.1],
+        'Salt Lake City': [-111.9, 40.8],
+        'Las Vegas': [-115.1, 36.2],
         'AWS GovCloud East': [-77.5, 39.0],
         'AWS GovCloud West': [-121.2, 45.6],
         // Canada
         'Montreal': [-73.6, 45.5], 'Toronto': [-79.4, 43.7],
-        'Quebec City': [-71.2, 46.8],
+        'Quebec City': [-71.2, 46.8], 'Canada': [-106.3, 56.1],
         // South America
         'São Paulo': [-46.6, -23.5], 'Santiago': [-70.6, -33.4],
+        'Brazil': [-47.9, -15.8], 'Chile': [-70.6, -33.4],
         // Europe
-        'Ireland': [-6.3, 53.3], 'London': [-0.1, 51.5],
-        'Frankfurt': [8.7, 50.1], 'Paris': [2.3, 48.9],
-        'Stockholm': [18.1, 59.3], 'Milan': [9.2, 45.5],
-        'Netherlands': [4.9, 52.4], 'Zürich': [8.5, 47.4],
-        'Belgium': [4.4, 50.8], 'Warsaw': [21.0, 52.2],
-        'Finland': [25.0, 61.5], 'Madrid': [-3.7, 40.4],
-        'Gävle': [17.1, 60.7], 'Oslo': [10.7, 59.9],
-        'Cardiff': [-3.2, 51.5],
+        'Ireland': [-6.3, 53.3], 'London': [-0.1, 51.5], 'UK': [-0.1, 51.5],
+        'Frankfurt': [8.7, 50.1], 'Paris': [2.3, 48.9], 'France': [2.3, 48.9],
+        'Germany': [10.4, 51.2],
+        'Stockholm': [18.1, 59.3], 'Milan': [9.2, 45.5], 'Italy': [12.5, 41.9],
+        'Netherlands': [4.9, 52.4], 'Zürich': [8.5, 47.4], 'Switzerland': [8.2, 46.8],
+        'Belgium': [4.4, 50.8], 'Warsaw': [21.0, 52.2], 'Poland': [19.1, 51.9],
+        'Finland': [25.0, 61.5], 'Madrid': [-3.7, 40.4], 'Spain': [-3.7, 40.4],
+        'Gävle': [17.1, 60.7], 'Oslo': [10.7, 59.9], 'Norway': [8.5, 60.5],
+        'Cardiff': [-3.2, 51.5], 'Sweden': [18.1, 59.3],
         // Middle East
-        'Bahrain': [50.6, 26.0], 'Dubai': [55.3, 25.3],
-        'Dammam': [50.1, 26.4], 'Doha': [51.5, 25.3],
-        'Tel Aviv': [34.8, 32.1],
+        'Bahrain': [50.6, 26.0], 'Dubai': [55.3, 25.3], 'UAE': [54.0, 24.0],
+        'Dammam': [50.1, 26.4], 'Doha': [51.5, 25.3], 'Qatar': [51.2, 25.3],
+        'Tel Aviv': [34.8, 32.1], 'Israel': [35.2, 31.0],
+        'Saudi Arabia': [45.0, 24.0],
         // Africa
         'Cape Town': [18.4, -33.9], 'Johannesburg': [28.0, -26.2],
+        'South Africa': [25.0, -29.0],
         // Asia Pacific
-        'Tokyo': [139.7, 35.7], 'Osaka': [135.5, 34.7],
-        'Seoul': [127.0, 37.5], 'Singapore': [103.8, 1.4],
-        'Hong Kong': [114.2, 22.3], 'Mumbai': [72.9, 19.1],
+        'Tokyo': [139.7, 35.7], 'Osaka': [135.5, 34.7], 'Japan': [138.3, 36.2],
+        'Seoul': [127.0, 37.5], 'South Korea': [127.8, 35.9],
+        'Singapore': [103.8, 1.4],
+        'Hong Kong': [114.2, 22.3],
+        'Mumbai': [72.9, 19.1], 'India': [78.9, 20.6],
         'Sydney': [151.2, -33.9], 'Melbourne': [145.0, -37.8],
-        'Beijing': [116.4, 39.9], 'Ningxia': [106.3, 38.5],
-        'Taiwan': [120.5, 24.0], 'Jakarta': [106.8, -6.2],
+        'Australia': [133.8, -25.3],
+        'Beijing': [116.4, 39.9], 'Ningxia': [106.3, 38.5], 'China': [104.2, 35.9],
+        'Taiwan': [120.5, 24.0],
+        'Jakarta': [106.8, -6.2], 'Indonesia': [113.9, -0.8],
         'Pune': [73.9, 18.5], 'Delhi': [77.2, 28.6],
-        'New South Wales': [151.2, -33.9], 'Victoria': [145.0, -37.8]
+        'New South Wales': [151.2, -33.9], 'Victoria': [145.0, -37.8],
+        // Countries as fallback
+        'United States': [-95.7, 37.1],
+        'United Kingdom': [-0.1, 51.5]
     };
 
     // Process all provider data
     var allRegions = [];
     
-    // AWS regions
+    // AWS regions - uses emission_factor
     awsData.forEach(function(d) {
         allRegions.push({
             provider: 'AWS',
@@ -894,7 +910,7 @@ function createWorldMap(awsData, azureData, gcpData, worldData) {
         });
     });
 
-    // Azure regions
+    // Azure regions - uses emission_factor
     azureData.forEach(function(d) {
         allRegions.push({
             provider: 'Azure',
@@ -905,13 +921,13 @@ function createWorldMap(awsData, azureData, gcpData, worldData) {
         });
     });
 
-    // GCP regions
+    // GCP regions - uses emission_factor_raw (different column name!)
     gcpData.forEach(function(d) {
         allRegions.push({
             provider: 'GCP',
             region: d.region_name,
             country: d.country,
-            emission: +d.emission_factor * 1000,
+            emission: +d.emission_factor_raw * 1000, // GCP uses emission_factor_raw
             code: d.region_code
         });
     });
@@ -930,12 +946,12 @@ function createWorldMap(awsData, azureData, gcpData, worldData) {
         worldData: worldData
     };
 
-    // Update filter panel stats
-    updateMapStats(mappedRegions);
-
     // Dimensions
     var width = container.offsetWidth;
-    var height = 310;
+    var height = 340;
+
+    // Make container relative for absolute positioned elements
+    d3.select(container).style('position', 'relative');
 
     var svg = d3.select(container)
         .append('svg')
@@ -1026,60 +1042,221 @@ function createWorldMap(awsData, azureData, gcpData, worldData) {
         .style('box-shadow', '0 4px 15px rgba(0,0,0,0.2)')
         .style('z-index', '9999');
 
-    // Setup filter listeners
-    setupMapFilters();
-}
+    // Add filter panel INSIDE the map container
+    var filterPanel = d3.select(container)
+        .append('div')
+        .attr('class', 'map-filter-panel');
 
-// Update map statistics panel
-function updateMapStats(regions) {
-    var statsContainer = document.getElementById('viz-map-stats');
-    if (!statsContainer) return;
+    filterPanel.append('div')
+        .style('font-weight', 'bold')
+        .style('margin-bottom', '8px')
+        .style('font-size', '11px')
+        .html('<i class="fas fa-filter" style="color:#5096d7;margin-right:5px"></i>Filter');
 
-    var awsCount = regions.filter(function(d) { return d.provider === 'AWS'; }).length;
-    var azureCount = regions.filter(function(d) { return d.provider === 'Azure'; }).length;
-    var gcpCount = regions.filter(function(d) { return d.provider === 'GCP'; }).length;
-    var totalCount = regions.length;
+    var providers = [
+        {name: 'AWS', color: '#FF9900'},
+        {name: 'Azure', color: '#00A4EF'},
+        {name: 'GCP', color: '#27ae60'}
+    ];
 
-    var avgEmission = d3.mean(regions, function(d) { return d.emission; });
-
-    statsContainer.innerHTML = 
-        '<div class="mb-2"><strong>Total Regions</strong><div class="h4 mb-0 text-primary">' + totalCount + '</div></div>' +
-        '<div class="mb-2"><span style="color:#FF9900">● AWS:</span> ' + awsCount + '</div>' +
-        '<div class="mb-2"><span style="color:#00A4EF">● Azure:</span> ' + azureCount + '</div>' +
-        '<div class="mb-2"><span style="color:#27ae60">● GCP:</span> ' + gcpCount + '</div>' +
-        '<hr>' +
-        '<div><strong>Avg Emissions</strong><div class="small text-muted">' + avgEmission.toFixed(0) + ' gCO₂/kWh</div></div>';
-}
-
-// Setup map filter checkboxes
-function setupMapFilters() {
-    var checkboxes = document.querySelectorAll('.provider-filter');
-    
-    checkboxes.forEach(function(cb) {
-        cb.addEventListener('change', function() {
-            var provider = this.value;
-            var isVisible = this.checked;
-            
-            // Show/hide points
-            d3.selectAll('.provider-' + provider)
-                .transition()
-                .duration(300)
-                .attr('opacity', isVisible ? 0.85 : 0)
-                .attr('r', isVisible ? 6 : 0);
-            
-            // Update stats with filtered data
-            if (mapGlobalData) {
-                var activeProviders = Array.from(document.querySelectorAll('.provider-filter:checked'))
-                    .map(function(c) { return c.value; });
-                
-                var filteredRegions = mapGlobalData.regions.filter(function(d) {
-                    return activeProviders.includes(d.provider);
-                });
-                
-                updateMapStats(filteredRegions);
-            }
-        });
+    providers.forEach(function(p) {
+        var label = filterPanel.append('label');
+        label.append('input')
+            .attr('type', 'checkbox')
+            .attr('class', 'map-filter-cb')
+            .attr('value', p.name)
+            .attr('checked', true)
+            .on('change', function() {
+                var isVisible = this.checked;
+                d3.selectAll('.provider-' + p.name)
+                    .transition()
+                    .duration(300)
+                    .attr('opacity', isVisible ? 0.85 : 0)
+                    .attr('r', isVisible ? 6 : 0);
+                updateStatsBadge();
+            });
+        label.append('span')
+            .style('color', p.color)
+            .style('font-weight', '600')
+            .text(' ● ' + p.name);
     });
+
+    // Stats badge at bottom right
+    var statsBadge = d3.select(container)
+        .append('div')
+        .attr('class', 'map-stats-badge')
+        .attr('id', 'map-stats-badge');
+
+    function updateStatsBadge() {
+        var activeProviders = [];
+        d3.selectAll('.map-filter-cb').each(function() {
+            if (this.checked) activeProviders.push(this.value);
+        });
+        
+        var filteredRegions = mapGlobalData.regions.filter(function(d) {
+            return activeProviders.includes(d.provider);
+        });
+        
+        var avgEmission = d3.mean(filteredRegions, function(d) { return d.emission; }) || 0;
+        
+        statsBadge.html(
+            '<strong>' + filteredRegions.length + '</strong> regions | ' +
+            '<span style="color:#27ae60">Avg: ' + avgEmission.toFixed(0) + ' gCO₂/kWh</span>'
+        );
+    }
+
+    updateStatsBadge();
+}
+
+// ============================================================
+// Chart 6: Renewable Energy % Horizontal Bar Chart
+// Container: #viz-renewable-compare
+// ============================================================
+function createRenewableChart(data) {
+    var container = document.getElementById('viz-renewable-compare');
+    if (!container) return;
+    container.innerHTML = '';
+
+    // Parse and sort data
+    data.forEach(function(d) {
+        d.Energy_Consumption_TWh = +d.Energy_Consumption_TWh;
+        d.Renewable_Percentage = +d.Renewable_Percentage;
+    });
+
+    // Sort by renewable percentage
+    data = data.slice().sort(function(a, b) { return b.Renewable_Percentage - a.Renewable_Percentage; });
+
+    // Dimensions for narrow column
+    var margin = {top: 10, right: 15, bottom: 30, left: 70};
+    var width = container.offsetWidth - margin.left - margin.right;
+    var height = 320 - margin.top - margin.bottom;
+
+    var svg = d3.select(container)
+        .append('svg')
+        .attr('width', width + margin.left + margin.right)
+        .attr('height', height + margin.top + margin.bottom)
+        .append('g')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    // Company colors
+    var colors = {
+        'Amazon': '#FF9900',
+        'Google': '#4285F4',
+        'Microsoft': '#00A4EF',
+        'Meta': '#0668E1',
+        'Apple': '#555555'
+    };
+
+    // Scales
+    var y = d3.scaleBand()
+        .domain(data.map(function(d) { return d.Company; }))
+        .range([0, height])
+        .padding(0.3);
+
+    var x = d3.scaleLinear()
+        .domain([0, 100])
+        .range([0, width]);
+
+    // Background bars (100%)
+    svg.selectAll('.bg-bar')
+        .data(data)
+        .enter()
+        .append('rect')
+        .attr('class', 'bg-bar')
+        .attr('x', 0)
+        .attr('y', function(d) { return y(d.Company); })
+        .attr('width', width)
+        .attr('height', y.bandwidth())
+        .attr('fill', '#f0f0f0')
+        .attr('rx', 4);
+
+    // Renewable percentage bars
+    svg.selectAll('.bar')
+        .data(data)
+        .enter()
+        .append('rect')
+        .attr('class', 'bar')
+        .attr('x', 0)
+        .attr('y', function(d) { return y(d.Company); })
+        .attr('width', 0)
+        .attr('height', y.bandwidth())
+        .attr('fill', function(d) { return colors[d.Company] || '#5096d7'; })
+        .attr('rx', 4)
+        .style('cursor', 'pointer')
+        .on('mouseover', function(event, d) {
+            d3.select(this).attr('opacity', 0.8);
+            tooltip.style('opacity', 1)
+                .html('<strong>' + d.Company + '</strong><br>' +
+                      'Renewable: <span style="color:' + colors[d.Company] + ';font-weight:bold">' + d.Renewable_Percentage + '%</span><br>' +
+                      'Total: ' + d.Energy_Consumption_TWh + ' TWh')
+                .style('left', (event.pageX + 10) + 'px')
+                .style('top', (event.pageY - 40) + 'px');
+        })
+        .on('mouseout', function() {
+            d3.select(this).attr('opacity', 1);
+            tooltip.style('opacity', 0);
+        })
+        .transition()
+        .duration(800)
+        .delay(function(d, i) { return i * 100; })
+        .attr('width', function(d) { return x(d.Renewable_Percentage); });
+
+    // Percentage labels inside bars
+    svg.selectAll('.pct-label')
+        .data(data)
+        .enter()
+        .append('text')
+        .attr('class', 'pct-label')
+        .attr('x', function(d) { return x(d.Renewable_Percentage) - 5; })
+        .attr('y', function(d) { return y(d.Company) + y.bandwidth() / 2 + 4; })
+        .attr('text-anchor', 'end')
+        .style('font-size', '11px')
+        .style('font-weight', 'bold')
+        .style('fill', 'white')
+        .style('opacity', 0)
+        .text(function(d) { return d.Renewable_Percentage + '%'; })
+        .transition()
+        .delay(1000)
+        .duration(300)
+        .style('opacity', 1);
+
+    // Y Axis (company names)
+    svg.append('g')
+        .call(d3.axisLeft(y).tickSize(0))
+        .selectAll('text')
+        .style('font-size', '10px')
+        .style('font-weight', '500');
+
+    svg.select('.domain').remove();
+
+    // X Axis
+    svg.append('g')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(x).ticks(4).tickFormat(function(d) { return d + '%'; }))
+        .selectAll('text')
+        .style('font-size', '9px');
+
+    // Title at bottom
+    svg.append('text')
+        .attr('x', width / 2)
+        .attr('y', height + 25)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '9px')
+        .style('fill', '#666')
+        .text('% Renewable Energy');
+
+    // Tooltip
+    var tooltip = d3.select('body').append('div')
+        .style('position', 'absolute')
+        .style('background', 'rgba(255,255,255,0.98)')
+        .style('border', '1px solid #ddd')
+        .style('padding', '10px 14px')
+        .style('border-radius', '8px')
+        .style('font-size', '11px')
+        .style('pointer-events', 'none')
+        .style('opacity', 0)
+        .style('box-shadow', '0 4px 15px rgba(0,0,0,0.15)')
+        .style('z-index', '9999');
 }
 
 
