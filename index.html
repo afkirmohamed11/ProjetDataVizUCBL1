@@ -64,7 +64,7 @@
     <!-- Navbar End -->
 
     <!-- Carousel Start -->
-    <div class="container-fluid px-0 mb-5">
+    <!-- <div class="container-fluid px-0 mb-5">
         <div id="header-carousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
@@ -107,52 +107,105 @@
                 <span class="visually-hidden">Next</span>
             </button>
         </div>
-    </div>
+    </div> -->
     <!-- Carousel End -->
 
-    <!-- Section 1: Intro (Modified About Section) -->
+    <!-- Section 1 - Why It Matters: Data in Our Daily Lives -->
+    
+    <!-- Part A: The Scale of Global Data Usage - Live Counter Dashboard -->
     <div id="intro" class="container-xxl py-5">
         <div class="container">
-            <div class="row g-5 align-items-end">
-                <div class="col-lg-6">
-                    <div class="row g-2">
-                        <div class="col-6 position-relative wow fadeIn" data-wow-delay="0.7s">
-                            <div class="about-experience bg-secondary rounded">
-                                <h1 class="display-1 mb-0">1</h1>
-                                <small class="fs-5 fw-bold">Data Journey</small>
+            <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 800px;">
+                <p class="section-title bg-white text-center text-primary px-3">Section 1</p>
+                <h1 class="mb-4">Why It Matters: Data in Our Daily Lives</h1>
+                <p class="fs-5 mb-5">Digital usage is massive and continuous, even when we are not aware of it. Every second, the world generates an enormous amount of data.</p>
+            </div>
+            
+            <!-- Live Counter Dashboard -->
+            <div class="row mb-5" id="sec1-counters">
+                <!-- D3 Visualization: Live Counter Dashboard will be rendered here -->
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Static Reference KPIs -->
+            <div class="row g-4 mt-4">
+                <div class="col-6 col-md-3 wow fadeIn" data-wow-delay="0.1s">
+                    <div class="text-center bg-primary py-4 px-3 rounded">
+                        <h2 class="display-6 text-white mb-2">~350</h2>
+                        <span class="fs-6 fw-semi-bold text-secondary">EB/day Global Traffic</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 wow fadeIn" data-wow-delay="0.3s">
+                    <div class="text-center bg-secondary py-4 px-3 rounded">
+                        <h2 class="display-6 mb-2">~3.5M</h2>
+                        <span class="fs-6 fw-semi-bold text-primary">Emails/second</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 wow fadeIn" data-wow-delay="0.5s">
+                    <div class="text-center bg-secondary py-4 px-3 rounded">
+                        <h2 class="display-6 mb-2">~65%</h2>
+                        <span class="fs-6 fw-semi-bold text-primary">Video Streaming Share</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 wow fadeIn" data-wow-delay="0.7s">
+                    <div class="text-center bg-primary py-4 px-3 rounded">
+                        <h2 class="display-6 text-white mb-2">~6.5h</h2>
+                        <span class="fs-6 fw-semi-bold text-secondary">Daily Internet/Person</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Part B: Data = Energy (The Missing Link) -->
+    <div class="container-xxl py-5 bg-light">
+        <div class="container">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-5 wow fadeInUp" data-wow-delay="0.1s">
+                    <p class="section-title bg-white text-start text-primary pe-3">Energy Impact</p>
+                    <h2 class="mb-4">Data is not abstract — it consumes electricity.</h2>
+                    <p class="mb-4">
+                        Every digital action requires energy. From a simple search to streaming your favorite show, each byte travels through infrastructure that constantly draws power.
+                    </p>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="bg-white p-3 rounded shadow-sm text-center">
+                                <span class="display-6 text-primary">🔍</span>
+                                <p class="mb-0 mt-2 small"><strong>~0.3 Wh</strong><br>per Google search</p>
                             </div>
                         </div>
-                        <div class="col-6 wow fadeIn" data-wow-delay="0.1s">
-                            <img class="img-fluid rounded" src="img/image01.png">
+                        <div class="col-6">
+                            <div class="bg-white p-3 rounded shadow-sm text-center">
+                                <span class="display-6 text-primary">✉️</span>
+                                <p class="mb-0 mt-2 small"><strong>~0.04 Wh</strong><br>per email sent</p>
+                            </div>
                         </div>
-                        <div class="col-6 wow fadeIn" data-wow-delay="0.3s">
-                            <img class="img-fluid rounded" src="img/image02.png">
+                        <div class="col-6">
+                            <div class="bg-white p-3 rounded shadow-sm text-center">
+                                <span class="display-6 text-primary">📶</span>
+                                <p class="mb-0 mt-2 small"><strong>~0.1 kWh</strong><br>per 1 GB transfer</p>
+                            </div>
                         </div>
-                        <div class="col-6 wow fadeIn" data-wow-delay="0.5s">
-                            <img class="img-fluid rounded" src="img/image03.png">
+                        <div class="col-6">
+                            <div class="bg-white p-3 rounded shadow-sm text-center">
+                                <span class="display-6 text-primary">🎬</span>
+                                <p class="mb-0 mt-2 small"><strong>~0.3 kWh</strong><br>per 1h HD streaming</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
-                    <p class="section-title bg-white text-start text-primary pe-3">Section 1</p>
-                    <h1 class="mb-4">Why It Matters: Data in Our Daily Lives</h1>
-                    <p class="mb-4">
-                        We generate and consume data constantly — through browsing, streaming, messaging, and online shopping. 
-                        These seemingly invisible actions rely on physical infrastructure and consume energy.
-                    </p>
-                    <div class="row g-5 pt-2 mb-5">
-                        <div class="col-sm-6">
-                            <h5 class="mb-3">Global Traffic</h5>
-                            <div id="viz-counter-dashboard">
-                                <!-- D3 Visualization: Simple Counter Dashboard will be rendered here -->
-                                <p class="text-muted">Loading counters...</p>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <h5 class="mb-3">Energy Cost</h5>
-                            <div id="viz-energy-action">
-                                <!-- D3 Visualization: Energy per Digital Action will be rendered here -->
-                                <p class="text-muted">Loading energy data...</p>
+                <div class="col-lg-7 wow fadeIn" data-wow-delay="0.3s">
+                    <div class="bg-white p-4 rounded shadow-sm">
+                        <div id="sec1-energy-chart" style="min-height: 320px;">
+                            <!-- D3 Visualization: Energy per Digital Action Bar Chart -->
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -160,6 +213,55 @@
             </div>
         </div>
     </div>
+
+    <!-- Part C: Visual Metaphor - Your Devices Are Working -->
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 800px;">
+                <p class="section-title bg-white text-center text-primary px-3">Device Power</p>
+                <h2 class="mb-4">Even Small Devices Draw Power When Using Data</h2>
+                <p class="fs-5 mb-5">Your laptop and smartphone consume more energy as data usage increases. See how different activities affect power consumption.</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="bg-light p-4 rounded shadow-sm">
+                        <div id="sec1-device-metaphor" style="min-height: 300px;">
+                            <!-- D3 Visualization: Device Energy Metaphor -->
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Part D: Transition - Where Does the Data Go? -->
+    <div class="container-xxl py-5 bg-dark">
+        <div class="container">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-5 wow fadeIn" data-wow-delay="0.3s">
+                    <p class="section-title text-start text-secondary pe-3" style="background: transparent;">Transition</p>
+                    <h2 class="text-white mb-4">Your Device is Only the Beginning</h2>
+                    <p class="text-white-50 mb-4 fs-6">
+                        Every message sent, video streamed, or website visited generates data that travels far beyond your screen — through routers, switches, and data centers across the globe.
+                    </p>
+                    <a href="#device" class="btn btn-secondary rounded-pill py-2 px-4">
+                        <i class="fas fa-arrow-down me-2"></i>Explore the Journey
+                    </a>
+                </div>
+                <div class="col-lg-7 wow fadeIn" data-wow-delay="0.5s">
+                    <div id="sec1-transition" style="min-height: 180px;">
+                        <!-- D3 Visualization: Data Transition Animation -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Section 2: Your Device -->
     <div id="device" class="container-xxl py-5 bg-light">
@@ -250,12 +352,12 @@
     </div>
 
     <!-- Section 6: UCBL1 -->
-    <div id="ucbl" class="container-xxl py-5 bg-light">
+    <div id="ucbl" class="container-xxl py-5">
         <div class="container">
              <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 800px;">
-                <p class="section-title bg-white text-center text-primary px-3">Section 6</p>
-                <h1 class="mb-5">UCBL1 Data Center: A Case Study</h1>
-                <p class="fs-5 mb-4">Local, real-world data provides tangible insight into energy consumption patterns beyond global estimates.</p>
+                <p class="section-title bg-white text-center text-primary px-3">Case Study</p>
+                <h1 class="mb-5">UCBL1 Data Center</h1>
+                <p class="fs-5 mb-4">Why This Case Study Matters</p>
             </div>
             <div class="row g-5">
                  <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">
@@ -269,13 +371,103 @@
                  </div>
                  <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
                     <div class="bg-white p-4 rounded shadow-sm">
-                         <h4 class="mb-3">Comparative Analysis</h4>
+                         <h4 class="mb-3">Data has a physical footprint — even at the scale of a university.</h4>
                          <div id="viz-ucbl-comparison" style="min-height: 300px;">
                              <!-- D3 Visualization: Comparisons -->
                              <p class="text-muted">University vs Cloud vs Small Biz...</p>
                          </div>
                     </div>
                  </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Insights from UCBL1 Case Study -->
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="text-center mx-auto pb-4 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 700px;">
+                <p class="section-title bg-white text-center text-primary px-3">Key Insights</p>
+                <h1 class="mb-4">What We Learned from UCBL1</h1>
+                <p class="fs-5 mb-4">Understanding energy consumption patterns helps identify optimization opportunities.</p>
+            </div>
+            <div class="row gy-5 gx-4">
+                <div class="col-lg-4 col-md-6 pt-5 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="service-item d-flex h-100">
+                        <div class="service-img">
+                            <img class="img-fluid" src="img/image01.png" alt="">
+                        </div>
+                        <div class="service-text p-5 pt-0">
+                            <div class="service-icon">
+                                <span class="service-icon-number">1</span>
+                            </div>
+                            <h5 class="mb-3">Usage Patterns</h5>
+                            <p class="mb-4">Energy consumption varies significantly between peak academic hours and quiet periods like nights and weekends.</p>
+                            <a class="btn btn-square rounded-circle" href="#ucbl"><i class="bi bi-chevron-double-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 pt-5 wow fadeInUp" data-wow-delay="0.3s">
+                    <div class="service-item d-flex h-100">
+                        <div class="service-img">
+                            <img class="img-fluid" src="img/image02.png" alt="">
+                        </div>
+                        <div class="service-text p-5 pt-0">
+                            <div class="service-icon">
+                                <span class="service-icon-number">2</span>
+                            </div>
+                            <h5 class="mb-3">Seasonal Variation</h5>
+                            <p class="mb-4">Academic calendar creates predictable patterns—exam periods and holidays show distinct consumption profiles.</p>
+                            <a class="btn btn-square rounded-circle" href="#ucbl"><i class="bi bi-chevron-double-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 pt-5 wow fadeInUp" data-wow-delay="0.5s">
+                    <div class="service-item d-flex h-100">
+                        <div class="service-img">
+                            <img class="img-fluid" src="img/image03.png" alt="">
+                        </div>
+                        <div class="service-text p-5 pt-0">
+                            <div class="service-icon">
+                                <span class="service-icon-number">3</span>
+                            </div>
+                            <h5 class="mb-3">Optimization Potential</h5>
+                            <p class="mb-4">Real measurement data reveals opportunities for scheduling, load balancing, and infrastructure improvements.</p>
+                            <a class="btn btn-square rounded-circle" href="#solutions"><i class="bi bi-chevron-double-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 500px;">
+                <p class="section-title bg-white text-center text-primary px-3">Our Team</p>
+                <h1 class="mb-5">Sec6 p4</h1>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="team-item rounded p-4">
+                        <img class="img-fluid rounded mb-4" src="img/image01.png" alt="">
+                        <h5>Teext</h5>
+                        <p class="text-primary">txt</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                    <div class="team-item rounded p-4">
+                        <img class="img-fluid rounded mb-4" src="img/image01.png" alt="">
+                        <h5>Teext</h5>
+                        <p class="text-primary">txt</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+                    <div class="team-item rounded p-4">
+                        <img class="img-fluid rounded mb-4" src="img/image01.png" alt="">
+                        <h5>Teext</h5>
+                        <p class="text-primary">txt</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -381,6 +573,7 @@
     <!-- D3.js -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <!-- Custom Visualizations -->
+    <script src="js/sec1.js"></script>
     <script src="js/serversDataCenters.js"></script>
 
     <!-- Template Javascript -->

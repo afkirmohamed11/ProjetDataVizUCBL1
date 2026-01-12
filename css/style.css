@@ -1,10 +1,16 @@
 /********** Template CSS **********/
-/* TODO : use compatible colors with theme */
+/* Minimal Light Theme Palette */
 :root {
-    --primary: #5096d7;
-    --secondary: #90f272;
-    --light: #F7F7F7;
-    --dark: #404A3D;
+    --primary: #4A6FA5;
+    --secondary: #88C9A1;
+    --light: #F8FAFB;
+    --dark: #2D3748;
+    --gray-100: #F7FAFC;
+    --gray-200: #EDF2F7;
+    --gray-300: #E2E8F0;
+    --gray-500: #A0AEC0;
+    --gray-600: #718096;
+    --accent: #E8B4B8;
 }
 
 .back-to-top {
@@ -323,6 +329,20 @@
     border-radius: 140px;
     overflow: hidden;
     box-shadow: 0 0 60px rgba(0, 0, 0, .1);
+}
+
+/* Center number inside the circular service icon */
+.service-item .service-text .service-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.service-item .service-text .service-icon .service-icon-number {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--secondary);
+    line-height: 1;
 }
 
 .service-item .service-text h5,
