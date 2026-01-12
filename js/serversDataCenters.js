@@ -177,7 +177,7 @@
                 .attr('text-anchor', 'middle')
                 .style('font-size', '18px')
                 .style('font-weight', 'bold')
-                .text('1. The Efficiency Leap: Performance Per Watt Over Time');
+                .text('The Efficiency Leap: Performance Per Watt Over Time');
 
             // Aggregate by year
             const efficiencyByYear = d3.rollup(data, v => d3.mean(v, d => d.result), d => d.year);
@@ -235,24 +235,24 @@
             g1.append('g')
                 .attr('transform', `translate(0,${height})`)
                 .call(d3.axisBottom(xScale1).tickFormat(d3.format('d')))
-                .style('font-size', '12px')
+                .style('font-size', '15px')
                 .append('text')
                 .attr('x', width / 2)
                 .attr('y', 55)
                 .attr('text-anchor', 'middle')
-                .style('font-size', '14px')
+                .style('font-size', '19px')
                 .style('fill', 'black')
                 .text('Hardware Release Year');
 
             g1.append('g')
                 .call(d3.axisLeft(yScale1))
-                .style('font-size', '12px')
+                .style('font-size', '15px')
                 .append('text')
                 .attr('transform', 'rotate(-90)')
                 .attr('x', -height / 2)
                 .attr('y', -70)
                 .attr('text-anchor', 'middle')
-                .style('font-size', '14px')
+                .style('font-size', '19px')
                 .style('fill', 'black')
                 .text('Performance/Watt (ops/W)');
 
@@ -280,7 +280,7 @@
                 .attr('text-anchor', 'middle')
                 .style('font-size', '18px')
                 .style('font-weight', 'bold')
-                .text('2. Energy Proportionality: Old Server (2010) vs Modern Server (2024)');
+                .text('Energy Proportionality: Old Server (2010) vs Modern Server (2024)');
 
             // Find representative servers from 2010 and 2024
             const server2010 = data.find(d => d.year === 2010);
@@ -338,24 +338,24 @@
                 g3.append('g')
                     .attr('transform', `translate(0,${height})`)
                     .call(d3.axisBottom(xScale3).tickFormat(d => d + '%'))
-                    .style('font-size', '12px')
+                    .style('font-size', '15px')
                     .append('text')
                     .attr('x', width / 2)
                     .attr('y', 55)
                     .attr('text-anchor', 'middle')
-                    .style('font-size', '14px')
+                    .style('font-size', '19px')
                     .style('fill', 'black')
                     .text('Workload Level (%)');
 
                 g3.append('g')
                     .call(d3.axisLeft(yScale3))
-                    .style('font-size', '12px')
+                    .style('font-size', '15px')
                     .append('text')
                     .attr('transform', 'rotate(-90)')
                     .attr('x', -height / 2)
                     .attr('y', -70)
                     .attr('text-anchor', 'middle')
-                    .style('font-size', '14px')
+                    .style('font-size', '19px')
                     .style('fill', 'black')
                     .text('Performance/Power (ops/W)');
 
@@ -373,7 +373,7 @@
                 legend3.append('text')
                     .attr('x', 30)
                     .attr('y', 5)
-                    .style('font-size', '13px')
+                    .style('font-size', '16px')
                     .text('2010 Server');
 
                 legend3.append('line')
@@ -385,7 +385,7 @@
                 legend3.append('text')
                     .attr('x', 30)
                     .attr('y', 30)
-                    .style('font-size', '13px')
+                    .style('font-size', '16px')
                     .text('2024 Server');
             }
 
@@ -413,7 +413,7 @@
                 .attr('text-anchor', 'middle')
                 .style('font-size', '18px')
                 .style('font-weight', 'bold')
-                .text('3. Density vs Waste: Cores vs Idle Power (colored by Performance)');
+                .text('Density vs Waste: Cores vs Idle Power (colored by Performance)');
 
             const xScale4 = d3.scaleLinear()
                 .domain([0, d3.max(data, d => d.cores)])
@@ -467,24 +467,24 @@
             g4.append('g')
                 .attr('transform', `translate(0,${height})`)
                 .call(d3.axisBottom(xScale4))
-                .style('font-size', '12px')
+                .style('font-size', '15px')
                 .append('text')
                 .attr('x', width / 2)
                 .attr('y', 55)
                 .attr('text-anchor', 'middle')
-                .style('font-size', '14px')
+                .style('font-size', '19px')
                 .style('fill', 'black')
                 .text('Number of Cores');
 
             g4.append('g')
                 .call(d3.axisLeft(yScale4))
-                .style('font-size', '12px')
+                .style('font-size', '15px')
                 .append('text')
                 .attr('transform', 'rotate(-90)')
                 .attr('x', -height / 2)
                 .attr('y', -70)
                 .attr('text-anchor', 'middle')
-                .style('font-size', '14px')
+                .style('font-size', '17px')
                 .style('fill', 'black')
                 .text('Idle Power (Watts)');
 
@@ -493,7 +493,7 @@
                 .attr('transform', `translate(${margin.left + width + 30}, ${height + margin.top + 40})`);
 
             colorLegend.append('text')
-                .style('font-size', '13px')
+                .style('font-size', '17px')
                 .style('font-weight', 'bold')
                 .text('Performance');
 
@@ -508,7 +508,7 @@
             colorLegend.append('text')
                 .attr('x', 25)
                 .attr('y', 33)
-                .style('font-size', '11px')
+                .style('font-size', '16px')
                 .text('Low');
 
             // High performance (green)
@@ -522,7 +522,7 @@
             colorLegend.append('text')
                 .attr('x', 25)
                 .attr('y', 63)
-                .style('font-size', '11px')
+                .style('font-size', '16px')
                 .text('High');
 
             // Initialize visualizations
