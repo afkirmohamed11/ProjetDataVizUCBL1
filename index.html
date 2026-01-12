@@ -244,7 +244,7 @@
                 <h1 class="mb-5">Big Picture: Data Center Efficiency & Its Limits</h1>
                 <p class="fs-5 mb-4">While companies like Google continuously improve efficiency, total energy consumption keeps increasing due to rising global data demand.</p>
             </div>
-            <div class="bg-white p-3 rounded shadow-sm mb-4">
+            <div class="bg-white p-3 rounded shadow-sm mb-4" style="display: none;">
                 <div class="row g-3 align-items-end" id="pue-filters">
                     <div class="col-md-4">
                         <label for="pue-filter-region" class="form-label mb-1">Région</label>
@@ -266,47 +266,69 @@
                     </div>
                 </div>
             </div>
-            <div class="row g-4">
+            <div class="row g-3">
+                <!-- Row 1: Timeline + Comparison + Stats -->
                 <!-- PUE Timeline Chart -->
-                <div class="col-lg-8 wow fadeIn" data-wow-delay="0.3s">
-                    <div class="bg-light p-4 rounded shadow-sm">
-                        <h4 class="mb-3">Google Data Center PUE Evolution (2011-2025)</h4>
-                        <p class="text-muted small mb-3">Power Usage Effectiveness: Lower is better (1.0 = perfect efficiency)</p>
-                        <div id="viz-pue-timeline" style="min-height: 400px;">
+                <div class="col-lg-5 wow fadeIn" data-wow-delay="0.3s">
+                    <div class="viz-card">
+                        <h5 class="mb-2">Google Data Center PUE Evolution (2007-2025)</h5>
+                        <p class="text-muted small mb-2">Power Usage Effectiveness: Lower is better (1.0 = perfect)</p>
+                        <div id="viz-pue-timeline" style="min-height: 280px;">
                             <!-- D3 Visualization: PUE Timeline Chart -->
                         </div>
                     </div>
                 </div>
+                <!-- Global vs Cloud Providers Comparison -->
+                <div class="col-lg-4 wow fadeIn" data-wow-delay="0.4s">
+                    <div class="viz-card">
+                        <h5 class="mb-2"><i class="fas fa-balance-scale text-primary me-2"></i>Global vs Cloud Providers PUE</h5>
+                        <p class="text-muted small mb-2">Industry average vs major cloud providers (2025)</p>
+                        <div id="viz-pue-comparison" style="min-height: 280px;">
+                            <!-- D3 Visualization: Comparison Bar Chart -->
+                        </div>
+                    </div>
+                </div>
                 <!-- PUE Stats Cards -->
-                <div class="col-lg-4 wow fadeIn" data-wow-delay="0.5s">
-                    <div class="bg-light p-4 rounded shadow-sm mb-4">
-                        <h5 class="mb-3"><i class="fas fa-chart-pie text-primary me-2"></i>Big Tech Energy Share</h5>
+                <div class="col-lg-3 wow fadeIn" data-wow-delay="0.5s">
+                    <div class="viz-card mb-3">
+                        <h5 class="mb-2"><i class="fas fa-chart-pie text-primary me-2"></i>Big Tech Energy (2021)</h5>
                         <div id="viz-pue-stats">
                             <!-- D3 Visualization: Donut Chart -->
                         </div>
                     </div>
-                    <div class="bg-light p-4 rounded shadow-sm">
-                        <h5 class="mb-3"><i class="fas fa-tachometer-alt text-primary me-2"></i>Cloud Provider PUE</h5>
-                        <div id="viz-pue-regions" style="min-height: 220px;">
+                    <div class="viz-card">
+                        <h5 class="mb-2"><i class="fas fa-tachometer-alt text-primary me-2"></i>Provider Efficiency</h5>
+                        <div id="viz-pue-regions" style="min-height: 150px;">
                             <!-- D3 Visualization: Provider Gauges -->
                         </div>
                     </div>
                 </div>
-                <!-- World Map -->
-                <div class="col-lg-7 wow fadeIn" data-wow-delay="0.6s">
-                    <div class="bg-light p-4 rounded shadow-sm">
-                        <h4 class="mb-3"><i class="fas fa-map-marked-alt text-primary me-2"></i>Global Carbon-Free Energy Map</h4>
-                        <p class="text-muted small mb-2">Google Cloud regions colored by Carbon-Free Energy percentage</p>
+                
+                <!-- Row 2: Map + Renewable Chart + Scatter -->
+                <!-- World Map with integrated filter -->
+                <div class="col-lg-5 wow fadeIn" data-wow-delay="0.6s">
+                    <div class="viz-card">
+                        <h5 class="mb-2"><i class="fas fa-map-marked-alt text-primary me-2"></i>Global Cloud Data Centers</h5>
                         <div id="viz-pue-map" style="min-height: 380px;">
-                            <!-- D3 Visualization: World Map -->
+                            <!-- D3 Visualization: World Map with filter inside -->
+                        </div>
+                    </div>
+                </div>
+                <!-- NEW: Renewable Energy Comparison Chart -->
+                <div class="col-lg-2 wow fadeIn" data-wow-delay="0.65s">
+                    <div class="viz-card h-100">
+                        <h6 class="mb-2"><i class="fas fa-leaf text-success me-2"></i>Renewable %</h6>
+                        <div id="viz-renewable-compare" style="min-height: 350px;">
+                            <!-- D3 Visualization: Renewable Energy Comparison -->
                         </div>
                     </div>
                 </div>
                 <!-- Scatter Plot -->
                 <div class="col-lg-5 wow fadeIn" data-wow-delay="0.7s">
-                    <div class="bg-light p-4 rounded shadow-sm">
-                        <h4 class="mb-3">CFE vs Carbon Intensity</h4>
-                        <div id="viz-pue-sites" style="min-height: 380px;">
+                    <div class="viz-card">
+                        <h5 class="mb-2">CFE vs Carbon Intensity</h5>
+                        <p class="text-muted small mb-2">Google Cloud regions - Higher CFE & lower carbon = greener</p>
+                        <div id="viz-pue-sites" style="min-height: 320px;">
                             <!-- D3 Visualization: Scatter Plot -->
                         </div>
                     </div>

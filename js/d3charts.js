@@ -32,25 +32,32 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initSection5() {
-    // Load all data files
+    // Load all data files including ALL cloud providers
     Promise.all([
         d3.csv('data/uptime- global average/uptime_pue_historical_2007_2025.csv'),
         d3.csv('data/iae/iea_tech_company_energy2021.csv'),
         d3.csv('data/climatiq/cloud_provider_pue.csv'),
         d3.csv('data/yearly Carbon free energy for Google Cloud regions/2024.csv'),
-        d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+        d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'),
+        d3.csv('data/climatiq/aws_region_emissions.csv'),
+        d3.csv('data/climatiq/azure_region_emissions.csv'),
+        d3.csv('data/climatiq/gcp_region_emissions.csv')
     ]).then(function(datasets) {
         var pueHistory = datasets[0];
         var techEnergy = datasets[1];
         var providerPue = datasets[2];
         var gcpCfe = datasets[3];
         var worldData = datasets[4];
+        var awsRegions = datasets[5];
+        var azureRegions = datasets[6];
+        var gcpRegions = datasets[7];
 
         // Create visualizations
         createPueTimelineChart(pueHistory);
+        createComparisonChart(pueHistory, providerPue);
         createDonutChart(techEnergy);
         createProviderGauges(providerPue);
-        createWorldMap(gcpCfe, worldData);
+        createWorldMap(awsRegions, azureRegions, gcpRegions, worldData);
         createScatterPlot(gcpCfe);
 
         // Hide the filter bar (not needed for these simpler charts)
@@ -79,10 +86,10 @@ function createPueTimelineChart(data) {
         d.Average_PUE = +d.Average_PUE;
     });
 
-    // Dimensions
-    var margin = {top: 40, right: 40, bottom: 60, left: 70};
+    // Dimensions - adjusted for col-5
+    var margin = {top: 50, right: 30, bottom: 45, left: 50};
     var width = container.offsetWidth - margin.left - margin.right;
-    var height = 380 - margin.top - margin.bottom;
+    var height = 240 - margin.top - margin.bottom;
 
     // Create SVG
     var svg = d3.select(container)
@@ -139,7 +146,7 @@ function createPueTimelineChart(data) {
         .datum(data)
         .attr('fill', 'none')
         .attr('stroke', '#2980b9')
-        .attr('stroke-width', 4)
+        .attr('stroke-width', 3)
         .attr('d', line);
 
     var totalLength = path.node().getTotalLength();
@@ -160,114 +167,80 @@ function createPueTimelineChart(data) {
         .attr('r', 0)
         .attr('fill', '#2980b9')
         .attr('stroke', 'white')
-        .attr('stroke-width', 3)
+        .attr('stroke-width', 2)
         .style('cursor', 'pointer')
         .transition()
-        .delay(function(d, i) { return 2000 + i * 100; })
-        .duration(300)
-        .attr('r', 8);
+        .delay(function(d, i) { return 2000 + i * 80; })
+        .duration(200)
+        .attr('r', 5);
 
     // Add interactivity after animation
     setTimeout(function() {
         svg.selectAll('circle')
             .on('mouseover', function(event, d) {
-                d3.select(this).transition().duration(150).attr('r', 12);
+                d3.select(this).transition().duration(150).attr('r', 9);
                 tooltip.style('opacity', 1)
-                    .html('<div style="font-size:16px;font-weight:bold;margin-bottom:5px">' + d.Year + '</div>' +
+                    .html('<div style="font-size:14px;font-weight:bold;margin-bottom:3px">' + d.Year + '</div>' +
                           '<div>PUE: <span style="color:#3498db;font-weight:bold">' + d.Average_PUE.toFixed(2) + '</span></div>')
                     .style('left', (event.pageX + 15) + 'px')
                     .style('top', (event.pageY - 40) + 'px');
             })
             .on('mouseout', function() {
-                d3.select(this).transition().duration(150).attr('r', 8);
+                d3.select(this).transition().duration(150).attr('r', 5);
                 tooltip.style('opacity', 0);
             });
     }, 3500);
 
-    // Annotations for key milestones
-    var annotations = [
-        {year: 2007, pue: 2.5, label: 'Baseline', align: 'start'},
-        {year: 2014, pue: 1.65, label: 'Major improvements', align: 'middle'},
-        {year: 2025, pue: 1.54, label: 'Current', align: 'end'}
-    ];
-
-    annotations.forEach(function(a) {
-        var xPos = x(a.year);
-        var yPos = y(a.pue);
-        
-        svg.append('line')
-            .attr('x1', xPos).attr('y1', yPos + 15)
-            .attr('x2', xPos).attr('y2', yPos + 35)
-            .attr('stroke', '#e74c3c')
-            .attr('stroke-width', 2)
-            .attr('stroke-dasharray', '4,2')
-            .style('opacity', 0)
-            .transition().delay(3000).duration(500).style('opacity', 1);
-
-        svg.append('text')
-            .attr('x', xPos)
-            .attr('y', yPos + 50)
-            .attr('text-anchor', a.align)
-            .style('font-size', '11px')
-            .style('fill', '#e74c3c')
-            .style('font-weight', 'bold')
-            .style('opacity', 0)
-            .text(a.label)
-            .transition().delay(3000).duration(500).style('opacity', 1);
-    });
-
     // X Axis
     svg.append('g')
         .attr('transform', 'translate(0,' + height + ')')
-        .call(d3.axisBottom(x).tickFormat(d3.format('d')).ticks(8))
+        .call(d3.axisBottom(x).tickFormat(d3.format('d')).ticks(6))
         .selectAll('text')
-        .style('font-size', '12px');
+        .style('font-size', '10px');
 
     // Y Axis
     svg.append('g')
-        .call(d3.axisLeft(y).ticks(6))
+        .call(d3.axisLeft(y).ticks(5))
         .selectAll('text')
-        .style('font-size', '12px');
+        .style('font-size', '10px');
 
     // Axis labels
     svg.append('text')
         .attr('transform', 'rotate(-90)')
-        .attr('y', -50)
+        .attr('y', -40)
         .attr('x', -height / 2)
         .attr('text-anchor', 'middle')
-        .style('font-size', '13px')
+        .style('font-size', '11px')
         .style('fill', '#555')
-        .style('font-weight', 'bold')
         .text('Average PUE');
 
     svg.append('text')
         .attr('x', width / 2)
-        .attr('y', height + 45)
+        .attr('y', height + 35)
         .attr('text-anchor', 'middle')
-        .style('font-size', '13px')
+        .style('font-size', '11px')
         .style('fill', '#555')
-        .style('font-weight', 'bold')
         .text('Year');
 
-    // Improvement badge
+    // Improvement badge - positioned inside the chart area
     var firstPue = data[0].Average_PUE;
     var lastPue = data[data.length - 1].Average_PUE;
     var improvement = ((firstPue - lastPue) / firstPue * 100).toFixed(0);
 
     svg.append('rect')
-        .attr('x', width - 100)
-        .attr('y', -30)
-        .attr('width', 100)
-        .attr('height', 30)
+        .attr('x', width - 95)
+        .attr('y', -40)
+        .attr('width', 95)
+        .attr('height', 26)
         .attr('fill', '#27ae60')
-        .attr('rx', 15);
+        .attr('rx', 13);
 
     svg.append('text')
-        .attr('x', width - 50)
-        .attr('y', -10)
+        .attr('x', width - 47)
+        .attr('y', -22)
         .attr('text-anchor', 'middle')
         .style('fill', 'white')
-        .style('font-size', '13px')
+        .style('font-size', '11px')
         .style('font-weight', 'bold')
         .text('↓ ' + improvement + '% improved');
 
@@ -278,12 +251,177 @@ function createPueTimelineChart(data) {
         .style('background', 'rgba(255,255,255,0.95)')
         .style('border', '2px solid #3498db')
         .style('color', '#333')
-        .style('padding', '12px 16px')
+        .style('padding', '10px 14px')
         .style('border-radius', '8px')
-        .style('font-size', '13px')
+        .style('font-size', '12px')
         .style('pointer-events', 'none')
         .style('opacity', 0)
         .style('box-shadow', '0 4px 15px rgba(0,0,0,0.15)');
+}
+
+// ============================================================
+// Chart 1.5: Global vs Cloud Providers PUE Comparison
+// Container: #viz-pue-comparison
+// ============================================================
+function createComparisonChart(pueHistory, providerPue) {
+    var container = document.getElementById('viz-pue-comparison');
+    if (!container) return;
+    container.innerHTML = '';
+
+    // Get latest global average from history (2025)
+    var latestGlobal = pueHistory[pueHistory.length - 1];
+    var globalPue = +latestGlobal.Average_PUE;
+
+    // Prepare comparison data
+    var comparisonData = [
+        { name: 'Global Avg', pue: globalPue, color: '#e74c3c', icon: '🌍' }
+    ];
+
+    // Add cloud providers
+    var providerColors = {
+        'AWS': '#FF9900',
+        'GCP': '#27ae60',
+        'Azure': '#00A4EF'
+    };
+
+    providerPue.forEach(function(d) {
+        if (d.provider !== 'Azure (Latest Designs)') {
+            comparisonData.push({
+                name: d.provider,
+                pue: +d.pue,
+                color: providerColors[d.provider],
+                icon: d.provider === 'AWS' ? '☁️' : d.provider === 'GCP' ? '🟢' : '🔷'
+            });
+        }
+    });
+
+    // Sort by PUE (worst to best)
+    comparisonData.sort(function(a, b) { return b.pue - a.pue; });
+
+    // Dimensions
+    var margin = {top: 20, right: 15, bottom: 35, left: 15};
+    var width = container.offsetWidth - margin.left - margin.right;
+    var height = 250 - margin.top - margin.bottom;
+
+    var svg = d3.select(container)
+        .append('svg')
+        .attr('width', width + margin.left + margin.right)
+        .attr('height', height + margin.top + margin.bottom)
+        .append('g')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    // Scales
+    var x = d3.scaleBand()
+        .domain(comparisonData.map(function(d) { return d.name; }))
+        .range([0, width])
+        .padding(0.35);
+
+    var y = d3.scaleLinear()
+        .domain([1.0, 1.7])
+        .range([height, 0]);
+
+    // Reference line at PUE 1.0 (perfect)
+    svg.append('line')
+        .attr('x1', 0).attr('x2', width)
+        .attr('y1', y(1.0)).attr('y2', y(1.0))
+        .attr('stroke', '#27ae60')
+        .attr('stroke-width', 2)
+        .attr('stroke-dasharray', '5,5')
+        .attr('opacity', 0.5);
+
+    svg.append('text')
+        .attr('x', width)
+        .attr('y', y(1.0) - 5)
+        .attr('text-anchor', 'end')
+        .style('font-size', '9px')
+        .style('fill', '#27ae60')
+        .text('Perfect (1.0)');
+
+    // Draw bars
+    svg.selectAll('.bar')
+        .data(comparisonData)
+        .enter()
+        .append('rect')
+        .attr('class', 'bar')
+        .attr('x', function(d) { return x(d.name); })
+        .attr('y', height)
+        .attr('width', x.bandwidth())
+        .attr('height', 0)
+        .attr('fill', function(d) { return d.color; })
+        .attr('rx', 4)
+        .style('cursor', 'pointer')
+        .on('mouseover', function(event, d) {
+            d3.select(this).attr('opacity', 0.8);
+            tooltip.style('opacity', 1)
+                .html('<strong>' + d.name + '</strong><br>PUE: ' + d.pue.toFixed(3))
+                .style('left', (event.pageX + 10) + 'px')
+                .style('top', (event.pageY - 30) + 'px');
+        })
+        .on('mouseout', function() {
+            d3.select(this).attr('opacity', 1);
+            tooltip.style('opacity', 0);
+        })
+        .transition()
+        .duration(800)
+        .delay(function(d, i) { return i * 150; })
+        .attr('y', function(d) { return y(d.pue); })
+        .attr('height', function(d) { return height - y(d.pue); });
+
+    // Value labels on bars
+    svg.selectAll('.value-label')
+        .data(comparisonData)
+        .enter()
+        .append('text')
+        .attr('class', 'value-label')
+        .attr('x', function(d) { return x(d.name) + x.bandwidth() / 2; })
+        .attr('y', function(d) { return y(d.pue) - 8; })
+        .attr('text-anchor', 'middle')
+        .style('font-size', '13px')
+        .style('font-weight', 'bold')
+        .style('fill', function(d) { return d.color; })
+        .style('opacity', 0)
+        .text(function(d) { return d.pue.toFixed(2); })
+        .transition()
+        .delay(1200)
+        .duration(300)
+        .style('opacity', 1);
+
+    // X Axis labels with icons
+    svg.selectAll('.x-label')
+        .data(comparisonData)
+        .enter()
+        .append('text')
+        .attr('class', 'x-label')
+        .attr('x', function(d) { return x(d.name) + x.bandwidth() / 2; })
+        .attr('y', height + 20)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '10px')
+        .style('fill', '#555')
+        .text(function(d) { return d.name; });
+
+    // Efficiency comparison text
+    var bestProvider = comparisonData[comparisonData.length - 1];
+    var savings = ((globalPue - bestProvider.pue) / globalPue * 100).toFixed(0);
+
+    svg.append('text')
+        .attr('x', width / 2)
+        .attr('y', height + 32)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '9px')
+        .style('fill', '#27ae60')
+        .style('font-weight', 'bold')
+        .text('Cloud providers ' + savings + '% more efficient');
+
+    // Tooltip
+    var tooltip = d3.select('body').append('div')
+        .style('position', 'absolute')
+        .style('background', 'rgba(0,0,0,0.8)')
+        .style('color', 'white')
+        .style('padding', '8px 12px')
+        .style('border-radius', '4px')
+        .style('font-size', '12px')
+        .style('pointer-events', 'none')
+        .style('opacity', 0);
 }
 
 // ============================================================
@@ -303,10 +441,10 @@ function createDonutChart(data) {
 
     var total = d3.sum(data, function(d) { return d.Energy_Consumption_TWh; });
 
-    // Dimensions
+    // Dimensions - smaller for new layout
     var width = container.offsetWidth;
-    var height = 280;
-    var radius = Math.min(width, height) / 2 - 20;
+    var height = 180;
+    var radius = Math.min(width, height) / 2 - 10;
 
     var svg = d3.select(container)
         .append('svg')
@@ -374,23 +512,23 @@ function createDonutChart(data) {
     // Center text
     var centerText = svg.append('text')
         .attr('text-anchor', 'middle')
-        .attr('y', -15)
-        .style('font-size', '14px')
+        .attr('y', -12)
+        .style('font-size', '12px')
         .style('fill', '#666')
         .text('Total');
 
     var centerValue = svg.append('text')
         .attr('text-anchor', 'middle')
-        .attr('y', 12)
-        .style('font-size', '22px')
+        .attr('y', 8)
+        .style('font-size', '18px')
         .style('font-weight', 'bold')
         .style('fill', '#333')
         .text(total.toFixed(1) + ' TWh');
 
     var centerPercent = svg.append('text')
         .attr('text-anchor', 'middle')
-        .attr('y', 35)
-        .style('font-size', '11px')
+        .attr('y', 26)
+        .style('font-size', '10px')
         .style('fill', '#888')
         .text('Big Tech Energy');
 
@@ -537,9 +675,9 @@ function createScatterPlot(data) {
     });
 
     // Dimensions - more compact for narrower container
-    var margin = {top: 20, right: 20, bottom: 50, left: 55};
+    var margin = {top: 15, right: 15, bottom: 45, left: 50};
     var width = container.offsetWidth - margin.left - margin.right;
-    var height = 320 - margin.top - margin.bottom;
+    var height = 290 - margin.top - margin.bottom;
 
     var svg = d3.select(container)
         .append('svg')
@@ -686,72 +824,118 @@ function createScatterPlot(data) {
 }
 
 // ============================================================
-// Chart 5: World Map - GCP Regions by CFE %
+// Chart 5: World Map - ALL Cloud Provider Regions (AWS, Azure, GCP)
 // Container: #viz-pue-map
 // ============================================================
-function createWorldMap(gcpData, worldData) {
+var mapGlobalData = null; // Store for filter functionality
+
+function createWorldMap(awsData, azureData, gcpData, worldData) {
     var container = document.getElementById('viz-pue-map');
     if (!container) return;
     container.innerHTML = '';
 
-    // Parse CFE data
-    gcpData.forEach(function(d) {
-        d.cfe = +d['Google CFE'] * 100;
-        d.carbon = +d['Grid carbon intensity (gCO2eq / kWh)'];
-        d.location = d.Location;
-        d.region = d['Google Cloud Region'];
+    // Comprehensive coordinates for ALL regions
+    var locationCoords = {
+        // US Regions
+        'N. Virginia': [-77.5, 39.0], 'Virginia': [-77.5, 39.0],
+        'Ohio': [-83.0, 40.0],
+        'N. California': [-121.5, 38.5], 'California': [-119.4, 36.8],
+        'Oregon': [-121.2, 45.6], 'Washington': [-122.3, 47.6],
+        'Iowa': [-93.6, 41.6],
+        'Illinois': [-89.6, 40.0],
+        'Texas': [-97.7, 31.0],
+        'Wyoming': [-107.3, 43.0],
+        'Arizona': [-111.9, 34.0],
+        'Georgia': [-83.5, 32.8],
+        'AWS GovCloud East': [-77.5, 39.0],
+        'AWS GovCloud West': [-121.2, 45.6],
+        // Canada
+        'Montreal': [-73.6, 45.5], 'Toronto': [-79.4, 43.7],
+        'Quebec City': [-71.2, 46.8],
+        // South America
+        'São Paulo': [-46.6, -23.5], 'Santiago': [-70.6, -33.4],
+        // Europe
+        'Ireland': [-6.3, 53.3], 'London': [-0.1, 51.5],
+        'Frankfurt': [8.7, 50.1], 'Paris': [2.3, 48.9],
+        'Stockholm': [18.1, 59.3], 'Milan': [9.2, 45.5],
+        'Netherlands': [4.9, 52.4], 'Zürich': [8.5, 47.4],
+        'Belgium': [4.4, 50.8], 'Warsaw': [21.0, 52.2],
+        'Finland': [25.0, 61.5], 'Madrid': [-3.7, 40.4],
+        'Gävle': [17.1, 60.7], 'Oslo': [10.7, 59.9],
+        'Cardiff': [-3.2, 51.5],
+        // Middle East
+        'Bahrain': [50.6, 26.0], 'Dubai': [55.3, 25.3],
+        'Dammam': [50.1, 26.4], 'Doha': [51.5, 25.3],
+        'Tel Aviv': [34.8, 32.1],
+        // Africa
+        'Cape Town': [18.4, -33.9], 'Johannesburg': [28.0, -26.2],
+        // Asia Pacific
+        'Tokyo': [139.7, 35.7], 'Osaka': [135.5, 34.7],
+        'Seoul': [127.0, 37.5], 'Singapore': [103.8, 1.4],
+        'Hong Kong': [114.2, 22.3], 'Mumbai': [72.9, 19.1],
+        'Sydney': [151.2, -33.9], 'Melbourne': [145.0, -37.8],
+        'Beijing': [116.4, 39.9], 'Ningxia': [106.3, 38.5],
+        'Taiwan': [120.5, 24.0], 'Jakarta': [106.8, -6.2],
+        'Pune': [73.9, 18.5], 'Delhi': [77.2, 28.6],
+        'New South Wales': [151.2, -33.9], 'Victoria': [145.0, -37.8]
+    };
+
+    // Process all provider data
+    var allRegions = [];
+    
+    // AWS regions
+    awsData.forEach(function(d) {
+        allRegions.push({
+            provider: 'AWS',
+            region: d.region_name,
+            country: d.country,
+            emission: +d.emission_factor * 1000, // Convert to gCO2/kWh
+            code: d.region_code
+        });
     });
 
-    // Location coordinates (approximate lat/lon for Google Cloud regions)
-    var locationCoords = {
-        'Changhua County, Taiwan': [120.5, 24.0],
-        'Tokyo, Japan': [139.7, 35.7],
-        'Osaka, Japan': [135.5, 34.7],
-        'Seoul, South Korea': [127.0, 37.5],
-        'Hong Kong': [114.2, 22.3],
-        'Mumbai, India': [72.9, 19.1],
-        'Delhi, India': [77.2, 28.6],
-        'Singapore': [103.8, 1.4],
-        'Jakarta, Indonesia': [106.8, -6.2],
-        'Sydney, Australia': [151.2, -33.9],
-        'Melbourne, Australia': [145.0, -37.8],
-        'Warsaw, Poland': [21.0, 52.2],
-        'Finland': [25.0, 61.5],
-        'Belgium': [4.4, 50.8],
-        'London, UK': [-0.1, 51.5],
-        'Frankfurt, Germany': [8.7, 50.1],
-        'Netherlands': [4.9, 52.4],
-        'Zürich, Switzerland': [8.5, 47.4],
-        'Milan, Italy': [9.2, 45.5],
-        'Paris, France': [2.3, 48.9],
-        'Madrid, Spain': [- 3.7, 40.4],
-        'Turin, Italy': [7.7, 45.1],
-        'Berlin, Germany': [13.4, 52.5],
-        'Dammam, Saudi Arabia': [50.1, 26.4],
-        'Doha, Qatar': [51.5, 25.3],
-        'Tel Aviv, Israel': [34.8, 32.1],
-        'Montréal, Canada': [-73.6, 45.5],
-        'Toronto, Canada': [-79.4, 43.7],
-        'São Paulo, Brazil': [-46.6, -23.5],
-        'Santiago, Chile': [-70.6, -33.4],
-        'Council Bluffs, Iowa, USA': [-95.9, 41.2],
-        'Moncks Corner, South Carolina, USA': [-80.0, 33.2],
-        'Ashburn, Virginia, USA': [-77.5, 39.0],
-        'The Dalles, Oregon, USA': [-121.2, 45.6],
-        'Los Angeles, California, USA': [-118.2, 34.1],
-        'Salt Lake City, Utah, USA': [-111.9, 40.8],
-        'Las Vegas, Nevada, USA': [-115.1, 36.2],
-        'Phoenix, Arizona': [-112.1, 33.4],
-        'Columbus, Ohio, USA': [-83.0, 39.96],
-        'Dallas, Texas, USA': [-96.8, 32.8],
-        'Johannesburg, South Africa': [28.0, -26.2],
-        'Stockholm, Sweden': [18.1, 59.3],
-        'Mexico': [-99.1, 19.4]
+    // Azure regions
+    azureData.forEach(function(d) {
+        allRegions.push({
+            provider: 'Azure',
+            region: d.region_name,
+            country: d.country,
+            emission: +d.emission_factor * 1000,
+            code: d.region_code
+        });
+    });
+
+    // GCP regions
+    gcpData.forEach(function(d) {
+        allRegions.push({
+            provider: 'GCP',
+            region: d.region_name,
+            country: d.country,
+            emission: +d.emission_factor * 1000,
+            code: d.region_code
+        });
+    });
+
+    // Find coordinates for each region
+    allRegions.forEach(function(d) {
+        d.coords = locationCoords[d.region] || locationCoords[d.country] || null;
+    });
+
+    // Filter out regions without coordinates
+    var mappedRegions = allRegions.filter(function(d) { return d.coords !== null; });
+
+    // Store globally for filtering
+    mapGlobalData = {
+        regions: mappedRegions,
+        worldData: worldData
     };
+
+    // Update filter panel stats
+    updateMapStats(mappedRegions);
 
     // Dimensions
     var width = container.offsetWidth;
-    var height = 350;
+    var height = 310;
 
     var svg = d3.select(container)
         .append('svg')
@@ -760,15 +944,17 @@ function createWorldMap(gcpData, worldData) {
 
     // Projection
     var projection = d3.geoNaturalEarth1()
-        .scale(width / 5.5)
-        .translate([width / 2, height / 2 + 20]);
+        .scale(width / 5)
+        .translate([width / 2, height / 2]);
 
     var path = d3.geoPath().projection(projection);
 
-    // Color scale for CFE
-    var colorScale = d3.scaleLinear()
-        .domain([0, 50, 100])
-        .range(['#e74c3c', '#f39c12', '#27ae60']);
+    // Provider colors - GCP green, AWS yellow/orange, Azure blue
+    var providerColors = {
+        'AWS': '#FF9900',
+        'Azure': '#00A4EF',
+        'GCP': '#27ae60'
+    };
 
     // Draw world map
     var countries = topojson.feature(worldData, worldData.objects.countries);
@@ -779,145 +965,121 @@ function createWorldMap(gcpData, worldData) {
         .enter()
         .append('path')
         .attr('d', path)
-        .attr('fill', '#e8e8e8')
-        .attr('stroke', '#ccc')
+        .attr('fill', '#f0f0f0')
+        .attr('stroke', '#ddd')
         .attr('stroke-width', 0.5);
 
-    // Add data center points
+    // Add data center points - colored by provider
     svg.selectAll('.datacenter')
-        .data(gcpData)
+        .data(mappedRegions)
         .enter()
         .append('circle')
-        .attr('class', 'datacenter')
-        .attr('cx', function(d) {
-            var coords = locationCoords[d.location];
-            return coords ? projection(coords)[0] : null;
-        })
-        .attr('cy', function(d) {
-            var coords = locationCoords[d.location];
-            return coords ? projection(coords)[1] : null;
-        })
+        .attr('class', function(d) { return 'datacenter provider-' + d.provider; })
+        .attr('cx', function(d) { return projection(d.coords)[0]; })
+        .attr('cy', function(d) { return projection(d.coords)[1]; })
         .attr('r', 0)
-        .attr('fill', function(d) { return colorScale(d.cfe); })
+        .attr('fill', function(d) { return providerColors[d.provider]; })
         .attr('stroke', '#fff')
-        .attr('stroke-width', 1.5)
-        .attr('opacity', 0.9)
+        .attr('stroke-width', 1)
+        .attr('opacity', 0.85)
         .style('cursor', 'pointer')
-        .style('display', function(d) {
-            var coords = locationCoords[d.location];
-            return coords ? 'block' : 'none';
-        })
         .on('mouseover', function(event, d) {
             d3.select(this)
                 .transition().duration(150)
-                .attr('r', 12)
-                .attr('stroke-width', 2);
+                .attr('r', 10)
+                .attr('stroke-width', 2)
+                .attr('opacity', 1);
             
             tooltip.style('opacity', 1)
-                .html('<div style="font-weight:bold;font-size:13px;margin-bottom:5px">' + d.location + '</div>' +
-                      '<div style="font-size:11px;color:#666;margin-bottom:8px">' + d.region + '</div>' +
-                      '<div style="display:flex;justify-content:space-between;gap:15px">' +
-                      '<div><span style="color:#888">CFE:</span> <strong style="color:' + colorScale(d.cfe) + '">' + d.cfe.toFixed(0) + '%</strong></div>' +
-                      '<div><span style="color:#888">Carbon:</span> <strong>' + d.carbon.toFixed(0) + '</strong></div>' +
-                      '</div>')
-                .style('left', (event.pageX + 15) + 'px')
+                .html('<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">' +
+                      '<span style="background:' + providerColors[d.provider] + ';color:white;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:bold">' + d.provider + '</span>' +
+                      '<span style="font-weight:bold;font-size:12px">' + d.region + '</span></div>' +
+                      '<div style="color:#666;font-size:10px;margin-bottom:6px">' + d.country + '</div>' +
+                      '<div style="font-size:11px">Emissions: <strong>' + d.emission.toFixed(0) + '</strong> gCO₂/kWh</div>')
+                .style('left', (event.pageX + 12) + 'px')
                 .style('top', (event.pageY - 70) + 'px');
         })
         .on('mouseout', function() {
             d3.select(this)
                 .transition().duration(150)
-                .attr('r', 7)
-                .attr('stroke-width', 1.5);
+                .attr('r', 6)
+                .attr('stroke-width', 1)
+                .attr('opacity', 0.85);
             tooltip.style('opacity', 0);
         })
         .transition()
-        .delay(function(d, i) { return 500 + i * 40; })
-        .duration(400)
-        .attr('r', 7);
-
-    // Legend
-    var legendWidth = 150;
-    var legendHeight = 12;
-    var legendX = width - legendWidth - 20;
-    var legendY = height - 40;
-
-    // Gradient for legend
-    var defs = svg.append('defs');
-    var linearGradient = defs.append('linearGradient')
-        .attr('id', 'cfe-gradient');
-
-    linearGradient.append('stop').attr('offset', '0%').attr('stop-color', '#e74c3c');
-    linearGradient.append('stop').attr('offset', '50%').attr('stop-color', '#f39c12');
-    linearGradient.append('stop').attr('offset', '100%').attr('stop-color', '#27ae60');
-
-    svg.append('rect')
-        .attr('x', legendX)
-        .attr('y', legendY)
-        .attr('width', legendWidth)
-        .attr('height', legendHeight)
-        .attr('fill', 'url(#cfe-gradient)')
-        .attr('rx', 3);
-
-    svg.append('text')
-        .attr('x', legendX)
-        .attr('y', legendY - 5)
-        .style('font-size', '10px')
-        .style('fill', '#666')
-        .text('Carbon-Free Energy %');
-
-    svg.append('text')
-        .attr('x', legendX)
-        .attr('y', legendY + legendHeight + 12)
-        .style('font-size', '9px')
-        .style('fill', '#999')
-        .text('0%');
-
-    svg.append('text')
-        .attr('x', legendX + legendWidth / 2)
-        .attr('y', legendY + legendHeight + 12)
-        .attr('text-anchor', 'middle')
-        .style('font-size', '9px')
-        .style('fill', '#999')
-        .text('50%');
-
-    svg.append('text')
-        .attr('x', legendX + legendWidth)
-        .attr('y', legendY + legendHeight + 12)
-        .attr('text-anchor', 'end')
-        .style('font-size', '9px')
-        .style('fill', '#999')
-        .text('100%');
-
-    // Stats summary
-    var avgCfe = d3.mean(gcpData, function(d) { return d.cfe; });
-    var greenRegions = gcpData.filter(function(d) { return d.cfe >= 80; }).length;
-    
-    svg.append('text')
-        .attr('x', 15)
-        .attr('y', height - 25)
-        .style('font-size', '11px')
-        .style('fill', '#555')
-        .html('📍 ' + gcpData.length + ' regions');
-
-    svg.append('text')
-        .attr('x', 15)
-        .attr('y', height - 10)
-        .style('font-size', '11px')
-        .style('fill', '#27ae60')
-        .text('🌱 ' + greenRegions + ' with 80%+ CFE');
+        .delay(function(d, i) { return 200 + i * 10; })
+        .duration(300)
+        .attr('r', 6);
 
     // Tooltip
     var tooltip = d3.select('body').append('div')
+        .attr('class', 'map-tooltip')
         .style('position', 'absolute')
         .style('background', 'rgba(255,255,255,0.98)')
         .style('border', '1px solid #ddd')
-        .style('padding', '12px 16px')
-        .style('border-radius', '10px')
-        .style('font-size', '12px')
+        .style('padding', '10px 14px')
+        .style('border-radius', '8px')
+        .style('font-size', '11px')
         .style('pointer-events', 'none')
         .style('opacity', 0)
-        .style('box-shadow', '0 4px 20px rgba(0,0,0,0.2)')
+        .style('box-shadow', '0 4px 15px rgba(0,0,0,0.2)')
         .style('z-index', '9999');
+
+    // Setup filter listeners
+    setupMapFilters();
+}
+
+// Update map statistics panel
+function updateMapStats(regions) {
+    var statsContainer = document.getElementById('viz-map-stats');
+    if (!statsContainer) return;
+
+    var awsCount = regions.filter(function(d) { return d.provider === 'AWS'; }).length;
+    var azureCount = regions.filter(function(d) { return d.provider === 'Azure'; }).length;
+    var gcpCount = regions.filter(function(d) { return d.provider === 'GCP'; }).length;
+    var totalCount = regions.length;
+
+    var avgEmission = d3.mean(regions, function(d) { return d.emission; });
+
+    statsContainer.innerHTML = 
+        '<div class="mb-2"><strong>Total Regions</strong><div class="h4 mb-0 text-primary">' + totalCount + '</div></div>' +
+        '<div class="mb-2"><span style="color:#FF9900">● AWS:</span> ' + awsCount + '</div>' +
+        '<div class="mb-2"><span style="color:#00A4EF">● Azure:</span> ' + azureCount + '</div>' +
+        '<div class="mb-2"><span style="color:#27ae60">● GCP:</span> ' + gcpCount + '</div>' +
+        '<hr>' +
+        '<div><strong>Avg Emissions</strong><div class="small text-muted">' + avgEmission.toFixed(0) + ' gCO₂/kWh</div></div>';
+}
+
+// Setup map filter checkboxes
+function setupMapFilters() {
+    var checkboxes = document.querySelectorAll('.provider-filter');
+    
+    checkboxes.forEach(function(cb) {
+        cb.addEventListener('change', function() {
+            var provider = this.value;
+            var isVisible = this.checked;
+            
+            // Show/hide points
+            d3.selectAll('.provider-' + provider)
+                .transition()
+                .duration(300)
+                .attr('opacity', isVisible ? 0.85 : 0)
+                .attr('r', isVisible ? 6 : 0);
+            
+            // Update stats with filtered data
+            if (mapGlobalData) {
+                var activeProviders = Array.from(document.querySelectorAll('.provider-filter:checked'))
+                    .map(function(c) { return c.value; });
+                
+                var filteredRegions = mapGlobalData.regions.filter(function(d) {
+                    return activeProviders.includes(d.provider);
+                });
+                
+                updateMapStats(filteredRegions);
+            }
+        });
+    });
 }
 
 

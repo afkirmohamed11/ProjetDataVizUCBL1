@@ -505,6 +505,27 @@
 
 
 /*** Section 5: D3 Visualizations - PUE Charts ***/
+
+/* Modern card design for viz containers */
+.viz-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+}
+
+.viz-card:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.viz-card h5, .viz-card h6 {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
 #viz-pue-timeline,
 #viz-pue-sites,
 #viz-pue-regions {
@@ -555,22 +576,13 @@
 }
 
 /* Section 5 Enhanced Styles */
-#viz-pue-timeline,
-#viz-pue-stats,
-#viz-pue-regions,
-#viz-pue-sites,
-#viz-pue-map {
-    background: #fff;
-    border-radius: 12px;
-    padding: 15px;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.06);
-}
-
 #viz-pue-timeline svg,
 #viz-pue-stats svg,
 #viz-pue-regions svg,
 #viz-pue-sites svg,
-#viz-pue-map svg {
+#viz-pue-map svg,
+#viz-pue-comparison svg,
+#viz-renewable-compare svg {
     display: block;
     margin: 0 auto;
 }
@@ -580,23 +592,70 @@
     transition: opacity 0.15s ease;
 }
 
+/* Map filter panel inside map */
+.map-filter-panel {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    padding: 10px 14px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    font-size: 12px;
+    z-index: 100;
+}
+
+.map-filter-panel label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+.map-filter-panel input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+}
+
+.map-stats-badge {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 11px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
 #viz-pue-map {
+    position: relative;
     min-height: 380px;
     overflow: hidden;
 }
 
 #viz-pue-sites {
-    min-height: 380px;
+    min-height: 320px;
 }
 
 #viz-pue-stats {
-    min-height: 340px;
+    min-height: 200px;
 }
 
 #viz-pue-regions {
-    min-height: 180px;
+    min-height: 160px;
+}
+
+#viz-pue-comparison {
+    min-height: 280px;
+}
+
+#viz-renewable-compare {
+    min-height: 350px;
 }
 
 #viz-pue-map circle.datacenter {
-    transition: r 0.2s ease;
+    transition: r 0.2s ease, opacity 0.3s ease;
 }
