@@ -19,7 +19,7 @@
     // Get dynamic container width
     const containerElement = document.getElementById('servers-3d-container');
     const containerWidth = Math.min(containerElement.getBoundingClientRect().width - 20, 1350);
-    const margin = { top: 70, right: 50, bottom: 80, left: 100 };
+    const margin = { top: 70, right: 150, bottom: 80, left: 100 };
     const width = containerWidth - margin.left - margin.right;
     const height = 480 - margin.top - margin.bottom;
     const svgHeight = height + margin.top + margin.bottom + 20;
@@ -490,7 +490,7 @@
 
             // Color legend
             const colorLegend = svg4.append('g')
-                .attr('transform', `translate(${margin.left + width - 100}, ${margin.top + 40})`);
+                .attr('transform', `translate(${margin.left + width + 30}, ${height + margin.top + 40})`);
 
             colorLegend.append('text')
                 .style('font-size', '13px')
