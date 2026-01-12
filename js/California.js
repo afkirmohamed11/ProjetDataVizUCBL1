@@ -1067,12 +1067,12 @@
                 .attr('height', y(scope2) - y(scope1 + scope2));
         });
 
-        // Legend
-        const legend = svg.append('g').attr('transform', `translate(0, -30)`);
+        // Legend (positioned on the right)
+        const legend = svg.append('g').attr('transform', `translate(${width - 150}, -30)`);
         legend.append('rect').attr('width', 16).attr('height', 16).attr('fill', colors.scope1).attr('rx', 3);
         legend.append('text').attr('x', 22).attr('y', 13).text('Scope 1 (Direct)').style('font-size', '13px');
-        legend.append('rect').attr('x', 150).attr('width', 16).attr('height', 16).attr('fill', colors.scope2).attr('rx', 3);
-        legend.append('text').attr('x', 172).attr('y', 13).text('Scope 2 (Indirect)').style('font-size', '13px');
+        legend.append('rect').attr('y', 22).attr('width', 16).attr('height', 16).attr('fill', colors.scope2).attr('rx', 3);
+        legend.append('text').attr('x', 22).attr('y', 35).text('Scope 2 (Indirect)').style('font-size', '13px');
     }
 
     // ============================================================
