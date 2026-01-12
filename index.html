@@ -30,6 +30,8 @@
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
+    <!-- UCBL Section Styles -->
+    <link href="css/d3s6.css" rel="stylesheet">
 </head>
 
 <body>
@@ -830,124 +832,152 @@
         </div>
     </div>
 
-    <!-- Section 6: UCBL1 -->
-    <div id="ucbl" class="container-xxl py-5">
+    <!-- Section 6: UCBL1 Case Study -->
+    <div id="ucbl" class="container-xxl py-5 bg-light">
         <div class="container">
-             <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 800px;">
-                <p class="section-title bg-white text-center text-primary px-3">Case Study</p>
-                <h1 class="mb-5">UCBL1 Data Center</h1>
-                <p class="fs-5 mb-4">Why This Case Study Matters</p>
+            <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 800px;">
+                <p class="section-title bg-light text-center text-primary px-3">Case Study</p>
+                <h1 class="mb-4">UCBL1 Data Center Energy Analysis</h1>
+                <p class="fs-5 mb-5">Real energy consumption data from a university data center reveals patterns and optimization opportunities.</p>
             </div>
-            <div class="row g-5">
-                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">
-                    <div class="bg-white p-4 rounded shadow-sm">
-                        <h4 class="mb-3">University Consumption Patterns</h4>
-                        <div id="viz-ucbl-timeseries" style="min-height: 300px;">
-                            <!-- D3 Visualization: Time Series Analysis -->
-                            <p class="text-muted">Daily and weekly energy consumption...</p>
-                        </div>
-                    </div>
-                 </div>
-                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
-                    <div class="bg-white p-4 rounded shadow-sm">
-                         <h4 class="mb-3">Data has a physical footprint — even at the scale of a university.</h4>
-                         <div id="viz-ucbl-comparison" style="min-height: 300px;">
-                             <!-- D3 Visualization: Comparisons -->
-                             <p class="text-muted">University vs Cloud vs Small Biz...</p>
-                         </div>
-                    </div>
-                 </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Key Insights from UCBL1 Case Study -->
-    <div class="container-xxl py-5">
-        <div class="container">
-            <div class="text-center mx-auto pb-4 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 700px;">
-                <p class="section-title bg-white text-center text-primary px-3">Key Insights</p>
-                <h1 class="mb-4">What We Learned from UCBL1</h1>
-                <p class="fs-5 mb-4">Understanding energy consumption patterns helps identify optimization opportunities.</p>
-            </div>
-            <div class="row gy-5 gx-4">
-                <div class="col-lg-4 col-md-6 pt-5 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="service-item d-flex h-100">
-                        <div class="service-img">
-                            <img class="img-fluid" src="img/image01.png" alt="">
-                        </div>
-                        <div class="service-text p-5 pt-0">
-                            <div class="service-icon">
-                                <span class="service-icon-number">1</span>
-                            </div>
-                            <h5 class="mb-3">Usage Patterns</h5>
-                            <p class="mb-4">Energy consumption varies significantly between peak academic hours and quiet periods like nights and weekends.</p>
-                            <a class="btn btn-square rounded-circle" href="#ucbl"><i class="bi bi-chevron-double-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 pt-5 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="service-item d-flex h-100">
-                        <div class="service-img">
-                            <img class="img-fluid" src="img/image02.png" alt="">
-                        </div>
-                        <div class="service-text p-5 pt-0">
-                            <div class="service-icon">
-                                <span class="service-icon-number">2</span>
-                            </div>
-                            <h5 class="mb-3">Seasonal Variation</h5>
-                            <p class="mb-4">Academic calendar creates predictable patterns—exam periods and holidays show distinct consumption profiles.</p>
-                            <a class="btn btn-square rounded-circle" href="#ucbl"><i class="bi bi-chevron-double-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 pt-5 wow fadeInUp" data-wow-delay="0.5s">
-                    <div class="service-item d-flex h-100">
-                        <div class="service-img">
-                            <img class="img-fluid" src="img/image03.png" alt="">
-                        </div>
-                        <div class="service-text p-5 pt-0">
-                            <div class="service-icon">
-                                <span class="service-icon-number">3</span>
-                            </div>
-                            <h5 class="mb-3">Optimization Potential</h5>
-                            <p class="mb-4">Real measurement data reveals opportunities for scheduling, load balancing, and infrastructure improvements.</p>
-                            <a class="btn btn-square rounded-circle" href="#solutions"><i class="bi bi-chevron-double-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+            <!-- Tooltip for charts -->
+            <div id="tooltip" class="tooltip"></div>
 
-    <div class="container-xxl py-5">
-        <div class="container">
-            <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 500px;">
-                <p class="section-title bg-white text-center text-primary px-3">Our Team</p>
-                <h1 class="mb-5">Sec6 p4</h1>
+            <!-- Filter Panel -->
+            <div class="filter-panel mb-4">
+                <div class="filter-header">
+                    <span class="filter-title"><i class="fas fa-filter me-2"></i>Filters</span>
+                    <button class="filter-reset" onclick="resetFilters()">Reset All</button>
+                </div>
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label class="filter-label">Month Range</label>
+                        <div class="filter-range">
+                            <select id="monthStart" class="filter-select" onchange="applyFilters()">
+                                <option value="0">JAN</option>
+                                <option value="1">FEB</option>
+                                <option value="2">MAR</option>
+                                <option value="3">APR</option>
+                                <option value="4">MAY</option>
+                                <option value="5">JUN</option>
+                                <option value="6">JUL</option>
+                                <option value="7">AUG</option>
+                                <option value="8">SEP</option>
+                                <option value="9">OCT</option>
+                            </select>
+                            <span>to</span>
+                            <select id="monthEnd" class="filter-select" onchange="applyFilters()">
+                                <option value="0">JAN</option>
+                                <option value="1">FEB</option>
+                                <option value="2">MAR</option>
+                                <option value="3">APR</option>
+                                <option value="4">MAY</option>
+                                <option value="5">JUN</option>
+                                <option value="6">JUL</option>
+                                <option value="7">AUG</option>
+                                <option value="8">SEP</option>
+                                <option value="9" selected>OCT</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Top N Consumers</label>
+                        <input type="number" id="topN" class="filter-input" value="10" min="1" max="20" onchange="applyFilters()">
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Heatmap Min (kWh)</label>
+                        <input type="number" id="heatmapMin" class="filter-input" value="0" min="0" onchange="applyFilters()">
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Categories</label>
+                        <div id="categoryFilters" class="filter-checkbox-group"></div>
+                    </div>
+                </div>
+                <div id="activeFilters" class="active-filters" style="display: none;">
+                    <span>Active:</span>
+                    <div id="activeFilterTags"></div>
+                </div>
             </div>
+
+            <!-- Row 1: Total Trend + Energy Share -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-8 wow fadeIn" data-wow-delay="0.1s">
+                    <div class="ucbl-card">
+                        <div class="ucbl-card-header">
+                            <h5><i class="fas fa-chart-line text-primary me-2"></i>Total Energy Consumption Trend</h5>
+                            <div id="l1" class="ucbl-legend"></div>
+                        </div>
+                        <div id="c1" class="ucbl-chart" style="height: 280px;"></div>
+                    </div>
+                </div>
+                <div class="col-lg-4 wow fadeIn" data-wow-delay="0.2s">
+                    <div class="ucbl-card">
+                        <div class="ucbl-card-header">
+                            <h5><i class="fas fa-chart-pie text-primary me-2"></i>Energy by Category</h5>
+                        </div>
+                        <div id="c2" class="ucbl-chart" style="height: 220px;"></div>
+                        <div id="l2" class="ucbl-legend ucbl-legend-wrap"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 2: Efficiency + Redundancy -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">
+                    <div class="ucbl-card">
+                        <div class="ucbl-card-header">
+                            <h5><i class="fas fa-bolt text-warning me-2"></i>IT vs Cooling Load</h5>
+                            <div id="l3" class="ucbl-legend"></div>
+                        </div>
+                        <div id="c3" class="ucbl-chart" style="height: 250px;"></div>
+                    </div>
+                </div>
+                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.4s">
+                    <div class="ucbl-card">
+                        <div class="ucbl-card-header">
+                            <h5><i class="fas fa-server text-success me-2"></i>Redundancy Systems</h5>
+                            <div id="l4" class="ucbl-legend"></div>
+                        </div>
+                        <div id="c4" class="ucbl-chart" style="height: 250px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 3: Water-Energy Nexus + Top Consumers -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
+                    <div class="ucbl-card">
+                        <div class="ucbl-card-header">
+                            <h5><i class="fas fa-tint text-info me-2"></i>Water-Energy Nexus</h5>
+                            <div id="l5" class="ucbl-legend"></div>
+                        </div>
+                        <div id="c5" class="ucbl-chart" style="height: 300px;"></div>
+                    </div>
+                </div>
+                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.6s">
+                    <div class="ucbl-card">
+                        <div class="ucbl-card-header">
+                            <h5><i class="fas fa-trophy text-danger me-2"></i>Top Energy Consumers</h5>
+                        </div>
+                        <div id="c6" class="ucbl-chart" style="height: 300px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 4: Heatmap -->
             <div class="row g-4">
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="team-item rounded p-4">
-                        <img class="img-fluid rounded mb-4" src="img/image01.png" alt="">
-                        <h5>Teext</h5>
-                        <p class="text-primary">txt</p>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="team-item rounded p-4">
-                        <img class="img-fluid rounded mb-4" src="img/image01.png" alt="">
-                        <h5>Teext</h5>
-                        <p class="text-primary">txt</p>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                    <div class="team-item rounded p-4">
-                        <img class="img-fluid rounded mb-4" src="img/image01.png" alt="">
-                        <h5>Teext</h5>
-                        <p class="text-primary">txt</p>
+                <div class="col-12 wow fadeIn" data-wow-delay="0.7s">
+                    <div class="ucbl-card">
+                        <div class="ucbl-card-header">
+                            <h5><i class="fas fa-th text-primary me-2"></i>Monthly Consumption Heatmap</h5>
+                            <div id="l7" class="ucbl-legend-scale"></div>
+                        </div>
+                        <div id="c7" class="ucbl-chart" style="height: 520px;"></div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -995,7 +1025,7 @@
                 <div class="col-lg-5 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="testimonial-img">
                         <img class="img-fluid animated pulse infinite" src="img/M.rida.png" alt="">
-                        <img class="img-fluid animated pulse infinite" src="img/hamza.png" alt="">
+                        <img class="img-fluid animated pulse infinite" src="img/hamzaae.png" alt="">
                         <img class="img-fluid animated pulse infinite" src="img/afkir.png" alt="">
                         <img class="img-fluid animated pulse infinite" src="img/lokmane.jpeg" alt="">
                     </div>
@@ -1003,10 +1033,10 @@
                 <div class="col-lg-7 wow fadeInUp" data-wow-delay="0.5s">
                     <div class="owl-carousel testimonial-carousel">
                         <div class="testimonial-item">
-                            <img class="img-fluid mb-3" src="img/hamza.png" alt="">
-                            <p class="fs-5">Dolores sed duo clita tempor justo dolor et stet lorem kasd labore dolore lorem ipsum. At lorem lorem magna ut et, nonumy et labore et tempor diam tempor erat.</p>
+                            <img class="img-fluid mb-3" src="img/hamzaae.png" alt="">
+                            <p class="fs-5">a Data Engineer and Master 2 student at UCBL1 who asked a simple question: “Does scrolling have a carbon footprint?” This project is the answer.</p>
                             <h5>MOTASSIM Hamza</h5>
-                            <span class="text-primary">Profession</span>
+                            <span class="text-primary">Data Engineer</span>
                         </div>
                         <div class="testimonial-item"> 
                             <img class="img-fluid mb-3" src="img/afkir.png" alt="Mohamed Afkir"> 
@@ -1054,7 +1084,7 @@
     <!-- Custom Visualizations -->
     <script src="js/sec1.js"></script>
     <script src="js/serversDataCenters.js"></script>
-    <script src="js/California.js"></script>
+    <script src="js/sec6v2.js"></script>
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
