@@ -2669,7 +2669,7 @@ function createEnvironmentalSimulator(containerId) {
             .style("text-align", "center")
             .style("margin-bottom", "25px")
             .html(`
-                <h3 style="color: #2c3e50; margin: 0;">🎮 CPU Environmental Impact Simulator</h3>
+                <h3 style="color: #2c3e50; margin: 0;"> CPU Environmental Impact Simulator</h3>
                 <p style="color: #7f8c8d; font-size: 13px; margin-top: 8px;">Select a CPU and adjust usage to see environmental impact</p>
             `);
 
