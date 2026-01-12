@@ -7,6 +7,477 @@
 
 
 // Section 3 (): When Data Leaves Your Device: Network & Cloud
+// ========================================================================
+
+// Wait for DOM to load - Section 3
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof d3 === 'undefined') {
+        console.error('D3.js not loaded');
+        return;
+    }
+    
+    // Only run if Section 3 elements exist
+    if (!document.getElementById('viz-energy-split')) {
+        return;
+    }
+
+    // Initialize Section 3 visualizations
+    initSection3();
+});
+
+function initSection3() {
+    // Load Section 3 data files
+    Promise.all([
+        d3.csv('data/iae/iea_datacenter_energy_consumption.csv'),
+        d3.csv('data/iae/iea_global_digital_energy_trends_2015_2022.csv')
+    ]).then(function(datasets) {
+        var energyConsumption = datasets[0];
+        var digitalTrends = datasets[1];
+
+        console.log('Section 3 Data loaded:', { energyConsumption, digitalTrends });
+
+        // Create visualizations
+        createEnergySplitDonut(energyConsumption);
+        createDigitalGrowthChart(digitalTrends);
+        createEnergyGrowthChart(digitalTrends);
+    }).catch(function(error) {
+        console.error('Error loading Section 3 data:', error);
+    });
+}
+
+// Donut Chart: Energy Split (Data Centers vs Networks vs Crypto)
+function createEnergySplitDonut(data) {
+    var container = d3.select('#viz-energy-split');
+    container.selectAll('*').remove();
+    
+    var width = 340;
+    var height = 280;
+    var radius = Math.min(width, height) / 2 - 20;
+
+    var svg = container.append('svg')
+        .attr('viewBox', '0 0 ' + width + ' ' + height)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .style('width', '100%')
+        .style('max-width', '400px')
+        .style('display', 'block')
+        .style('margin', '0 auto');
+    
+    var g = svg.append('g')
+        .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
+
+    // Prepare data for donut chart (using mid-range values)
+    var pieData = [
+        { label: 'Data Centres', value: 290, color: '#06A3DA' },
+        { label: 'Networks', value: 310, color: '#F57E20' },
+        { label: 'Crypto Mining', value: 110, color: '#6c757d' }
+    ];
+
+    var total = d3.sum(pieData, function(d) { return d.value; });
+
+    var pie = d3.pie()
+        .value(function(d) { return d.value; })
+        .sort(null)
+        .padAngle(0.02);
+
+    var arc = d3.arc()
+        .innerRadius(radius * 0.55)
+        .outerRadius(radius);
+
+    var arcHover = d3.arc()
+        .innerRadius(radius * 0.55)
+        .outerRadius(radius + 8);
+
+    // Draw slices
+    var slices = g.selectAll('.slice')
+        .data(pie(pieData))
+        .enter()
+        .append('g')
+        .attr('class', 'slice');
+
+    slices.append('path')
+        .attr('d', arc)
+        .attr('fill', function(d) { return d.data.color; })
+        .style('opacity', 0.9)
+        .style('cursor', 'pointer')
+        .on('mouseover', function(event, d) {
+            d3.select(this)
+                .transition()
+                .duration(200)
+                .attr('d', arcHover)
+                .style('opacity', 1);
+        })
+        .on('mouseout', function(event, d) {
+            d3.select(this)
+                .transition()
+                .duration(200)
+                .attr('d', arc)
+                .style('opacity', 0.9);
+        });
+
+    // Add labels on slices
+    slices.append('text')
+        .attr('transform', function(d) {
+            var pos = arc.centroid(d);
+            return 'translate(' + pos[0] + ',' + pos[1] + ')';
+        })
+        .attr('text-anchor', 'middle')
+        .attr('fill', 'white')
+        .attr('font-size', '11px')
+        .attr('font-weight', '600')
+        .text(function(d) { 
+            var pct = ((d.data.value / total) * 100).toFixed(0);
+            return pct + '%';
+        });
+
+    // Center text
+    g.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('dy', '-0.3em')
+        .attr('font-size', '22px')
+        .attr('font-weight', '700')
+        .attr('fill', '#333')
+        .text('~710');
+
+    g.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('dy', '1.2em')
+        .attr('font-size', '11px')
+        .attr('fill', '#666')
+        .text('TWh Total');
+
+    // Legend
+    var legend = svg.append('g')
+        .attr('transform', 'translate(10, ' + (height - 60) + ')');
+
+    pieData.forEach(function(d, i) {
+        var legendItem = legend.append('g')
+            .attr('transform', 'translate(' + (i * 110) + ', 0)');
+
+        legendItem.append('rect')
+            .attr('width', 12)
+            .attr('height', 12)
+            .attr('rx', 2)
+            .attr('fill', d.color);
+
+        legendItem.append('text')
+            .attr('x', 16)
+            .attr('y', 10)
+            .attr('font-size', '9px')
+            .attr('fill', '#333')
+            .text(d.label);
+
+        legendItem.append('text')
+            .attr('x', 16)
+            .attr('y', 22)
+            .attr('font-size', '9px')
+            .attr('fill', '#666')
+            .text(d.value + ' TWh');
+    });
+}
+
+// Bar Chart: Digital Growth (2015 vs 2022)
+function createDigitalGrowthChart(data) {
+    var container = d3.select('#viz-digital-growth');
+    container.selectAll('*').remove();
+    
+    var margin = { top: 20, right: 20, bottom: 50, left: 60 };
+    var width = 400 - margin.left - margin.right;
+    var height = 260 - margin.top - margin.bottom;
+
+    var svg = container.append('svg')
+        .attr('viewBox', '0 0 400 260')
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .style('width', '100%')
+        .append('g')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    // Prepare data - filter for digital growth metrics
+    var chartData = [
+        { label: 'Internet\nUsers (B)', value2015: 3.0, value2022: 5.3, unit: 'B' },
+        { label: 'Traffic\n(ZB)', value2015: 0.6, value2022: 4.4, unit: 'ZB' },
+        { label: 'DC Work-\nloads (M)', value2015: 180, value2022: 800, unit: 'M' }
+    ];
+
+    // For traffic, scale to show difference better
+    var x0 = d3.scaleBand()
+        .domain(chartData.map(function(d) { return d.label; }))
+        .range([0, width])
+        .padding(0.3);
+
+    var x1 = d3.scaleBand()
+        .domain(['2015', '2022'])
+        .range([0, x0.bandwidth()])
+        .padding(0.1);
+
+    // Normalize values for visualization (scale to 0-100)
+    var maxVals = chartData.map(function(d) { return Math.max(d.value2015, d.value2022); });
+    
+    var y = d3.scaleLinear()
+        .domain([0, 100])
+        .range([height, 0]);
+
+    // Gridlines
+    svg.append('g')
+        .attr('class', 'grid')
+        .call(d3.axisLeft(y)
+            .tickSize(-width)
+            .tickFormat('')
+            .ticks(5)
+        )
+        .selectAll('line')
+        .style('stroke', '#e0e0e0')
+        .style('stroke-dasharray', '3,3');
+
+    // Draw bars
+    var groups = svg.selectAll('.bar-group')
+        .data(chartData)
+        .enter()
+        .append('g')
+        .attr('class', 'bar-group')
+        .attr('transform', function(d) { return 'translate(' + x0(d.label) + ',0)'; });
+
+    // 2015 bars
+    groups.append('rect')
+        .attr('x', x1('2015'))
+        .attr('y', function(d, i) { 
+            var normalized = (d.value2015 / maxVals[i]) * 80;
+            return y(normalized); 
+        })
+        .attr('width', x1.bandwidth())
+        .attr('height', function(d, i) { 
+            var normalized = (d.value2015 / maxVals[i]) * 80;
+            return height - y(normalized); 
+        })
+        .attr('fill', '#6c757d')
+        .attr('rx', 3);
+
+    // 2022 bars
+    groups.append('rect')
+        .attr('x', x1('2022'))
+        .attr('y', function(d, i) { 
+            var normalized = (d.value2022 / maxVals[i]) * 80;
+            return y(normalized); 
+        })
+        .attr('width', x1.bandwidth())
+        .attr('height', function(d, i) { 
+            var normalized = (d.value2022 / maxVals[i]) * 80;
+            return height - y(normalized); 
+        })
+        .attr('fill', '#06A3DA')
+        .attr('rx', 3);
+
+    // Value labels on bars
+    groups.append('text')
+        .attr('x', x1('2015') + x1.bandwidth() / 2)
+        .attr('y', function(d, i) { 
+            var normalized = (d.value2015 / maxVals[i]) * 80;
+            return y(normalized) - 5; 
+        })
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '9px')
+        .attr('fill', '#666')
+        .text(function(d) { return d.value2015; });
+
+    groups.append('text')
+        .attr('x', x1('2022') + x1.bandwidth() / 2)
+        .attr('y', function(d, i) { 
+            var normalized = (d.value2022 / maxVals[i]) * 80;
+            return y(normalized) - 5; 
+        })
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '9px')
+        .attr('font-weight', '600')
+        .attr('fill', '#06A3DA')
+        .text(function(d) { return d.value2022; });
+
+    // X axis
+    svg.append('g')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(x0).tickSize(0))
+        .selectAll('text')
+        .style('font-size', '9px')
+        .style('text-anchor', 'middle')
+        .each(function(d) {
+            var el = d3.select(this);
+            var lines = d.split('\n');
+            el.text('');
+            lines.forEach(function(line, i) {
+                el.append('tspan')
+                    .attr('x', 0)
+                    .attr('dy', i === 0 ? '0.6em' : '1.1em')
+                    .text(line);
+            });
+        });
+
+    svg.select('.domain').remove();
+
+    // Legend
+    var legend = svg.append('g')
+        .attr('transform', 'translate(' + (width - 100) + ', -5)');
+
+    legend.append('rect').attr('width', 12).attr('height', 12).attr('fill', '#6c757d').attr('rx', 2);
+    legend.append('text').attr('x', 16).attr('y', 10).text('2015').attr('font-size', '10px');
+    legend.append('rect').attr('x', 55).attr('width', 12).attr('height', 12).attr('fill', '#06A3DA').attr('rx', 2);
+    legend.append('text').attr('x', 71).attr('y', 10).text('2022').attr('font-size', '10px');
+
+    // Growth % labels
+    groups.append('text')
+        .attr('x', x0.bandwidth() / 2)
+        .attr('y', height + 40)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '10px')
+        .attr('font-weight', '600')
+        .attr('fill', '#28a745')
+        .text(function(d) { 
+            var growth = ((d.value2022 - d.value2015) / d.value2015 * 100).toFixed(0);
+            return '+' + growth + '%';
+        });
+}
+
+// Bar Chart: Energy Growth (2015 vs 2022)
+function createEnergyGrowthChart(data) {
+    var container = d3.select('#viz-energy-growth');
+    container.selectAll('*').remove();
+    
+    var margin = { top: 20, right: 20, bottom: 50, left: 60 };
+    var width = 400 - margin.left - margin.right;
+    var height = 260 - margin.top - margin.bottom;
+
+    var svg = container.append('svg')
+        .attr('viewBox', '0 0 400 260')
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .style('width', '100%')
+        .append('g')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    // Energy data (TWh)
+    var chartData = [
+        { label: 'Data\nCenters', value2015: 200, value2022: 290, color2022: '#06A3DA' },
+        { label: 'Networks', value2015: 220, value2022: 310, color2022: '#F57E20' },
+        { label: 'Crypto\nMining', value2015: 4, value2022: 110, color2022: '#6c757d' }
+    ];
+
+    var x0 = d3.scaleBand()
+        .domain(chartData.map(function(d) { return d.label; }))
+        .range([0, width])
+        .padding(0.3);
+
+    var x1 = d3.scaleBand()
+        .domain(['2015', '2022'])
+        .range([0, x0.bandwidth()])
+        .padding(0.1);
+
+    var y = d3.scaleLinear()
+        .domain([0, 350])
+        .range([height, 0]);
+
+    // Gridlines
+    svg.append('g')
+        .attr('class', 'grid')
+        .call(d3.axisLeft(y)
+            .tickSize(-width)
+            .tickFormat('')
+            .ticks(5)
+        )
+        .selectAll('line')
+        .style('stroke', '#e0e0e0')
+        .style('stroke-dasharray', '3,3');
+
+    // Y axis
+    svg.append('g')
+        .call(d3.axisLeft(y).ticks(5).tickFormat(function(d) { return d; }))
+        .selectAll('text')
+        .style('font-size', '10px');
+
+    svg.append('text')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', -45)
+        .attr('x', -height / 2)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '10px')
+        .attr('fill', '#666')
+        .text('Energy (TWh)');
+
+    svg.select('.domain').remove();
+
+    // Draw bars
+    var groups = svg.selectAll('.bar-group')
+        .data(chartData)
+        .enter()
+        .append('g')
+        .attr('class', 'bar-group')
+        .attr('transform', function(d) { return 'translate(' + x0(d.label) + ',0)'; });
+
+    // 2015 bars
+    groups.append('rect')
+        .attr('x', x1('2015'))
+        .attr('y', function(d) { return y(d.value2015); })
+        .attr('width', x1.bandwidth())
+        .attr('height', function(d) { return height - y(d.value2015); })
+        .attr('fill', '#adb5bd')
+        .attr('rx', 3);
+
+    // 2022 bars
+    groups.append('rect')
+        .attr('x', x1('2022'))
+        .attr('y', function(d) { return y(d.value2022); })
+        .attr('width', x1.bandwidth())
+        .attr('height', function(d) { return height - y(d.value2022); })
+        .attr('fill', function(d) { return d.color2022; })
+        .attr('rx', 3);
+
+    // Value labels
+    groups.append('text')
+        .attr('x', x1('2015') + x1.bandwidth() / 2)
+        .attr('y', function(d) { return y(d.value2015) - 5; })
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '9px')
+        .attr('fill', '#666')
+        .text(function(d) { return d.value2015; });
+
+    groups.append('text')
+        .attr('x', x1('2022') + x1.bandwidth() / 2)
+        .attr('y', function(d) { return y(d.value2022) - 5; })
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '9px')
+        .attr('font-weight', '600')
+        .attr('fill', function(d) { return d.color2022; })
+        .text(function(d) { return d.value2022; });
+
+    // X axis
+    svg.append('g')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(x0).tickSize(0))
+        .selectAll('text')
+        .style('font-size', '9px')
+        .each(function(d) {
+            var el = d3.select(this);
+            var lines = d.split('\n');
+            el.text('');
+            lines.forEach(function(line, i) {
+                el.append('tspan')
+                    .attr('x', 0)
+                    .attr('dy', i === 0 ? '0.6em' : '1.1em')
+                    .text(line);
+            });
+        });
+
+    // Growth % labels
+    groups.append('text')
+        .attr('x', x0.bandwidth() / 2)
+        .attr('y', height + 40)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '10px')
+        .attr('font-weight', '600')
+        .attr('fill', function(d) {
+            var growth = (d.value2022 - d.value2015) / d.value2015 * 100;
+            return growth > 100 ? '#dc3545' : '#28a745';
+        })
+        .text(function(d) { 
+            var growth = ((d.value2022 - d.value2015) / d.value2015 * 100).toFixed(0);
+            return '+' + growth + '%';
+        });
+}
 
 
 // Section 4 (Afkir): Servers & Data Centers: The Engines Behind the Internet (Californie & Portugal) 
@@ -1121,9 +1592,10 @@ function updateMapStats(regions) {
     // Format average emission intelligently
     var avgEmissionStr = avgEmission < 1 ? avgEmission.toFixed(2) : avgEmission.toFixed(0);
 
+    // Horizontal layout for stats
     statsContainer.innerHTML = 
         '<div class="stat-block">' +
-            '<div class="stat-label">Total Regions</div>' +
+            '<div class="stat-label">Regions</div>' +
             '<div class="stat-value">' + totalCount + '</div>' +
         '</div>' +
         '<div class="provider-counts">' +
@@ -1131,7 +1603,7 @@ function updateMapStats(regions) {
             '<div class="provider-row"><span class="provider-dot" style="background:#00A4EF"></span><span class="provider-name">Azure</span><span class="provider-count">' + azureCount + '</span></div>' +
             '<div class="provider-row"><span class="provider-dot" style="background:#27ae60"></span><span class="provider-name">GCP</span><span class="provider-count">' + gcpCount + '</span></div>' +
         '</div>' +
-        '<div class="stat-block mt-3">' +
+        '<div class="stat-block">' +
             '<div class="stat-label">Avg Emissions</div>' +
             '<div class="stat-value-sm">' + avgEmissionStr + ' <span class="stat-unit">gCO₂/kWh</span></div>' +
         '</div>';

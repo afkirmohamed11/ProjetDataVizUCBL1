@@ -524,9 +524,46 @@
 }
 
 
+/*** Section 3: Network & Cloud Styles ***/
+
+/* Section 3 stat cards */
+.stat-card-s3 {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+}
+
+.stat-card-s3:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card-s3 h2 {
+    font-weight: 800;
+}
+
+/* Section 3 Background */
+#network {
+    background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 50%, #e8f4f8 100%);
+    position: relative;
+}
+
+#network::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: linear-gradient(135deg, rgba(6, 163, 218, 0.03) 0%, rgba(245, 126, 32, 0.03) 100%);
+    pointer-events: none;
+}
+
+/* Section 3 uses same viz-card style as Section 5 */
+
+
 /*** Section 5: D3 Visualizations - PUE Charts ***/
 
-/* Section 5 Background */
+/* Section 5 Background - Part A (Main intro) */
 #global {
     background: linear-gradient(180deg, #f8fafc 0%, #e8f4f8 50%, #f0f9ff 100%);
     position: relative;
@@ -556,7 +593,7 @@
     border: 1px solid rgba(74, 111, 165, 0.1);
 }
 
-#global h1.mb-5 {
+#global h1.mb-4 {
     font-size: 2.5rem;
     background: linear-gradient(135deg, #1a365d 0%, #2d6a8a 50%, #4a6fa5 100%);
     -webkit-background-clip: text;
@@ -565,7 +602,7 @@
     font-weight: 800;
 }
 
-#global .fs-5.mb-4 {
+#global .fs-5.mb-5 {
     color: #475569;
     line-height: 1.8;
     max-width: 700px;
@@ -573,17 +610,63 @@
     margin-right: auto;
 }
 
+/* Key Stats Cards in Section 5 */
+#global .bg-primary.py-4,
+#global .bg-secondary.py-4 {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#global .bg-primary.py-4:hover,
+#global .bg-secondary.py-4:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Sub-section titles */
+#global + .container-xxl .section-title,
+#global + .container-xxl + .container-xxl .section-title,
+#global + .container-xxl + .container-xxl + .container-xxl .section-title {
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+}
+
+/* Insight callout box */
+#global + .container-xxl .bg-white.p-4.shadow-sm {
+    border-left: 4px solid var(--secondary);
+}
+
+/* Country comparison cards */
+.bg-success.bg-opacity-10,
+.bg-danger.bg-opacity-10 {
+    transition: transform 0.2s ease;
+}
+
+.bg-success.bg-opacity-10:hover,
+.bg-danger.bg-opacity-10:hover {
+    transform: scale(1.05);
+}
+
+/* Dark section (The Paradox) */
+#global + .container-xxl + .container-xxl + .container-xxl + .container-xxl.bg-dark {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%) !important;
+}
+
+#global + .container-xxl + .container-xxl + .container-xxl + .container-xxl.bg-dark .bg-white.bg-opacity-10 {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
 /* Modern card design for viz containers */
 .viz-card {
     background: linear-gradient(145deg, #ffffff 0%, #fafbfc 100%);
-    border-radius: 20px;
-    padding: 24px;
+    border-radius: 16px;
+    padding: 20px;
     box-shadow: 
-        0 4px 6px rgba(0, 0, 0, 0.04),
-        0 10px 40px rgba(0, 0, 0, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        0 2px 4px rgba(0, 0, 0, 0.04),
+        0 8px 24px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
     overflow: hidden;
     position: relative;
 }
@@ -594,7 +677,7 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
+    height: 3px;
     background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -602,9 +685,9 @@
 
 .viz-card:hover {
     box-shadow: 
-        0 8px 12px rgba(0, 0, 0, 0.06),
-        0 20px 60px rgba(74, 111, 165, 0.15);
-    transform: translateY(-4px);
+        0 4px 8px rgba(0, 0, 0, 0.06),
+        0 12px 32px rgba(74, 111, 165, 0.12);
+    transform: translateY(-2px);
 }
 
 .viz-card:hover::before {
@@ -614,15 +697,15 @@
 .viz-card h5 {
     color: #1a365d;
     font-weight: 700;
-    font-size: 1.15rem;
-    margin-bottom: 8px;
+    font-size: 1rem;
+    margin-bottom: 4px;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
 .viz-card h5 i {
-    font-size: 1.1rem;
+    font-size: 1rem;
     background: linear-gradient(135deg, var(--primary) 0%, #3182ce 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -632,15 +715,20 @@
 .viz-card h6 {
     color: #2d3748;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .viz-card .text-muted {
     color: #64748b !important;
-    font-size: 0.88rem;
-    line-height: 1.5;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    margin-bottom: 12px !important;
+}
+
+.viz-card p.text-muted.small {
+    margin-bottom: 8px !important;
 }
 
 /* SVG Containers - Responsive & No Overflow */
@@ -674,6 +762,118 @@
     background: linear-gradient(145deg, #f8fafc 0%, #f1f5f9 100%);
     border-radius: 12px;
     padding: 8px;
+}
+
+/* Horizontal Filter Panel */
+.filter-panel-horizontal {
+    padding: 16px 24px !important;
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.filter-panel-horizontal h6 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1a365d;
+    white-space: nowrap;
+}
+
+.filter-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 0;
+}
+
+.filter-chip:hover {
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(74, 111, 165, 0.15);
+}
+
+.filter-chip .form-check-input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.filter-chip .filter-label {
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+/* Horizontal Stats Display */
+#viz-map-stats {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+#viz-map-stats .stat-block {
+    padding: 8px 16px;
+    margin: 0;
+    background: linear-gradient(145deg, #f8fafc 0%, #ffffff 100%);
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+}
+
+#viz-map-stats .stat-label {
+    font-size: 0.65rem;
+    margin-bottom: 2px;
+}
+
+#viz-map-stats .stat-value {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+#viz-map-stats .provider-counts {
+    display: flex;
+    gap: 16px;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+}
+
+#viz-map-stats .provider-row {
+    padding: 6px 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: none;
+}
+
+#viz-map-stats .provider-row:not(:last-child) {
+    border-bottom: none;
+}
+
+#viz-map-stats .provider-dot {
+    width: 10px;
+    height: 10px;
+    margin-right: 6px;
+}
+
+#viz-map-stats .provider-name {
+    font-size: 0.8rem;
+}
+
+#viz-map-stats .provider-count {
+    font-size: 1rem;
+    margin-left: 6px;
+}
+
+#viz-map-stats .stat-value-sm {
+    font-size: 1.1rem;
 }
 
 .stat-block {
@@ -765,31 +965,31 @@
 
 /* Chart Specific Enhancements */
 #viz-pue-timeline {
-    min-height: 280px;
+    min-height: 250px;
 }
 
 #viz-pue-stats {
-    min-height: 220px;
+    min-height: 200px;
 }
 
 #viz-pue-regions {
-    min-height: 200px;
+    min-height: 180px;
 }
 
 #viz-pue-comparison {
-    min-height: 260px;
+    min-height: 220px;
 }
 
 #viz-renewable-compare {
-    min-height: 200px;
+    min-height: 160px;
 }
 
 #viz-pue-map {
-    min-height: 380px;
+    min-height: 320px;
 }
 
 #viz-pue-sites {
-    min-height: 340px;
+    min-height: 300px;
 }
 
 /* Map datacenter points */
@@ -814,7 +1014,7 @@
     border-radius: 12px;
 }
 
-/* Filter Panel Checkboxes */
+/* Filter Panel Checkboxes - Legacy styles */
 .form-check-input:checked {
     background-color: var(--primary);
     border-color: var(--primary);
@@ -825,38 +1025,34 @@
     font-size: 0.95rem;
 }
 
-#viz-map-filters .form-check {
-    padding: 10px 12px;
-    margin: 0 0 8px 0;
-    background: #ffffff;
-    border-radius: 10px;
-    border: 1px solid #e2e8f0;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
+/* Section 5 Row Spacing */
+#global .row.g-4,
+#global + .container-xxl .row.g-4 {
+    --bs-gutter-x: 1.25rem;
+    --bs-gutter-y: 1.25rem;
 }
 
-#viz-map-filters .form-check:hover {
-    border-color: var(--primary);
-    box-shadow: 0 2px 8px rgba(74, 111, 165, 0.12);
+#global .row.g-5 {
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 1.5rem;
 }
 
-#viz-map-filters .form-check-input {
-    width: 18px;
-    height: 18px;
-    margin-right: 10px;
-    cursor: pointer;
+/* Section 5 container padding */
+#global .container,
+#global + .container-xxl .container,
+#global + .container-xxl + .container-xxl .container,
+#global + .container-xxl + .container-xxl + .container-xxl .container {
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
-#viz-map-filters .form-check-label {
-    cursor: pointer;
-    font-size: 1rem;
-}
-
-#viz-map-filters hr {
-    border-color: #e2e8f0;
-    opacity: 0.5;
-    margin: 16px 0;
+/* Section 5 py-5 override for tighter spacing */
+#global,
+#global + .container-xxl,
+#global + .container-xxl + .container-xxl,
+#global + .container-xxl + .container-xxl + .container-xxl {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
 }
 
 /* Animated Gradient Border for Featured Card */
