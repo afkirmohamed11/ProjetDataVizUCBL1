@@ -87,10 +87,10 @@ function createPueTimelineChart(data) {
         d.Average_PUE = +d.Average_PUE;
     });
 
-    // Dimensions - adjusted for col-5
-    var margin = {top: 50, right: 30, bottom: 45, left: 50};
+    // Dimensions - now full width, adjusted height
+    var margin = {top: 50, right: 40, bottom: 45, left: 55};
     var width = container.offsetWidth - margin.left - margin.right;
-    var height = 240 - margin.top - margin.bottom;
+    var height = 260 - margin.top - margin.bottom;
 
     // Create SVG
     var svg = d3.select(container)
@@ -442,10 +442,10 @@ function createDonutChart(data) {
 
     var total = d3.sum(data, function(d) { return d.Energy_Consumption_TWh; });
 
-    // Dimensions - smaller for new layout
+    // Dimensions - adjusted for col-4 layout
     var width = container.offsetWidth;
-    var height = 180;
-    var radius = Math.min(width, height) / 2 - 10;
+    var height = 220;
+    var radius = Math.min(width, height) / 2 - 15;
 
     var svg = d3.select(container)
         .append('svg')
@@ -570,32 +570,32 @@ function createProviderGauges(data) {
         'Azure': '#00A4EF'
     };
 
-    // Create gauge for each provider - FIXED: Use flex-wrap and proper sizing
+    // Create gauge for each provider - adjusted for col-4 layout
     var gaugeContainer = d3.select(container)
         .append('div')
         .style('display', 'flex')
-        .style('justify-content', 'center')
+        .style('justify-content', 'space-around')
         .style('align-items', 'center')
         .style('flex-wrap', 'wrap')
-        .style('gap', '5px')
-        .style('padding', '10px 0');
+        .style('gap', '10px')
+        .style('padding', '20px 10px');
 
     data.forEach(function(d) {
         var gauge = gaugeContainer.append('div')
             .style('text-align', 'center')
-            .style('flex', '1 1 90px')
-            .style('min-width', '90px')
-            .style('max-width', '120px');
+            .style('flex', '1 1 100px')
+            .style('min-width', '100px')
+            .style('max-width', '130px');
 
-        var size = 55;
+        var size = 60;
         var svg = gauge.append('svg')
-            .attr('width', size * 2 + 10)
-            .attr('height', size + 25)
+            .attr('width', size * 2 + 15)
+            .attr('height', size + 30)
             .style('display', 'block')
             .style('margin', '0 auto');
 
         var g = svg.append('g')
-            .attr('transform', 'translate(' + (size + 5) + ',' + size + ')');
+            .attr('transform', 'translate(' + (size + 7) + ',' + size + ')');
 
         // Background arc
         var bgArc = d3.arc()
@@ -899,13 +899,22 @@ function createWorldMap(awsData, azureData, gcpData, worldData) {
     // Process all provider data
     var allRegions = [];
     
+    // Helper function to safely parse emission values
+    function parseEmission(value) {
+        var parsed = parseFloat(value);
+        if (isNaN(parsed) || parsed === null || parsed === undefined) {
+            return null; // Mark as unavailable
+        }
+        return parsed * 1000; // Convert kg to g CO2/kWh
+    }
+    
     // AWS regions - uses emission_factor
     awsData.forEach(function(d) {
         allRegions.push({
             provider: 'AWS',
             region: d.region_name,
             country: d.country,
-            emission: +d.emission_factor * 1000, // Convert to gCO2/kWh
+            emission: parseEmission(d.emission_factor),
             code: d.region_code
         });
     });
@@ -916,7 +925,7 @@ function createWorldMap(awsData, azureData, gcpData, worldData) {
             provider: 'Azure',
             region: d.region_name,
             country: d.country,
-            emission: +d.emission_factor * 1000,
+            emission: parseEmission(d.emission_factor),
             code: d.region_code
         });
     });
@@ -927,7 +936,7 @@ function createWorldMap(awsData, azureData, gcpData, worldData) {
             provider: 'GCP',
             region: d.region_name,
             country: d.country,
-            emission: +d.emission_factor_raw * 1000, // GCP uses emission_factor_raw
+            emission: parseEmission(d.emission_factor_raw),
             code: d.region_code
         });
     });
@@ -1003,12 +1012,26 @@ function createWorldMap(awsData, azureData, gcpData, worldData) {
                 .attr('stroke-width', 2)
                 .attr('opacity', 1);
             
+            // Format emission value intelligently
+            var emissionText;
+            if (d.emission === null) {
+                emissionText = '<span style="color:#999">Data unavailable</span>';
+            } else if (d.emission < 1) {
+                emissionText = '<strong>' + d.emission.toFixed(2) + '</strong> gCO₂/kWh <span style="color:#27ae60">(Very Clean!)</span>';
+            } else if (d.emission < 50) {
+                emissionText = '<strong>' + d.emission.toFixed(1) + '</strong> gCO₂/kWh <span style="color:#27ae60">(Clean)</span>';
+            } else if (d.emission < 200) {
+                emissionText = '<strong>' + d.emission.toFixed(0) + '</strong> gCO₂/kWh';
+            } else {
+                emissionText = '<strong>' + d.emission.toFixed(0) + '</strong> gCO₂/kWh <span style="color:#e74c3c">(High)</span>';
+            }
+            
             tooltip.style('opacity', 1)
                 .html('<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">' +
                       '<span style="background:' + providerColors[d.provider] + ';color:white;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:bold">' + d.provider + '</span>' +
                       '<span style="font-weight:bold;font-size:12px">' + d.region + '</span></div>' +
                       '<div style="color:#666;font-size:10px;margin-bottom:6px">' + d.country + '</div>' +
-                      '<div style="font-size:11px">Emissions: <strong>' + d.emission.toFixed(0) + '</strong> gCO₂/kWh</div>')
+                      '<div style="font-size:11px">Emissions: ' + emissionText + '</div>')
                 .style('left', (event.pageX + 12) + 'px')
                 .style('top', (event.pageY - 70) + 'px');
         })
@@ -1053,7 +1076,13 @@ function updateMapStats(regions) {
     var azureCount = regions.filter(function(d) { return d.provider === 'Azure'; }).length;
     var gcpCount = regions.filter(function(d) { return d.provider === 'GCP'; }).length;
     var totalCount = regions.length;
-    var avgEmission = d3.mean(regions, function(d) { return d.emission; }) || 0;
+    
+    // Filter out null emissions for average calculation
+    var validEmissions = regions.filter(function(d) { return d.emission !== null && !isNaN(d.emission); });
+    var avgEmission = validEmissions.length > 0 ? d3.mean(validEmissions, function(d) { return d.emission; }) : 0;
+    
+    // Format average emission intelligently
+    var avgEmissionStr = avgEmission < 1 ? avgEmission.toFixed(2) : avgEmission.toFixed(0);
 
     statsContainer.innerHTML = 
         '<div class="mb-2"><strong>Total Regions</strong><div class="h5 mb-0 text-primary">' + totalCount + '</div></div>' +
@@ -1061,7 +1090,7 @@ function updateMapStats(regions) {
         '<div class="mb-1"><span style="color:#00A4EF">Azure:</span> ' + azureCount + '</div>' +
         '<div class="mb-1"><span style="color:#27ae60">GCP:</span> ' + gcpCount + '</div>' +
         '<hr class="my-2">' +
-        '<div><strong>Avg Emissions</strong><div class="small text-muted">' + avgEmission.toFixed(0) + ' gCO₂/kWh</div></div>';
+        '<div><strong>Avg Emissions</strong><div class="small text-muted">' + avgEmissionStr + ' gCO₂/kWh</div></div>';
 }
 
 // Setup map filter checkboxes (external panel)
@@ -1226,7 +1255,7 @@ function createEmissionsRankingChart(awsData, azureData, gcpData) {
         .delay(function(d, i) { return i * 80; })
         .attr('width', function(d) { return xGreen(d.emission); });
 
-    // Greenest labels
+    // Greenest labels - format small values properly
     svg.selectAll('.green-label')
         .data(greenest)
         .enter()
@@ -1235,7 +1264,10 @@ function createEmissionsRankingChart(awsData, azureData, gcpData) {
         .attr('y', function(d) { return yGreen(d.region) + yGreen.bandwidth() / 2 + 4; })
         .style('font-size', '9px')
         .style('fill', '#333')
-        .text(function(d) { return d.region + ' (' + d.emission.toFixed(0) + ')'; });
+        .text(function(d) { 
+            var emissionStr = d.emission < 1 ? d.emission.toFixed(2) : d.emission.toFixed(0);
+            return d.region + ' (' + emissionStr + ')'; 
+        });
 
     // Draw highest bars (right side)
     var rightOffset = halfWidth + 60;

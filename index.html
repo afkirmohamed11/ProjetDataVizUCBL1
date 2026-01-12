@@ -360,45 +360,50 @@
                 </div>
             </div>
             <div class="row g-3">
-                <!-- Row 1: Timeline + Comparison + Stats -->
-                <!-- PUE Timeline Chart -->
-                <div class="col-lg-5 wow fadeIn" data-wow-delay="0.3s">
+                <!-- Row 1: PUE Timeline (Full Width) -->
+                <div class="col-12 wow fadeIn" data-wow-delay="0.3s">
                     <div class="viz-card">
-                        <h5 class="mb-2">Google Data Center PUE Evolution (2007-2025)</h5>
-                        <p class="text-muted small mb-2">Power Usage Effectiveness: Lower is better (1.0 = perfect)</p>
-                        <div id="viz-pue-timeline" style="min-height: 280px;">
+                        <h5 class="mb-2"><i class="fas fa-chart-line text-primary me-2"></i>Google Data Center PUE Evolution (2007-2025)</h5>
+                        <p class="text-muted small mb-2">Power Usage Effectiveness: Lower is better (1.0 = perfect efficiency)</p>
+                        <div id="viz-pue-timeline" style="min-height: 300px;">
                             <!-- D3 Visualization: PUE Timeline Chart -->
                         </div>
                     </div>
                 </div>
-                <!-- Global vs Cloud Providers Comparison -->
+
+                <!-- Row 2: Stats Side by Side -->
+                <!-- Big Tech Energy Donut -->
                 <div class="col-lg-4 wow fadeIn" data-wow-delay="0.4s">
-                    <div class="viz-card">
-                        <h5 class="mb-2"><i class="fas fa-balance-scale text-primary me-2"></i>Global vs Cloud Providers PUE</h5>
-                        <p class="text-muted small mb-2">Industry average vs major cloud providers (2025)</p>
-                        <div id="viz-pue-comparison" style="min-height: 280px;">
+                    <div class="viz-card h-100">
+                        <h5 class="mb-2"><i class="fas fa-chart-pie text-primary me-2"></i>Big Tech Energy (2021)</h5>
+                        <div id="viz-pue-stats" style="min-height: 250px;">
+                            <!-- D3 Visualization: Donut Chart -->
+                        </div>
+                    </div>
+                </div>
+                <!-- Global vs Cloud Providers Comparison -->
+                <div class="col-lg-4 wow fadeIn" data-wow-delay="0.5s">
+                    <div class="viz-card h-100">
+                        <h5 class="mb-2"><i class="fas fa-balance-scale text-primary me-2"></i>Global vs Cloud PUE</h5>
+                        <p class="text-muted small mb-2">Industry average vs major providers (2025)</p>
+                        <div id="viz-pue-comparison" style="min-height: 250px;">
                             <!-- D3 Visualization: Comparison Bar Chart -->
                         </div>
                     </div>
                 </div>
-                <!-- PUE Stats Cards -->
-                <div class="col-lg-3 wow fadeIn" data-wow-delay="0.5s">
-                    <div class="viz-card mb-3">
-                        <h5 class="mb-2"><i class="fas fa-chart-pie text-primary me-2"></i>Big Tech Energy (2021)</h5>
-                        <div id="viz-pue-stats">
-                            <!-- D3 Visualization: Donut Chart -->
-                        </div>
-                    </div>
-                    <div class="viz-card">
+                <!-- Provider Efficiency Gauges -->
+                <div class="col-lg-4 wow fadeIn" data-wow-delay="0.6s">
+                    <div class="viz-card h-100">
                         <h5 class="mb-2"><i class="fas fa-tachometer-alt text-primary me-2"></i>Provider Efficiency</h5>
-                        <div id="viz-pue-regions" style="min-height: 150px;">
+                        <p class="text-muted small mb-2">Average PUE scores by cloud provider</p>
+                        <div id="viz-pue-regions" style="min-height: 250px;">
                             <!-- D3 Visualization: Provider Gauges -->
                         </div>
                     </div>
                 </div>
                 
-                <!-- Row 2: Emissions Ranking Chart (fills the gap) -->
-                <div class="col-12 wow fadeIn" data-wow-delay="0.55s">
+                <!-- Row 3: Emissions Ranking Chart -->
+                <div class="col-12 wow fadeIn" data-wow-delay="0.65s">
                     <div class="viz-card">
                         <h5 class="mb-2"><i class="fas fa-bolt text-warning me-2"></i>Cloud Region Carbon Emissions: Best vs Worst</h5>
                         <p class="text-muted small mb-2">Comparing the cleanest and highest emission data center regions across AWS, Azure & GCP</p>
@@ -408,9 +413,9 @@
                     </div>
                 </div>
 
-                <!-- Row 3: Map + Filter + Scatter -->
+                <!-- Row 4: Map + Filter + Scatter -->
                 <!-- World Map -->
-                <div class="col-lg-5 wow fadeIn" data-wow-delay="0.6s">
+                <div class="col-lg-5 wow fadeIn" data-wow-delay="0.7s">
                     <div class="viz-card">
                         <h5 class="mb-2"><i class="fas fa-map-marked-alt text-primary me-2"></i>Global Cloud Data Centers</h5>
                         <div id="viz-pue-map" style="min-height: 380px;">
@@ -419,7 +424,7 @@
                     </div>
                 </div>
                 <!-- Map Filter & Stats Panel -->
-                <div class="col-lg-2 wow fadeIn" data-wow-delay="0.65s">
+                <div class="col-lg-2 wow fadeIn" data-wow-delay="0.75s">
                     <div class="viz-card h-100">
                         <h6 class="mb-3"><i class="fas fa-filter text-primary me-2"></i>Filter Providers</h6>
                         <div id="viz-map-filters">
@@ -445,9 +450,9 @@
                     </div>
                 </div>
                 <!-- Scatter Plot -->
-                <div class="col-lg-5 wow fadeIn" data-wow-delay="0.7s">
+                <div class="col-lg-5 wow fadeIn" data-wow-delay="0.8s">
                     <div class="viz-card">
-                        <h5 class="mb-2">CFE vs Carbon Intensity</h5>
+                        <h5 class="mb-2"><i class="fas fa-project-diagram text-primary me-2"></i>CFE vs Carbon Intensity</h5>
                         <p class="text-muted small mb-2">Google Cloud regions - Higher CFE & lower carbon = greener</p>
                         <div id="viz-pue-sites" style="min-height: 320px;">
                             <!-- D3 Visualization: Scatter Plot -->
