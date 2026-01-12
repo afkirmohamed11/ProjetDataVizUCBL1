@@ -553,3 +553,50 @@
     transform: translateX(5px);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
+
+/* Section 5 Enhanced Styles */
+#viz-pue-timeline,
+#viz-pue-stats,
+#viz-pue-regions,
+#viz-pue-sites,
+#viz-pue-map {
+    background: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.06);
+}
+
+#viz-pue-timeline svg,
+#viz-pue-stats svg,
+#viz-pue-regions svg,
+#viz-pue-sites svg,
+#viz-pue-map svg {
+    display: block;
+    margin: 0 auto;
+}
+
+.section5-tooltip {
+    z-index: 9999;
+    transition: opacity 0.15s ease;
+}
+
+#viz-pue-map {
+    min-height: 380px;
+    overflow: hidden;
+}
+
+#viz-pue-sites {
+    min-height: 380px;
+}
+
+#viz-pue-stats {
+    min-height: 340px;
+}
+
+#viz-pue-regions {
+    min-height: 180px;
+}
+
+#viz-pue-map circle.datacenter {
+    transition: r 0.2s ease;
+}
