@@ -6,7 +6,7 @@
 // Section 2 (Ben Touhami): Inside Your Device: How Much Energy Does It Use?
 
 
-// Section 3 (): When Data Leaves Your Device: Network & Cloud
+// Section 3 (Akkouh): When Data Leaves Your Device: Network & Cloud
 // ========================================================================
 
 // Wait for DOM to load - Section 3
@@ -1853,4 +1853,4 @@ function createEmissionsRankingChart(awsData, azureData, gcpData) {
 // Section 6 (Motassim): UCBL1 Data Center: A Case Study
 
 
-// Section 7 (): What We Can Do: Solutions & Future Roadmap
+// Section 7 (Akkouh): What We Can Do: Solutions & Future Roadmap
