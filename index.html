@@ -210,6 +210,15 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Visualization 6: Interactive Environmental Simulator -->
+            <div class="row g-5 mb-5">
+                <div class="col-lg-12 wow fadeIn" data-wow-delay="1.3s">
+                    <div class="bg-light p-4 rounded shadow-sm">
+                        <div id="environmental-simulator" style="min-height: 650px;"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -433,6 +442,7 @@
             createADPAnalysis('adp-analysis');
             createGPUvsCPU_GWP('gpu-cpu-gwp');
             createGPUvsCPU_PE('gpu-cpu-pe');
+            createEnvironmentalSimulator('environmental-simulator');
         });
     </script>
 
