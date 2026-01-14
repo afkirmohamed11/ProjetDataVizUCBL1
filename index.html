@@ -274,46 +274,27 @@
                 <p class="fs-5 mb-4">Although personal devices appear small, each internal component consumes energy. Data-intensive tasks significantly increase this consumption.</p>
             </div>
 
-            <!-- Visualization 1 & 2: GWP and PE Analysis Side by Side -->
+            <!-- Combined Visualization: Environmental Impact Analysis with Filter -->
             <div class="row g-4 mb-5">
-                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">
+                <div class="col-lg-12 wow fadeIn" data-wow-delay="0.3s">
                     <div class="bg-white p-4 rounded shadow-sm">
-                        <div id="gwp-analysis" style="min-height: 550px; overflow-x: auto;"></div>
-                    </div>
-                </div>
-                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
-                    <div class="bg-white p-4 rounded shadow-sm">
-                        <div id="pe-analysis" style="min-height: 550px; overflow-x: auto;"></div>
+                        <div id="combined-impact-analysis" style="min-height: 550px;"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Visualization 3: ADP Analysis -->
+            <!-- Combined GPU vs CPU Comparison with Filter -->
+            <div class="row g-5 mb-5">
+                <div class="col-lg-12 wow fadeIn" data-wow-delay="0.5s">
+                    <div class="bg-white p-4 rounded shadow-sm">
+                        <div id="combined-gpu-cpu" style="min-height: 500px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualization: Interactive Environmental Simulator -->
             <div class="row g-5 mb-5">
                 <div class="col-lg-12 wow fadeIn" data-wow-delay="0.7s">
-                    <div class="bg-white p-4 rounded shadow-sm text-center">
-                        <div id="adp-analysis" style="min-height: 600px; display: flex; justify-content: center; align-items: center;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Visualization 4 & 5: GPU vs CPU Comparisons -->
-            <div class="row g-5 mb-5">
-                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.9s">
-                    <div class="bg-white p-4 rounded shadow-sm">
-                        <div id="gpu-cpu-gwp" style="min-height: 550px;"></div>
-                    </div>
-                </div>
-                <div class="col-lg-6 wow fadeIn" data-wow-delay="1.1s">
-                    <div class="bg-white p-4 rounded shadow-sm">
-                        <div id="gpu-cpu-pe" style="min-height: 550px;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Visualization 6: Interactive Environmental Simulator -->
-            <div class="row g-5 mb-5">
-                <div class="col-lg-12 wow fadeIn" data-wow-delay="1.3s">
                     <div class="bg-light p-4 rounded shadow-sm">
                         <div id="environmental-simulator" style="min-height: 650px;"></div>
                     </div>
@@ -1122,12 +1103,11 @@
     <script>
         // Initialize all environmental visualizations when DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
-            // Environmental impact visualizations
-            createGWPAnalysis('gwp-analysis');
-            createPEAnalysis('pe-analysis');
-            createADPAnalysis('adp-analysis');
-            createGPUvsCPU_GWP('gpu-cpu-gwp');
-            createGPUvsCPU_PE('gpu-cpu-pe');
+            // Combined environmental impact visualization with filter
+            createCombinedImpactAnalysis('combined-impact-analysis');
+            // Combined GPU vs CPU comparison with filter
+            createCombinedGPUvsCPU('combined-gpu-cpu');
+            // Environmental simulator
             createEnvironmentalSimulator('environmental-simulator');
         });
     </script>

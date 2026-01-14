@@ -583,6 +583,463 @@ function createADPAnalysis(containerId) {
     }).catch(error => console.error("Error:", error));
 }
 
+// ===========================================
+// COMBINED VISUALIZATION: Environmental Impact Scatter Plot with Filter (GWP, PE, ADP)
+// ===========================================
+function createCombinedImpactAnalysis(containerId) {
+    const container = d3.select(`#${containerId}`);
+    
+    // Create filter buttons
+    const filterDiv = container.append("div")
+        .style("text-align", "center")
+        .style("margin-bottom", "20px");
+
+    filterDiv.append("span")
+        .style("font-weight", "bold")
+        .style("margin-right", "15px")
+        .style("color", "#2c3e50")
+        .text("Select Metric:");
+
+    const metrics = [
+        { id: "gwp", label: "🌍 CO₂ Emissions", color: "#27ae60" },
+        { id: "pe", label: "⚡ Energy (kWh)", color: "#e74c3c" },
+        { id: "adp", label: "💎 Resources", color: "#f39c12" }
+    ];
+
+    metrics.forEach((metric, i) => {
+        filterDiv.append("button")
+            .attr("class", "impact-filter-btn")
+            .attr("data-metric", metric.id)
+            .style("padding", "10px 20px")
+            .style("margin", "0 5px")
+            .style("border", i === 0 ? `2px solid ${metric.color}` : "2px solid #ddd")
+            .style("background", i === 0 ? metric.color : "white")
+            .style("color", i === 0 ? "white" : "#2c3e50")
+            .style("border-radius", "25px")
+            .style("cursor", "pointer")
+            .style("font-weight", "bold")
+            .style("font-size", "13px")
+            .style("transition", "all 0.3s ease")
+            .text(metric.label)
+            .on("click", function() {
+                filterDiv.selectAll(".impact-filter-btn")
+                    .style("background", "white")
+                    .style("color", "#2c3e50")
+                    .style("border", "2px solid #ddd");
+                d3.select(this)
+                    .style("background", metric.color)
+                    .style("color", "white")
+                    .style("border", `2px solid ${metric.color}`);
+                drawScatterPlot(metric.id);
+            });
+    });
+
+    // Chart container
+    const chartDiv = container.append("div").attr("id", "impact-chart-container");
+
+    const margin = { top: 60, right: 150, bottom: 80, left: 80 };
+    const width = 900 - margin.left - margin.right;
+    const height = 450 - margin.top - margin.bottom;
+
+    const MJ_TO_KWH = 0.2778;
+
+    function drawScatterPlot(metricType) {
+        chartDiv.html("");
+
+        const svg = chartDiv.append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        d3.json("data/terminals/cpu_data_enriched.json").then(data => {
+            const manufacturers = [...new Set(data.map(d => d.manufacturer))];
+            const colorScale = d3.scaleOrdinal()
+                .domain(manufacturers)
+                .range(d3.schemeSet2);
+
+            let yAccessor, yLabel, title;
+
+            if (metricType === "gwp") {
+                yAccessor = d => d.gwp_total;
+                yLabel = "Total CO₂ Emissions (kg CO₂eq)";
+                title = "🌍 CO₂ Emissions vs Power Consumption";
+            } else if (metricType === "pe") {
+                yAccessor = d => d.pe_total * MJ_TO_KWH;
+                yLabel = "Total Energy (kWh)";
+                title = "⚡ Energy Consumption vs Power";
+            } else {
+                yAccessor = d => d.adp_total;
+                yLabel = "Resource Depletion (kg Sb eq)";
+                title = "💎 Resource Depletion vs Power";
+            }
+
+            // Scales
+            const xScale = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d.tdp) * 1.05])
+                .range([0, width]);
+
+            const yScale = d3.scaleLinear()
+                .domain([0, d3.max(data, yAccessor) * 1.05])
+                .range([height, 0]);
+
+            const sizeScale = d3.scaleSqrt()
+                .domain([d3.min(data, d => d.cores), d3.max(data, d => d.cores)])
+                .range([4, 12]);
+
+            // Grid
+            svg.append("g")
+                .attr("opacity", 0.1)
+                .call(d3.axisLeft(yScale).tickSize(-width).tickFormat(""));
+
+            svg.append("g")
+                .attr("opacity", 0.1)
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(xScale).tickSize(-height).tickFormat(""));
+
+            // Axes
+            svg.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(xScale))
+                .append("text")
+                .attr("x", width / 2)
+                .attr("y", 45)
+                .attr("fill", "#2c3e50")
+                .attr("font-size", "12px")
+                .attr("font-weight", "bold")
+                .style("text-anchor", "middle")
+                .text("TDP - Thermal Design Power (Watts)");
+
+            svg.append("g")
+                .call(d3.axisLeft(yScale).tickFormat(d => {
+                    if (metricType === "adp") return d.toExponential(1);
+                    return d.toFixed(0);
+                }))
+                .append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("x", -height / 2)
+                .attr("y", -60)
+                .attr("fill", "#2c3e50")
+                .attr("font-size", "12px")
+                .attr("font-weight", "bold")
+                .style("text-anchor", "middle")
+                .text(yLabel);
+
+            // Title
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", -35)
+                .attr("text-anchor", "middle")
+                .attr("font-size", "16px")
+                .attr("font-weight", "bold")
+                .attr("fill", "#2c3e50")
+                .text(title);
+
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", -15)
+                .attr("text-anchor", "middle")
+                .attr("font-size", "11px")
+                .attr("fill", "#7f8c8d")
+                .text("Hover for details • Size = cores");
+
+            // Tooltip
+            const tooltip = d3.select("body").append("div")
+                .style("position", "absolute")
+                .style("visibility", "hidden")
+                .style("background", "#2c3e50")
+                .style("color", "white")
+                .style("padding", "12px 16px")
+                .style("border-radius", "8px")
+                .style("font-size", "12px")
+                .style("max-width", "280px")
+                .style("pointer-events", "none")
+                .style("z-index", "1000");
+
+            // Scatter points
+            svg.selectAll(".point")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("class", "point")
+                .attr("cx", d => xScale(d.tdp))
+                .attr("cy", d => yScale(yAccessor(d)))
+                .attr("r", 0)
+                .attr("fill", d => colorScale(d.manufacturer))
+                .attr("opacity", 0.7)
+                .attr("stroke", "white")
+                .attr("stroke-width", 1.5)
+                .style("cursor", "pointer")
+                .on("mouseover", function(event, d) {
+                    d3.select(this)
+                        .transition()
+                        .duration(200)
+                        .attr("r", sizeScale(d.cores) * 1.5)
+                        .attr("opacity", 1)
+                        .attr("stroke-width", 3);
+
+                    let valueInfo;
+                    if (metricType === "gwp") {
+                        valueInfo = `
+                            <div><strong>🌍 CO₂ Total:</strong> ${d.gwp_total.toFixed(1)} kg</div>
+                            <div style="font-size:11px;">• Manufacturing: ${d.gwp_embedded.toFixed(1)} kg</div>
+                            <div style="font-size:11px;">• Usage: ${d.gwp_use.toFixed(1)} kg</div>
+                        `;
+                    } else if (metricType === "pe") {
+                        valueInfo = `
+                            <div><strong>⚡ Energy Total:</strong> ${(d.pe_total * MJ_TO_KWH).toFixed(0)} kWh</div>
+                            <div style="font-size:11px;">• Manufacturing: ${(d.pe_embedded * MJ_TO_KWH).toFixed(1)} kWh</div>
+                            <div style="font-size:11px;">• Usage: ${(d.pe_use * MJ_TO_KWH).toFixed(0)} kWh</div>
+                        `;
+                    } else {
+                        valueInfo = `
+                            <div><strong>💎 ADP Total:</strong> ${d.adp_total.toExponential(2)} kg Sb eq</div>
+                            <div style="font-size:11px;">• Manufacturing: ${d.adp_embedded.toExponential(2)}</div>
+                            <div style="font-size:11px;">• Usage: ${d.adp_use.toExponential(2)}</div>
+                        `;
+                    }
+
+                    tooltip.html(`
+                        <strong style="font-size:14px;">${d.name}</strong><br/>
+                        <div style="margin: 8px 0; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.3);">
+                            <div>🏭 ${d.manufacturer} • ⚡ ${d.tdp}W • 🔢 ${d.cores} cores</div>
+                        </div>
+                        ${valueInfo}
+                    `).style("visibility", "visible");
+                })
+                .on("mousemove", function(event) {
+                    tooltip.style("top", (event.pageY - 10) + "px")
+                        .style("left", (event.pageX + 15) + "px");
+                })
+                .on("mouseout", function() {
+                    d3.select(this)
+                        .transition()
+                        .duration(200)
+                        .attr("r", d => sizeScale(d.cores))
+                        .attr("opacity", 0.7)
+                        .attr("stroke-width", 1.5);
+                    tooltip.style("visibility", "hidden");
+                })
+                .transition()
+                .duration(600)
+                .delay((d, i) => i * 2)
+                .attr("r", d => sizeScale(d.cores));
+
+            // Legend
+            const legend = svg.append("g")
+                .attr("transform", `translate(${width + 20}, 20)`);
+
+            legend.append("text")
+                .attr("font-size", "12px")
+                .attr("font-weight", "bold")
+                .attr("fill", "#2c3e50")
+                .text("Manufacturers");
+
+            manufacturers.forEach((mfr, i) => {
+                const row = legend.append("g")
+                    .attr("transform", `translate(0, ${i * 25 + 20})`);
+
+                row.append("circle")
+                    .attr("r", 6)
+                    .attr("fill", colorScale(mfr));
+
+                row.append("text")
+                    .attr("x", 12)
+                    .attr("y", 4)
+                    .attr("font-size", "11px")
+                    .attr("fill", "#2c3e50")
+                    .text(mfr);
+            });
+
+        }).catch(error => console.error("Error:", error));
+    }
+
+    // Initialize with GWP
+    drawScatterPlot("gwp");
+}
+
+// ===========================================
+// COMBINED VISUALIZATION: GPU vs CPU Comparison with Filter (GWP, PE)
+// ===========================================
+function createCombinedGPUvsCPU(containerId) {
+    const container = d3.select(`#${containerId}`);
+    
+    // Create filter buttons
+    const filterDiv = container.append("div")
+        .style("text-align", "center")
+        .style("margin-bottom", "20px");
+
+    filterDiv.append("span")
+        .style("font-weight", "bold")
+        .style("margin-right", "15px")
+        .style("color", "#2c3e50")
+        .text("Compare by:");
+
+    const metrics = [
+        { id: "gwp", label: "🌍 CO₂ Emissions", color: "#27ae60" },
+        { id: "pe", label: "⚡ Energy (kWh)", color: "#e74c3c" }
+    ];
+
+    metrics.forEach((metric, i) => {
+        filterDiv.append("button")
+            .attr("class", "gpu-cpu-filter-btn")
+            .attr("data-metric", metric.id)
+            .style("padding", "10px 25px")
+            .style("margin", "0 8px")
+            .style("border", i === 0 ? `2px solid ${metric.color}` : "2px solid #ddd")
+            .style("background", i === 0 ? metric.color : "white")
+            .style("color", i === 0 ? "white" : "#2c3e50")
+            .style("border-radius", "25px")
+            .style("cursor", "pointer")
+            .style("font-weight", "bold")
+            .style("font-size", "14px")
+            .style("transition", "all 0.3s ease")
+            .text(metric.label)
+            .on("click", function() {
+                filterDiv.selectAll(".gpu-cpu-filter-btn")
+                    .style("background", "white")
+                    .style("color", "#2c3e50")
+                    .style("border", "2px solid #ddd");
+                d3.select(this)
+                    .style("background", metric.color)
+                    .style("color", "white")
+                    .style("border", `2px solid ${metric.color}`);
+                drawGPUvsCPUChart(metric.id);
+            });
+    });
+
+    // Chart container
+    const chartDiv = container.append("div").attr("id", "gpu-cpu-chart-container");
+
+    const margin = { top: 60, right: 40, bottom: 100, left: 100 };
+    const width = 700 - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+
+    const MJ_TO_KWH = 0.2778;
+
+    function drawGPUvsCPUChart(metricType) {
+        chartDiv.html("");
+
+        const svg = chartDiv.append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .style("display", "block")
+            .style("margin", "0 auto")
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        d3.json("data/terminals/cpu_gpu_comparison.json").then(data => {
+            const cpus = data.filter(d => d.type === 'CPU');
+            const gpus = data.filter(d => d.type === 'GPU');
+
+            let avgCPU, avgGPU, unit, title;
+
+            if (metricType === "gwp") {
+                avgCPU = d3.mean(cpus, d => d.gwp_total);
+                avgGPU = d3.mean(gpus, d => d.gwp_total);
+                unit = "kg CO₂";
+                title = "🌍 CO₂ Emissions: CPU vs GPU";
+            } else {
+                avgCPU = d3.mean(cpus, d => d.pe_total) * MJ_TO_KWH;
+                avgGPU = d3.mean(gpus, d => d.pe_total) * MJ_TO_KWH;
+                unit = "kWh";
+                title = "⚡ Energy Consumption: CPU vs GPU";
+            }
+
+            const barData = [
+                { type: "CPU", value: avgCPU, color: "#3498db", icon: "" },
+                { type: "GPU", value: avgGPU, color: metricType === "gwp" ? "#e74c3c" : "#f39c12", icon: "" }
+            ];
+
+            // Title
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", -30)
+                .attr("text-anchor", "middle")
+                .attr("font-size", "20px")
+                .attr("font-weight", "bold")
+                .attr("fill", "#2c3e50")
+                .text(title);
+
+            const xScale = d3.scaleBand()
+                .domain(barData.map(d => d.type))
+                .range([0, width])
+                .padding(0.4);
+
+            const yScale = d3.scaleLinear()
+                .domain([0, avgGPU * 1.3])
+                .range([height, 0]);
+
+            // Grid
+            svg.append("g")
+                .attr("opacity", 0.1)
+                .call(d3.axisLeft(yScale).tickSize(-width).tickFormat(""));
+
+            // Y axis
+            svg.append("g")
+                .call(d3.axisLeft(yScale).tickFormat(d => `${d.toFixed(0)} ${unit}`));
+
+            // Bars
+            svg.selectAll(".bar")
+                .data(barData)
+                .enter()
+                .append("rect")
+                .attr("x", d => xScale(d.type))
+                .attr("y", height)
+                .attr("width", xScale.bandwidth())
+                .attr("height", 0)
+                .attr("fill", d => d.color)
+                .attr("rx", 10)
+                .transition()
+                .duration(1000)
+                .attr("y", d => yScale(d.value))
+                .attr("height", d => height - yScale(d.value));
+
+            // Value labels
+            svg.selectAll(".value")
+                .data(barData)
+                .enter()
+                .append("text")
+                .attr("x", d => xScale(d.type) + xScale.bandwidth() / 2)
+                .attr("y", d => yScale(d.value) - 15)
+                .attr("text-anchor", "middle")
+                .attr("font-size", "22px")
+                .attr("font-weight", "bold")
+                .attr("fill", "#2c3e50")
+                .text(d => `${d.value.toFixed(0)} ${unit}`);
+
+            // X axis labels with icons
+            svg.selectAll(".x-label")
+                .data(barData)
+                .enter()
+                .append("text")
+                .attr("x", d => xScale(d.type) + xScale.bandwidth() / 2)
+                .attr("y", height + 40)
+                .attr("text-anchor", "middle")
+                .attr("font-size", "18px")
+                .attr("font-weight", "bold")
+                .text(d => `${d.icon} ${d.type}`);
+
+            // Ratio indicator
+            const ratio = (avgGPU / avgCPU).toFixed(1);
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", height + 75)
+                .attr("text-anchor", "middle")
+                .attr("font-size", "14px")
+                .attr("fill", barData[1].color)
+                .attr("font-weight", "bold")
+                .text(metricType === "gwp" ? 
+                    `⚠️ GPUs emit ${ratio}× more CO₂ than CPUs` : 
+                    `⚡ GPUs consume ${ratio}× more energy than CPUs`);
+
+        }).catch(error => console.error("Error:", error));
+    }
+
+    // Initialize with GWP
+    drawGPUvsCPUChart("gwp");
+}
+
 // Visualization 4: GPU vs CPU - Combined Comparison Chart
 function createGPUvsCPU_GWP(containerId) {
     const margin = { top: 60, right: 40, bottom: 100, left: 80 };
@@ -2747,11 +3204,11 @@ function createEnvironmentalSimulator(containerId) {
             .style("justify-content", "space-between")
             .style("margin-bottom", "5px")
             .style("font-size", "13px")
-            .html(`<span>⏰ Daily Usage</span><span id="hours-value">8 h/day</span>`);
+            .html(`<span>⏰ Daily Usage</span><span id="hours-value">12 h/day</span>`);
         hoursGroup.append("input")
             .attr("type", "range")
             .attr("id", "sim-hours")
-            .attr("min", 1).attr("max", 24).attr("value", 8)
+            .attr("min", 1).attr("max", 24).attr("value", 12)
             .style("width", "100%");
 
         // Results Panel
@@ -2834,7 +3291,7 @@ function createEnvironmentalSimulator(containerId) {
 
             // Calculate adjusted values
             const yearsFactor = years / 4;
-            const hoursFactor = hours / 8;
+            const hoursFactor = hours / 12;  // API data baseline: 50% workload = 12h/day
 
             const gwp_embedded = cpu.gwp_embedded;
             const gwp_use = cpu.gwp_use * yearsFactor * hoursFactor;
