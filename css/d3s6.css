@@ -1,5 +1,5 @@
 /* ==================== UCBL Section Scoped Variables ==================== */
-#ucbl {
+#case-studies {
     --ucbl-bg: #f3f4f6;
     --ucbl-card: #ffffff;
     --ucbl-text: #1f2937;
@@ -7,7 +7,7 @@
 }
 
 /* ==================== UCBL Section Cards ==================== */
-#ucbl .ucbl-card {
+#case-studies .ucbl-card {
     background: var(--ucbl-card);
     border-radius: 12px;
     padding: 20px;
@@ -16,11 +16,11 @@
     border: 1px solid #e5e7eb;
     transition: transform 0.2s, box-shadow 0.2s;
 }
-#ucbl .ucbl-card:hover {
+#case-studies .ucbl-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
-#ucbl .ucbl-card-header {
+#case-studies .ucbl-card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -28,39 +28,39 @@
     flex-wrap: wrap;
     gap: 10px;
 }
-#ucbl .ucbl-card-header h5 {
+#case-studies .ucbl-card-header h5 {
     margin: 0;
     font-size: 1rem;
     font-weight: 600;
     color: var(--ucbl-text);
 }
-#ucbl .ucbl-chart {
+#case-studies .ucbl-chart {
     width: 100%;
 }
-#ucbl .ucbl-legend {
+#case-studies .ucbl-legend {
     display: flex;
     gap: 15px;
     font-size: 12px;
     flex-wrap: wrap;
 }
-#ucbl .ucbl-legend-wrap {
+#case-studies .ucbl-legend-wrap {
     justify-content: center;
     margin-top: 10px;
 }
-#ucbl .ucbl-legend-scale {
+#case-studies .ucbl-legend-scale {
     display: flex;
     align-items: center;
     gap: 8px;
     font-size: 11px;
 }
-#ucbl .ucbl-legend-scale .color-bar {
+#case-studies .ucbl-legend-scale .color-bar {
     width: 100px;
     height: 12px;
     border-radius: 3px;
 }
 
 /* ==================== UCBL Tooltip ==================== */
-#ucbl #tooltip {
+#case-studies #tooltip {
     position: fixed;
     padding: 10px 14px;
     background: rgba(17, 24, 39, 0.95);
@@ -74,17 +74,17 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     max-width: 250px;
 }
-#ucbl .tooltip-title { font-weight: 600; margin-bottom: 4px; color: #60a5fa; }
-#ucbl .tooltip-value { font-size: 14px; font-weight: 700; }
-#ucbl .tooltip-label { color: #9ca3af; font-size: 10px; }
+#case-studies .tooltip-title { font-weight: 600; margin-bottom: 4px; color: #60a5fa; }
+#case-studies .tooltip-value { font-size: 14px; font-weight: 700; }
+#case-studies .tooltip-label { color: #9ca3af; font-size: 10px; }
 
 /* ==================== UCBL Axis Styles ==================== */
-#ucbl .axis text { fill: #6b7280; font-size: 9px; }
-#ucbl .axis line, #ucbl .axis path { stroke: #e5e7eb; }
-#ucbl .axis-label { font-size: 10px; fill: #6b7280; font-weight: 500; }
+#case-studies .axis text { fill: #6b7280; font-size: 9px; }
+#case-studies .axis line, #case-studies .axis path { stroke: #e5e7eb; }
+#case-studies .axis-label { font-size: 10px; fill: #6b7280; font-weight: 500; }
 
 /* ==================== UCBL Legend Styles ==================== */
-#ucbl .legend { 
+#case-studies .legend { 
     display: flex; 
     justify-content: center; 
     flex-wrap: wrap; 
@@ -94,7 +94,7 @@
     padding-top: 10px; 
     border-top: 1px solid #f3f4f6; 
 }
-#ucbl .legend-item { 
+#case-studies .legend-item { 
     display: flex; 
     align-items: center; 
     gap: 6px; 
@@ -104,25 +104,25 @@
     cursor: pointer; 
     transition: background 0.2s; 
 }
-#ucbl .legend-item:hover { background: #f3f4f6; }
-#ucbl .dot { width: 12px; height: 12px; border-radius: 3px; }
-#ucbl .line-dot { width: 20px; height: 3px; border-radius: 2px; }
+#case-studies .legend-item:hover { background: #f3f4f6; }
+#case-studies .dot { width: 12px; height: 12px; border-radius: 3px; }
+#case-studies .line-dot { width: 20px; height: 3px; border-radius: 2px; }
 
 /* Color scale legend for heatmap */
-#ucbl .color-scale { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 15px; font-size: 10px; }
-#ucbl .color-bar { width: 200px; height: 12px; border-radius: 6px; }
-#ucbl .scale-label { color: #6b7280; }
+#case-studies .color-scale { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 15px; font-size: 10px; }
+#case-studies .color-bar { width: 200px; height: 12px; border-radius: 6px; }
+#case-studies .scale-label { color: #6b7280; }
 
 /* ==================== UCBL KPI badges ==================== */
-#ucbl .kpi-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; margin-left: 8px; }
-#ucbl .kpi-up { background: #dcfce7; color: #166534; }
-#ucbl .kpi-down { background: #fee2e2; color: #991b1b; }
-#ucbl .kpi-neutral { background: #e0e7ff; color: #3730a3; }
+#case-studies .kpi-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; margin-left: 8px; }
+#case-studies .kpi-up { background: #dcfce7; color: #166534; }
+#case-studies .kpi-down { background: #fee2e2; color: #991b1b; }
+#case-studies .kpi-neutral { background: #e0e7ff; color: #3730a3; }
 
 /* ==================== UCBL Data points & Grid ==================== */
-#ucbl .data-point { cursor: pointer; transition: r 0.2s, transform 0.2s; }
-#ucbl .data-point:hover { r: 6; }
-#ucbl .grid-line { stroke: #f3f4f6; stroke-dasharray: 2,2; }
+#case-studies .data-point { cursor: pointer; transition: r 0.2s, transform 0.2s; }
+#case-studies .data-point:hover { r: 6; }
+#case-studies .grid-line { stroke: #f3f4f6; stroke-dasharray: 2,2; }
 
 /* ==================== UCBL Animations ==================== */
 @keyframes ucblFadeInUp {
@@ -149,14 +149,14 @@
     to { transform: scaleX(1); }
 }
 
-#ucbl .ucbl-card { animation: ucblFadeInUp 0.6s ease-out backwards; }
-#ucbl .animate-bar { animation: ucblSlideInLeft 0.5s ease-out backwards; }
-#ucbl .animate-point { animation: ucblScaleIn 0.3s ease-out backwards; }
-#ucbl .animate-path { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: ucblDrawLine 1.5s ease-out forwards; }
-#ucbl .bar-animate { transform-origin: left; animation: ucblGrowBar 0.8s ease-out backwards; }
+#case-studies .ucbl-card { animation: ucblFadeInUp 0.6s ease-out backwards; }
+#case-studies .animate-bar { animation: ucblSlideInLeft 0.5s ease-out backwards; }
+#case-studies .animate-point { animation: ucblScaleIn 0.3s ease-out backwards; }
+#case-studies .animate-path { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: ucblDrawLine 1.5s ease-out forwards; }
+#case-studies .bar-animate { transform-origin: left; animation: ucblGrowBar 0.8s ease-out backwards; }
 
 /* ==================== UCBL Filter Panel Styles ==================== */
-#ucbl .filter-panel {
+#case-studies .filter-panel {
     max-width: 1400px;
     margin: 0 auto 25px auto;
     background: var(--ucbl-card);
@@ -166,13 +166,13 @@
     border: 1px solid #e5e7eb;
     animation: ucblFadeInUp 0.5s ease-out;
 }
-#ucbl .filter-header {
+#case-studies .filter-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 15px;
 }
-#ucbl .filter-title {
+#case-studies .filter-title {
     font-size: 13px;
     font-weight: 600;
     color: #374151;
@@ -180,7 +180,7 @@
     align-items: center;
     gap: 8px;
 }
-#ucbl .filter-reset {
+#case-studies .filter-reset {
     font-size: 11px;
     color: #6b7280;
     background: #f3f4f6;
@@ -190,30 +190,30 @@
     cursor: pointer;
     transition: all 0.2s;
 }
-#ucbl .filter-reset:hover {
+#case-studies .filter-reset:hover {
     background: #e5e7eb;
     color: #374151;
 }
-#ucbl .filter-row {
+#case-studies .filter-row {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     align-items: flex-end;
 }
-#ucbl .filter-group {
+#case-studies .filter-group {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
-#ucbl .filter-label {
+#case-studies .filter-label {
     font-size: 10px;
     text-transform: uppercase;
     color: #6b7280;
     letter-spacing: 0.5px;
     font-weight: 500;
 }
-#ucbl .filter-select, 
-#ucbl .filter-input {
+#case-studies .filter-select, 
+#case-studies .filter-input {
     padding: 8px 12px;
     border: 1px solid #e5e7eb;
     border-radius: 6px;
@@ -224,23 +224,23 @@
     transition: all 0.2s;
     min-width: 80px;
 }
-#ucbl .filter-select:hover, 
-#ucbl .filter-input:hover {
+#case-studies .filter-select:hover, 
+#case-studies .filter-input:hover {
     border-color: #d1d5db;
     background: white;
 }
-#ucbl .filter-select:focus, 
-#ucbl .filter-input:focus {
+#case-studies .filter-select:focus, 
+#case-studies .filter-input:focus {
     outline: none;
     border-color: var(--ucbl-accent);
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
-#ucbl .filter-checkbox-group {
+#case-studies .filter-checkbox-group {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
 }
-#ucbl .filter-chip {
+#case-studies .filter-chip {
     display: inline-flex;
     align-items: center;
     gap: 4px;
@@ -253,29 +253,29 @@
     transition: all 0.2s;
     user-select: none;
 }
-#ucbl .filter-chip:hover {
+#case-studies .filter-chip:hover {
     background: #e5e7eb;
 }
-#ucbl .filter-chip.active {
+#case-studies .filter-chip.active {
     background: var(--ucbl-accent);
     color: white;
     border-color: var(--ucbl-accent);
 }
-#ucbl .filter-chip .chip-dot {
+#case-studies .filter-chip .chip-dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
 }
-#ucbl .filter-range {
+#case-studies .filter-range {
     display: flex;
     align-items: center;
     gap: 8px;
 }
-#ucbl .filter-range span {
+#case-studies .filter-range span {
     font-size: 11px;
     color: #6b7280;
 }
-#ucbl .active-filters {
+#case-studies .active-filters {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -285,7 +285,7 @@
     font-size: 11px;
     color: #6b7280;
 }
-#ucbl .active-filter-tag {
+#case-studies .active-filter-tag {
     display: inline-flex;
     align-items: center;
     gap: 4px;
@@ -295,10 +295,10 @@
     border-radius: 4px;
     font-size: 10px;
 }
-#ucbl .active-filter-tag .remove {
+#case-studies .active-filter-tag .remove {
     cursor: pointer;
     opacity: 0.7;
 }
-#ucbl .active-filter-tag .remove:hover {
+#case-studies .active-filter-tag .remove:hover {
     opacity: 1;
 }
