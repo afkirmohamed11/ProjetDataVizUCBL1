@@ -833,11 +833,139 @@ function initSection3() {
 
         // Create visualizations
         createEnergySplitDonut(energyConsumption);
-        createDigitalGrowthChart(digitalTrends);
-        createEnergyGrowthChart(digitalTrends);
+        createGrowthComparisonChart(digitalTrends);
     }).catch(function(error) {
         console.error('Error loading Section 3 data:', error);
     });
+}
+
+// MAIN CHART: Growth vs Energy Comparison - Shows the efficiency story
+function createGrowthComparisonChart(data) {
+    var container = d3.select('#viz-growth-comparison');
+    container.selectAll('*').remove();
+    
+    var margin = { top: 30, right: 30, bottom: 60, left: 45 };
+    var width = 550 - margin.left - margin.right;
+    var height = 300 - margin.top - margin.bottom;
+
+    var svg = container.append('svg')
+        .attr('viewBox', '0 0 550 300')
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .style('width', '100%')
+        .append('g')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    // Data: Growth percentages (2015 → 2022)
+    var chartData = [
+        { label: 'Traffic', growth: 633, category: 'demand' },
+        { label: 'Workloads', growth: 344, category: 'demand' },
+        { label: 'Users', growth: 77, category: 'demand' },
+        { label: 'DC Energy', growth: 45, category: 'energy' },
+        { label: 'Net Energy', growth: 41, category: 'energy' }
+    ];
+
+    // Scales
+    var x = d3.scaleBand()
+        .domain(chartData.map(function(d) { return d.label; }))
+        .range([0, width])
+        .padding(0.2);
+
+    var y = d3.scaleLinear()
+        .domain([0, 700])
+        .range([height, 0]);
+
+    // Color scale
+    var colorScale = function(d) {
+        if (d.category === 'demand') return '#dc3545';
+        return '#28a745';
+    };
+
+    // Gridlines
+    svg.append('g')
+        .attr('class', 'grid')
+        .call(d3.axisLeft(y).tickSize(-width).tickFormat('').ticks(5))
+        .selectAll('line')
+        .style('stroke', '#e0e0e0')
+        .style('stroke-dasharray', '2,2');
+
+    // Divider line
+    var dividerX = x('Users') + x.bandwidth() + (x('DC Energy') - x('Users') - x.bandwidth()) / 2;
+    svg.append('line')
+        .attr('x1', dividerX).attr('x2', dividerX)
+        .attr('y1', -15).attr('y2', height + 10)
+        .attr('stroke', '#ccc').attr('stroke-width', 1).attr('stroke-dasharray', '4,4');
+
+    // Category labels
+    svg.append('text')
+        .attr('x', (x('Traffic') + x('Users') + x.bandwidth()) / 2)
+        .attr('y', -12)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '11px')
+        .attr('font-weight', '600')
+        .attr('fill', '#dc3545')
+        .text('DEMAND GROWTH');
+
+    svg.append('text')
+        .attr('x', (x('DC Energy') + x('Net Energy') + x.bandwidth()) / 2)
+        .attr('y', -12)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '11px')
+        .attr('font-weight', '600')
+        .attr('fill', '#28a745')
+        .text('ENERGY GROWTH');
+
+    // Draw bars
+    svg.selectAll('.bar')
+        .data(chartData)
+        .enter()
+        .append('rect')
+        .attr('class', 'bar')
+        .attr('x', function(d) { return x(d.label); })
+        .attr('y', height)
+        .attr('width', x.bandwidth())
+        .attr('height', 0)
+        .attr('fill', colorScale)
+        .attr('rx', 4)
+        .transition()
+        .duration(600)
+        .delay(function(d, i) { return i * 100; })
+        .attr('y', function(d) { return y(d.growth); })
+        .attr('height', function(d) { return height - y(d.growth); });
+
+    // Value labels
+    svg.selectAll('.value-label')
+        .data(chartData)
+        .enter()
+        .append('text')
+        .attr('class', 'value-label')
+        .attr('x', function(d) { return x(d.label) + x.bandwidth() / 2; })
+        .attr('y', function(d) { return y(d.growth) - 5; })
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '12px')
+        .attr('font-weight', '700')
+        .attr('fill', function(d) { return colorScale(d); })
+        .attr('opacity', 0)
+        .text(function(d) { return '+' + d.growth + '%'; })
+        .transition()
+        .duration(400)
+        .delay(function(d, i) { return 600 + i * 100; })
+        .attr('opacity', 1);
+
+    // X axis
+    svg.append('g')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(x).tickSize(0))
+        .selectAll('text')
+        .style('font-size', '10px')
+        .attr('dy', '0.8em');
+
+    svg.select('.domain').remove();
+
+    // Y axis
+    svg.append('g')
+        .call(d3.axisLeft(y).tickFormat(function(d) { return d + '%'; }).ticks(5))
+        .selectAll('text')
+        .style('font-size', '9px');
 }
 
 // Donut Chart: Energy Split (Data Centers vs Networks vs Crypto)
@@ -968,167 +1096,8 @@ function createEnergySplitDonut(data) {
     });
 }
 
-// Bar Chart: Digital Growth (2015 vs 2022)
-function createDigitalGrowthChart(data) {
-    var container = d3.select('#viz-digital-growth');
-    container.selectAll('*').remove();
-    
-    var margin = { top: 20, right: 20, bottom: 50, left: 60 };
-    var width = 400 - margin.left - margin.right;
-    var height = 260 - margin.top - margin.bottom;
-
-    var svg = container.append('svg')
-        .attr('viewBox', '0 0 400 260')
-        .attr('preserveAspectRatio', 'xMidYMid meet')
-        .style('width', '100%')
-        .append('g')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-    // Prepare data - filter for digital growth metrics
-    var chartData = [
-        { label: 'Internet\nUsers (B)', value2015: 3.0, value2022: 5.3, unit: 'B' },
-        { label: 'Traffic\n(ZB)', value2015: 0.6, value2022: 4.4, unit: 'ZB' },
-        { label: 'DC Work-\nloads (M)', value2015: 180, value2022: 800, unit: 'M' }
-    ];
-
-    // For traffic, scale to show difference better
-    var x0 = d3.scaleBand()
-        .domain(chartData.map(function(d) { return d.label; }))
-        .range([0, width])
-        .padding(0.3);
-
-    var x1 = d3.scaleBand()
-        .domain(['2015', '2022'])
-        .range([0, x0.bandwidth()])
-        .padding(0.1);
-
-    // Normalize values for visualization (scale to 0-100)
-    var maxVals = chartData.map(function(d) { return Math.max(d.value2015, d.value2022); });
-    
-    var y = d3.scaleLinear()
-        .domain([0, 100])
-        .range([height, 0]);
-
-    // Gridlines
-    svg.append('g')
-        .attr('class', 'grid')
-        .call(d3.axisLeft(y)
-            .tickSize(-width)
-            .tickFormat('')
-            .ticks(5)
-        )
-        .selectAll('line')
-        .style('stroke', '#e0e0e0')
-        .style('stroke-dasharray', '3,3');
-
-    // Draw bars
-    var groups = svg.selectAll('.bar-group')
-        .data(chartData)
-        .enter()
-        .append('g')
-        .attr('class', 'bar-group')
-        .attr('transform', function(d) { return 'translate(' + x0(d.label) + ',0)'; });
-
-    // 2015 bars
-    groups.append('rect')
-        .attr('x', x1('2015'))
-        .attr('y', function(d, i) { 
-            var normalized = (d.value2015 / maxVals[i]) * 80;
-            return y(normalized); 
-        })
-        .attr('width', x1.bandwidth())
-        .attr('height', function(d, i) { 
-            var normalized = (d.value2015 / maxVals[i]) * 80;
-            return height - y(normalized); 
-        })
-        .attr('fill', '#6c757d')
-        .attr('rx', 3);
-
-    // 2022 bars
-    groups.append('rect')
-        .attr('x', x1('2022'))
-        .attr('y', function(d, i) { 
-            var normalized = (d.value2022 / maxVals[i]) * 80;
-            return y(normalized); 
-        })
-        .attr('width', x1.bandwidth())
-        .attr('height', function(d, i) { 
-            var normalized = (d.value2022 / maxVals[i]) * 80;
-            return height - y(normalized); 
-        })
-        .attr('fill', '#06A3DA')
-        .attr('rx', 3);
-
-    // Value labels on bars
-    groups.append('text')
-        .attr('x', x1('2015') + x1.bandwidth() / 2)
-        .attr('y', function(d, i) { 
-            var normalized = (d.value2015 / maxVals[i]) * 80;
-            return y(normalized) - 5; 
-        })
-        .attr('text-anchor', 'middle')
-        .attr('font-size', '9px')
-        .attr('fill', '#666')
-        .text(function(d) { return d.value2015; });
-
-    groups.append('text')
-        .attr('x', x1('2022') + x1.bandwidth() / 2)
-        .attr('y', function(d, i) { 
-            var normalized = (d.value2022 / maxVals[i]) * 80;
-            return y(normalized) - 5; 
-        })
-        .attr('text-anchor', 'middle')
-        .attr('font-size', '9px')
-        .attr('font-weight', '600')
-        .attr('fill', '#06A3DA')
-        .text(function(d) { return d.value2022; });
-
-    // X axis
-    svg.append('g')
-        .attr('transform', 'translate(0,' + height + ')')
-        .call(d3.axisBottom(x0).tickSize(0))
-        .selectAll('text')
-        .style('font-size', '9px')
-        .style('text-anchor', 'middle')
-        .each(function(d) {
-            var el = d3.select(this);
-            var lines = d.split('\n');
-            el.text('');
-            lines.forEach(function(line, i) {
-                el.append('tspan')
-                    .attr('x', 0)
-                    .attr('dy', i === 0 ? '0.6em' : '1.1em')
-                    .text(line);
-            });
-        });
-
-    svg.select('.domain').remove();
-
-    // Legend
-    var legend = svg.append('g')
-        .attr('transform', 'translate(' + (width - 100) + ', -5)');
-
-    legend.append('rect').attr('width', 12).attr('height', 12).attr('fill', '#6c757d').attr('rx', 2);
-    legend.append('text').attr('x', 16).attr('y', 10).text('2015').attr('font-size', '10px');
-    legend.append('rect').attr('x', 55).attr('width', 12).attr('height', 12).attr('fill', '#06A3DA').attr('rx', 2);
-    legend.append('text').attr('x', 71).attr('y', 10).text('2022').attr('font-size', '10px');
-
-    // Growth % labels
-    groups.append('text')
-        .attr('x', x0.bandwidth() / 2)
-        .attr('y', height + 40)
-        .attr('text-anchor', 'middle')
-        .attr('font-size', '10px')
-        .attr('font-weight', '600')
-        .attr('fill', '#28a745')
-        .text(function(d) { 
-            var growth = ((d.value2022 - d.value2015) / d.value2015 * 100).toFixed(0);
-            return '+' + growth + '%';
-        });
-}
-
-// Bar Chart: Energy Growth (2015 vs 2022)
-function createEnergyGrowthChart(data) {
+// Bar Chart: Energy Growth (2015 vs 2022) - REMOVED, replaced by createGrowthComparisonChart
+function createEnergyGrowthChart_DEPRECATED(data) {
     var container = d3.select('#viz-energy-growth');
     container.selectAll('*').remove();
     
