@@ -24,6 +24,26 @@
             $('.sticky-top').removeClass('shadow-sm').css('top', '-100px');
         }
     });
+
+
+    // Scroll Spy - Update active nav link based on scroll position
+    $(window).on('scroll', function () {
+        var scrollPos = $(document).scrollTop() + 100; // offset for navbar height
+        $('.navbar-nav .nav-link').each(function () {
+            var href = $(this).attr('href');
+            if (href && href.startsWith('#')) {
+                var section = $(href);
+                if (section.length) {
+                    var sectionTop = section.offset().top;
+                    var sectionBottom = sectionTop + section.outerHeight();
+                    if (scrollPos >= sectionTop && scrollPos < sectionBottom) {
+                        $('.navbar-nav .nav-link').removeClass('active');
+                        $(this).addClass('active');
+                    }
+                }
+            }
+        });
+    });
     
     
     // Back to top button
