@@ -437,8 +437,10 @@
             const data5 = parseCSV(table5);
             const data6 = parseCSV(table6);
 
-            renderEfficiencyMetricsChart(data5);
-            renderWaterBreakdownChart(data6);
+            // Efficiency: PUE & WUE Trends - COMMENTED OUT
+            // renderEfficiencyMetricsChart(data5);
+            // Water Consumption Breakdown - COMMENTED OUT
+            // renderWaterBreakdownChart(data6);
         }).catch(error => {
             console.error('Error loading California data:', error);
         });
