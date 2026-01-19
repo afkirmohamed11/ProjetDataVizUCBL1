@@ -409,24 +409,106 @@ function createEnvironmentalSimulator(containerId) {
     const container = d3.select(`#${containerId}`);
 
     d3.json("data/terminals/cpu_data_enriched.json").then(data => {
+<<<<<<< HEAD
+        // Build the simulator UI
+        const wrapper = container.append("div")
+            .style("width", "100%")
+            .style("margin", "0 auto")
+            .style("padding", "20px");
+
+        // Title
+        wrapper.append("div")
+            .style("text-align", "center")
+            .style("margin-bottom", "25px")
+            .html(`
+                <h3 style="color: #2c3e50; margin: 0; font-size: 28px;">CPU Environmental Impact Simulator</h3>
+                <p style="color: #7f8c8d; font-size: 16px; margin-top: 8px;">Select a CPU and adjust usage to see environmental impact</p>
+            `);
+
+        // Main layout - simpler 2 column
+        const mainLayout = wrapper.append("div")
+            .style("display", "grid")
+            .style("grid-template-columns", "350px 1fr")
+            .style("gap", "30px");
+=======
         const wrapper = container.append("div").style("max-width", "1000px").style("margin", "0 auto").style("padding", "20px");
 
         wrapper.append("div").style("text-align", "center").style("margin-bottom", "25px")
             .html(`<h3 style="color: #2c3e50; margin: 0;"> CPU Environmental Impact Simulator</h3><p style="color: #7f8c8d; font-size: 13px; margin-top: 8px;">Select a CPU and adjust usage to see environmental impact</p>`);
 
         const mainLayout = wrapper.append("div").style("display", "grid").style("grid-template-columns", "300px 1fr").style("gap", "25px");
+>>>>>>> 11e4e0332d6de23fec242e7c19c3585600444884
 
         const controlsPanel = mainLayout.append("div").style("background", "#f8f9fa").style("padding", "20px").style("border-radius", "12px").style("border", "2px solid #e9ecef");
         controlsPanel.append("h4").style("color", "#2c3e50").style("margin", "0 0 15px 0").style("font-size", "16px").text("⚙️ Configuration");
 
+<<<<<<< HEAD
+        controlsPanel.append("h4")
+            .style("color", "#2c3e50")
+            .style("margin", "0 0 15px 0")
+            .style("font-size", "20px")
+            .style("border-bottom", "2px solid #3498db")
+            .style("padding-bottom", "10px")
+            .text("Configuration");
+
+        // CPU Dropdown
+        const cpuGroup = controlsPanel.append("div").style("margin-bottom", "20px");
+        cpuGroup.append("label")
+            .style("display", "block")
+            .style("margin-bottom", "5px")
+            .style("font-size", "16px")
+            .style("font-weight", "bold")
+            .style("color", "#2c3e50")
+            .text("Select a CPU:");
+
+        const cpuSelect = cpuGroup.append("select")
+            .attr("id", "sim-cpu")
+            .style("width", "100%")
+            .style("padding", "10px")
+            .style("border-radius", "6px")
+            .style("border", "1px solid #ddd")
+            .style("font-size", "14px")
+            .style("cursor", "pointer");
+=======
         const cpuGroup = controlsPanel.append("div").style("margin-bottom", "20px");
         cpuGroup.append("label").style("display", "block").style("margin-bottom", "5px").style("font-size", "13px").style("font-weight", "bold").style("color", "#2c3e50").text("💻 Select a CPU:");
 
         const cpuSelect = cpuGroup.append("select").attr("id", "sim-cpu").style("width", "100%").style("padding", "10px").style("border-radius", "6px").style("border", "1px solid #ddd").style("font-size", "12px").style("cursor", "pointer");
         cpuSelect.selectAll("option").data(data.sort((a, b) => a.name.localeCompare(b.name))).enter().append("option").attr("value", (d, i) => i).text(d => `${d.name} (${d.tdp}W, ${d.cores} cores)`);
+>>>>>>> 11e4e0332d6de23fec242e7c19c3585600444884
 
         controlsPanel.append("div").attr("id", "cpu-info").style("background", "#e3f2fd").style("padding", "12px").style("border-radius", "8px").style("margin-bottom", "20px").style("font-size", "12px");
 
+<<<<<<< HEAD
+        // Usage sliders
+        const yearsGroup = controlsPanel.append("div").style("margin-bottom", "15px");
+        yearsGroup.append("label")
+            .style("display", "flex")
+            .style("justify-content", "space-between")
+            .style("margin-bottom", "5px")
+            .style("font-size", "15px")
+            .style("font-weight", "500")
+            .html(`<span>Usage Duration</span><span id="years-value">4 years</span>`);
+        yearsGroup.append("input")
+            .attr("type", "range")
+            .attr("id", "sim-years")
+            .attr("min", 1).attr("max", 10).attr("value", 4)
+            .style("width", "100%");
+
+        const hoursGroup = controlsPanel.append("div").style("margin-bottom", "15px");
+        hoursGroup.append("label")
+            .style("display", "flex")
+            .style("justify-content", "space-between")
+            .style("margin-bottom", "5px")
+            .style("font-size", "15px")
+            .style("font-weight", "500")
+            .html(`<span>Daily Usage</span><span id="hours-value">12 h/day</span>`);
+        hoursGroup.append("input")
+            .attr("type", "range")
+            .attr("id", "sim-hours")
+            .attr("min", 1).attr("max", 24).attr("value", 12)
+            .style("width", "100%");
+=======
         const yearsGroup = controlsPanel.append("div").style("margin-bottom", "15px");
         yearsGroup.append("label").style("display", "flex").style("justify-content", "space-between").style("margin-bottom", "5px").style("font-size", "13px").html(`<span>📅 Usage Duration</span><span id="years-value">4 years</span>`);
         yearsGroup.append("input").attr("type", "range").attr("id", "sim-years").attr("min", 1).attr("max", 10).attr("value", 4).style("width", "100%");
@@ -434,22 +516,80 @@ function createEnvironmentalSimulator(containerId) {
         const hoursGroup = controlsPanel.append("div").style("margin-bottom", "15px");
         hoursGroup.append("label").style("display", "flex").style("justify-content", "space-between").style("margin-bottom", "5px").style("font-size", "13px").html(`<span>⏰ Daily Usage</span><span id="hours-value">12 h/day</span>`);
         hoursGroup.append("input").attr("type", "range").attr("id", "sim-hours").attr("min", 1).attr("max", 24).attr("value", 12).style("width", "100%");
+>>>>>>> 11e4e0332d6de23fec242e7c19c3585600444884
 
         const resultsPanel = mainLayout.append("div");
         const cardsContainer = resultsPanel.append("div").style("display", "grid").style("grid-template-columns", "repeat(3, 1fr)").style("gap", "15px").style("margin-bottom", "20px");
 
+<<<<<<< HEAD
+        function createCard(parent, id, title, color) {
+            const card = parent.append("div")
+                .attr("id", id)
+                .style("background", "white")
+                .style("padding", "20px")
+                .style("border-radius", "10px")
+                .style("text-align", "center")
+                .style("border-top", `4px solid ${color}`)
+                .style("box-shadow", "0 2px 8px rgba(0,0,0,0.08)");
+
+            card.append("div").style("font-size", "14px").style("color", "#7f8c8d").style("text-transform", "uppercase").style("letter-spacing", "1px").style("margin-bottom", "10px").text(title);
+            card.append("div").attr("class", "value").style("font-size", "32px").style("font-weight", "bold").style("color", color).text("--");
+            card.append("div").attr("class", "unit").style("font-size", "14px").style("color", "#95a5a6").style("margin-top", "5px").text("");
+=======
         function createCard(parent, id, emoji, title, color) {
             const card = parent.append("div").attr("id", id).style("background", "white").style("padding", "20px").style("border-radius", "10px").style("text-align", "center").style("border-left", `4px solid ${color}`).style("box-shadow", "0 2px 8px rgba(0,0,0,0.08)");
             card.append("div").style("font-size", "30px").text(emoji);
             card.append("div").style("font-size", "12px").style("color", "#7f8c8d").style("margin", "5px 0").text(title);
             card.append("div").attr("class", "value").style("font-size", "24px").style("font-weight", "bold").style("color", color).text("--");
             card.append("div").attr("class", "unit").style("font-size", "11px").style("color", "#95a5a6").text("");
+>>>>>>> 11e4e0332d6de23fec242e7c19c3585600444884
         }
 
-        createCard(cardsContainer, "gwp-card", "🌍", "CO₂ Emissions", "#27ae60");
-        createCard(cardsContainer, "pe-card", "⚡", "Energy", "#e74c3c");
-        createCard(cardsContainer, "adp-card", "💎", "Resources", "#f39c12");
+        createCard(cardsContainer, "gwp-card", "CO₂ Emissions", "#27ae60");
+        createCard(cardsContainer, "pe-card", "Energy", "#e74c3c");
+        createCard(cardsContainer, "adp-card", "Resources", "#f39c12");
 
+<<<<<<< HEAD
+        // Breakdown bars (simpler)
+        const breakdownDiv = resultsPanel.append("div")
+            .style("background", "white")
+            .style("padding", "20px")
+            .style("border-radius", "10px")
+            .style("box-shadow", "0 2px 8px rgba(0,0,0,0.08)")
+            .style("margin-bottom", "15px");
+
+        breakdownDiv.append("h5")
+            .style("margin", "0 0 15px 0")
+            .style("color", "#2c3e50")
+            .style("font-size", "18px")
+            .style("border-bottom", "2px solid #3498db")
+            .style("padding-bottom", "8px")
+            .text("Manufacturing vs Usage");
+
+        const barContainer = breakdownDiv.append("div").attr("id", "breakdown-bars");
+
+        // Equivalents (clean integrated design)
+        const equivDiv = resultsPanel.append("div")
+            .style("background", "white")
+            .style("padding", "20px")
+            .style("border-radius", "10px")
+            .style("box-shadow", "0 2px 8px rgba(0,0,0,0.08)")
+            .style("border-top", "4px solid #27ae60");
+
+        equivDiv.append("h5")
+            .style("margin", "0 0 15px 0")
+            .style("font-size", "18px")
+            .style("color", "#2c3e50")
+            .style("font-weight", "600")
+            .text("Environmental Equivalents");
+        
+        const equivContent = equivDiv.append("div")
+            .attr("id", "equiv-content")
+            .style("display", "grid")
+            .style("grid-template-columns", "repeat(3, 1fr)")
+            .style("gap", "15px")
+            .style("text-align", "center");
+=======
         const breakdownDiv = resultsPanel.append("div").style("background", "white").style("padding", "20px").style("border-radius", "10px").style("box-shadow", "0 2px 8px rgba(0,0,0,0.08)").style("margin-bottom", "15px");
         breakdownDiv.append("h5").style("margin", "0 0 15px 0").style("color", "#2c3e50").style("font-size", "14px").text("📊 Manufacturing vs Usage");
         breakdownDiv.append("div").attr("id", "breakdown-bars");
@@ -457,6 +597,7 @@ function createEnvironmentalSimulator(containerId) {
         const equivDiv = resultsPanel.append("div").style("background", "linear-gradient(135deg, #27ae60, #2ecc71)").style("color", "white").style("padding", "15px 20px").style("border-radius", "10px");
         equivDiv.append("h5").style("margin", "0 0 10px 0").style("font-size", "13px").text("🌱 Equivalent to:");
         equivDiv.append("div").attr("id", "equiv-content").style("display", "flex").style("gap", "20px").style("justify-content", "center").style("font-size", "13px");
+>>>>>>> 11e4e0332d6de23fec242e7c19c3585600444884
 
         function updateSimulation() {
             const cpuIndex = +document.getElementById("sim-cpu").value;
@@ -468,6 +609,10 @@ function createEnvironmentalSimulator(containerId) {
             document.getElementById("hours-value").textContent = hours + " h/day";
             d3.select("#cpu-info").html(`<strong>${cpu.name}</strong><br/>🏭 ${cpu.manufacturer} • ⚡ ${cpu.tdp}W • 🔢 ${cpu.cores} cores`);
 
+<<<<<<< HEAD
+            // Calculate adjusted values
+=======
+>>>>>>> 11e4e0332d6de23fec242e7c19c3585600444884
             const yearsFactor = years / 4;
             const hoursFactor = hours / 12;
 
@@ -494,14 +639,60 @@ function createEnvironmentalSimulator(containerId) {
             const pePct = (pe_embedded / pe_total * 100).toFixed(0);
 
             d3.select("#breakdown-bars").html(`
+<<<<<<< HEAD
+                <div style="margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 4px;">
+                        <span style="font-weight: 500;">CO₂ Emissions</span>
+                        <span style="color: #7f8c8d;">${gwpPct}% mfg / ${100-gwpPct}% use</span>
+                    </div>
+                    <div style="height: 24px; background: #ecf0f1; border-radius: 10px; overflow: hidden; display: flex;">
+                        <div style="width: ${gwpPct}%; background: #3498db;"></div>
+                        <div style="width: ${100-gwpPct}%; background: #e74c3c;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 4px;">
+                        <span style="font-weight: 500;">Energy Consumption</span>
+                        <span style="color: #7f8c8d;">${pePct}% mfg / ${100-pePct}% use</span>
+                    </div>
+                    <div style="height: 24px; background: #ecf0f1; border-radius: 10px; overflow: hidden; display: flex;">
+                        <div style="width: ${pePct}%; background: #3498db;"></div>
+                        <div style="width: ${100-pePct}%; background: #e74c3c;"></div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 20px; margin-top: 12px; font-size: 14px;">
+                    <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #3498db; border-radius: 2px;"></span> Manufacturing</span>
+                    <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #e74c3c; border-radius: 2px;"></span> Usage</span>
+                </div>
+=======
                 <div style="margin-bottom: 12px;"><div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;"><span>🌍 CO₂</span><span>${gwpPct}% mfg / ${100-gwpPct}% use</span></div><div style="height: 20px; background: #ecf0f1; border-radius: 10px; overflow: hidden; display: flex;"><div style="width: ${gwpPct}%; background: #3498db;"></div><div style="width: ${100-gwpPct}%; background: #e74c3c;"></div></div></div>
                 <div><div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;"><span>⚡ Energy</span><span>${pePct}% mfg / ${100-pePct}% use</span></div><div style="height: 20px; background: #ecf0f1; border-radius: 10px; overflow: hidden; display: flex;"><div style="width: ${pePct}%; background: #3498db;"></div><div style="width: ${100-pePct}%; background: #e74c3c;"></div></div></div>
                 <div style="display: flex; gap: 15px; margin-top: 10px; font-size: 11px; color: #7f8c8d;"><span>🟦 Manufacturing</span><span>🟥 Usage</span></div>
+>>>>>>> 11e4e0332d6de23fec242e7c19c3585600444884
             `);
 
             const carKm = gwp_total / 0.12;
             const trees = gwp_total / 21;
+<<<<<<< HEAD
+            const smartphones = gwp_total / 70; // Smartphone lifecycle ~70kg CO2
+            
+            d3.select("#equiv-content").html(`
+                <div style="padding: 12px; border-left: 3px solid #3498db;">
+                    <div style="font-size: 24px; font-weight: bold; color: #3498db;">${carKm >= 1000 ? (carKm/1000).toFixed(1) + 'k' : carKm.toFixed(0)} km</div>
+                    <div style="font-size: 14px; color: #7f8c8d;">driven by car</div>
+                </div>
+                <div style="padding: 12px; border-left: 3px solid #27ae60;">
+                    <div style="font-size: 24px; font-weight: bold; color: #27ae60;">${trees.toFixed(1)} trees</div>
+                    <div style="font-size: 14px; color: #7f8c8d;">needed/year to offset</div>
+                </div>
+                <div style="padding: 12px; border-left: 3px solid #9b59b6;">
+                    <div style="font-size: 24px; font-weight: bold; color: #9b59b6;">${smartphones.toFixed(1)}x</div>
+                    <div style="font-size: 14px; color: #7f8c8d;">smartphone lifecycles</div>
+                </div>
+            `);
+=======
             d3.select("#equiv-content").html(`<span>🚗 ${carKm.toFixed(0)} km by car</span><span>•</span><span>🌳 ${trees.toFixed(1)} trees to offset</span>`);
+>>>>>>> 11e4e0332d6de23fec242e7c19c3585600444884
         }
 
         document.getElementById("sim-cpu").addEventListener("change", updateSimulation);
