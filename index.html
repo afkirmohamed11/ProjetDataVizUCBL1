@@ -45,7 +45,7 @@
     <!-- Navbar Start -->
     <nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5">
         <a href="index.html" class="navbar-brand d-flex align-items-center">
-            <h1 class="m-0">Data ?</h1>
+            <h1 class="m-0" style="font-size: 1.5rem;">The Hidden Cost of Data</h1>
         </a>
         <button type="button" class="navbar-toggler me-0" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
@@ -55,9 +55,8 @@
                 <a href="#intro" class="nav-item nav-link active">Daily Lives</a>
                 <a href="#device" class="nav-item nav-link">Your Device</a>
                 <a href="#network" class="nav-item nav-link">Network</a>
-                <a href="#servers" class="nav-item nav-link">Servers</a>
                 <a href="#global" class="nav-item nav-link">Global</a>
-                <a href="#ucbl" class="nav-item nav-link">UCBL1</a>
+                <a href="#case-studies" class="nav-item nav-link">Case Studies</a>
                 <a href="#solutions" class="nav-item nav-link">Solutions</a>
                 <a href="#team" class="nav-item nav-link">Team</a>
             </div>
@@ -134,7 +133,7 @@
             </div>
 
             <!-- Static Reference KPIs -->
-            <div class="row g-4 mt-4">
+            <!-- <div class="row g-4 mt-4">
                 <div class="col-6 col-md-3 wow fadeIn" data-wow-delay="0.1s">
                     <div class="text-center bg-primary py-4 px-3 rounded">
                         <h2 class="display-6 text-white mb-2">~350</h2>
@@ -159,7 +158,7 @@
                         <span class="fs-6 fw-semi-bold text-secondary">Daily Internet/Person</span>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 
@@ -217,7 +216,7 @@
     </div>
 
     <!-- Part C: Visual Metaphor - Your Devices Are Working -->
-    <div class="container-xxl py-5">
+    <!-- <div class="container-xxl py-5">
         <div class="container">
             <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 800px;">
                 <p class="section-title bg-white text-center text-primary px-3">Device Power</p>
@@ -228,7 +227,6 @@
                 <div class="col-lg-10 mx-auto">
                     <div class="bg-light p-4 rounded shadow-sm">
                         <div id="sec1-device-metaphor" style="min-height: 300px;">
-                            <!-- D3 Visualization: Device Energy Metaphor -->
                             <div class="text-center py-5">
                                 <div class="spinner-border text-primary" role="status">
                                     <span class="visually-hidden">Loading...</span>
@@ -239,14 +237,14 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Part D: Transition - Where Does the Data Go? -->
     <div class="container-xxl py-5 bg-dark">
         <div class="container">
             <div class="row g-5 align-items-center">
                 <div class="col-lg-5 wow fadeIn" data-wow-delay="0.3s">
-                    <p class="section-title text-start text-secondary pe-3" style="background: transparent;">Transition</p>
+                    <p class="section-title text-start text-secondary pe-3" style="background: transparent;">Next ?</p>
                     <h2 class="text-white mb-4">Your Device is Only the Beginning</h2>
                     <p class="text-white-50 mb-4 fs-6">
                         Every message sent, video streamed, or website visited generates data that travels far beyond your screen — through routers, switches, and data centers across the globe.
@@ -344,123 +342,11 @@
         </div>
     </div>
 
-    <!-- Section 4: Servers -->
-    <div id="servers" class="container-xxl py-5 bg-light">
-        <div class="container">
-             <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 800px;">
-                <p class="section-title bg-white text-center text-primary px-3">Section 4</p>
-                <h1 class="mb-5">Servers & Data Centers: The Engines Behind the Internet</h1>
-                <p class="fs-5 mb-4">Servers are responsible for storage, computation, and data delivery. Their energy consumption vastly exceeds that of individual devices.</p>
-            </div>
-            <div class="row g-5">
-                 <div class="col-lg-12 wow fadeIn" data-wow-delay="0.3s">
-                    <div class="bg-white p-4 rounded shadow-sm" style="overflow: hidden;">
-                        <h4 class="mb-3">3D Energy Proportionality Analysis: SPECpower Dataset</h4>
-                        <div id="servers-3d-container" style="min-height: 900px; overflow: hidden; position: relative;">
-                            <!-- 3D Energy Proportionality Visualization will be rendered here -->
-                            <p class="text-muted text-center">Loading 3D energy proportionality visualization...</p>
-                        </div>
-                    </div>
-                 </div>
-            </div>
-
-            <!-- California Data Centers Environmental Impact -->
-            <div class="row g-5 mt-4">
-                <div class="col-lg-12 wow fadeIn" data-wow-delay="0.5s">
-                    <div class="bg-white p-4 rounded shadow-sm">
-                        <h4 class="mb-3">California Data Centers: Environmental Impact Over Time</h4>
-                        <p class="text-muted mb-4">A multi-dimensional view of carbon emissions, electricity consumption, water usage, and health costs from California data centers (2019-2028 projections).</p>
-                        <div class="row mb-3">
-                            <div class="col-md-12">
-                                <label class="form-label fw-bold">Select Metrics to Display:</label>
-                                <div id="california-metric-toggles" class="d-flex flex-wrap gap-2">
-                                    <button class="btn btn-sm btn-primary active" data-metric="carbon">Carbon Emissions</button>
-                                    <button class="btn btn-sm btn-outline-primary" data-metric="electricity">Electricity</button>
-                                    <button class="btn btn-sm btn-outline-primary" data-metric="water">Water</button>
-                                    <button class="btn btn-sm btn-outline-primary" data-metric="health">Health Costs</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="california-impact-chart" style="min-height: 500px; position: relative;">
-                            <p class="text-muted text-center">Loading California impact visualization...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- California vs US Electricity Comparison -->
-            <div class="row g-5 mt-4">
-                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">
-                    <div class="bg-white p-4 rounded shadow-sm h-100">
-                        <h4 class="mb-3">California vs US Data Center Electricity</h4>
-                        <p class="text-muted mb-3">Comparing California's data center electricity consumption with the national total.</p>
-                        <div id="california-vs-us-chart" style="min-height: 400px; position: relative;">
-                            <p class="text-muted text-center">Loading comparison chart...</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
-                    <div class="bg-white p-4 rounded shadow-sm h-100">
-                        <h4 class="mb-3">Emission Factors: California vs US</h4>
-                        <p class="text-muted mb-3">California's cleaner grid results in significantly lower emission factors.</p>
-                        <div id="emission-factors-chart" style="min-height: 400px; position: relative;">
-                            <p class="text-muted text-center">Loading emission factors chart...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Efficiency Metrics and Water Consumption -->
-            <div class="row g-5 mt-4">
-                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">
-                    <div class="bg-white p-4 rounded shadow-sm h-100">
-                        <h4 class="mb-3">Data Center Efficiency: PUE & WUE Trends</h4>
-                        <p class="text-muted mb-3">Power Usage Effectiveness (PUE) and Water Usage Effectiveness (WUE) over time.</p>
-                        <div id="efficiency-metrics-chart" style="min-height: 400px; position: relative;">
-                            <p class="text-muted text-center">Loading efficiency metrics...</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
-                    <div class="bg-white p-4 rounded shadow-sm h-100">
-                        <h4 class="mb-3">Water Consumption Breakdown</h4>
-                        <p class="text-muted mb-3">On-site vs off-site water consumption in California data centers.</p>
-                        <div id="water-breakdown-chart" style="min-height: 400px; position: relative;">
-                            <p class="text-muted text-center">Loading water breakdown...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Health Costs and CA Share -->
-            <div class="row g-5 mt-4">
-                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">
-                    <div class="bg-white p-4 rounded shadow-sm h-100">
-                        <h4 class="mb-3">Health Costs: Scope 1 vs Scope 2</h4>
-                        <p class="text-muted mb-3">Direct (Scope 1) and indirect (Scope 2) health costs from data center emissions.</p>
-                        <div id="health-costs-chart" style="min-height: 400px; position: relative;">
-                            <p class="text-muted text-center">Loading health costs chart...</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
-                    <div class="bg-white p-4 rounded shadow-sm h-100">
-                        <h4 class="mb-3">California's Share of State Electricity & Emissions</h4>
-                        <p class="text-muted mb-3">Data centers' growing share of California's total electricity and emissions.</p>
-                        <div id="ca-share-chart" style="min-height: 400px; position: relative;">
-                            <p class="text-muted text-center">Loading CA share chart...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Section 5: Global - Big Picture: Data Center Efficiency & Its Limits -->
+    <!-- Section 4: Global - Big Picture: Data Center Efficiency & Its Limits -->
     <div id="global" class="container-xxl py-5">
         <div class="container">
             <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 800px;">
-                <p class="section-title bg-white text-center text-primary px-3">Section 5</p>
+                <p class="section-title bg-white text-center text-primary px-3">Section 4</p>
                 <h1 class="mb-4">Data Center Efficiency: Progress & Limits</h1>
                 <p class="fs-5 mb-5">Data centers consume <strong>1-2% of global electricity</strong> (~200 TWh/year). Over 18 years, efficiency improved by 32% — but demand grows even faster.</p>
             </div>
@@ -519,20 +405,82 @@
                 <div class="col-12 wow fadeIn" data-wow-delay="0.4s">
                     <div class="alert alert-warning mb-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
                         <span><strong>The Paradox:</strong> Efficiency improved 32%, but data demand grew 300%. Location matters — Sweden emits 140x less CO₂ than India for the same computation.</span>
-                        <a href="#ucbl" class="btn btn-sm btn-outline-dark">See Real Example →</a>
+                        <a href="#case-studies" class="btn btn-sm btn-outline-dark">See Real Examples →</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Section 6: UCBL1 Case Study -->
-    <div id="ucbl" class="container-xxl py-5 bg-light">
+    <!-- Section 5: Case Studies -->
+    <div id="case-studies" class="container-xxl py-5 bg-light">
         <div class="container">
             <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 800px;">
-                <p class="section-title bg-light text-center text-primary px-3">Case Study</p>
-                <h1 class="mb-4">UCBL1 Data Center Energy Analysis</h1>
-                <p class="fs-5 mb-5">Real energy consumption data from a university data center reveals patterns and optimization opportunities.</p>
+                <p class="section-title bg-light text-center text-primary px-3">Section 5</p>
+                <h1 class="mb-4">Real-World Case Studies</h1>
+                <p class="fs-5 mb-5">Examining real data center energy consumption patterns from California and a university data center to understand environmental impact.</p>
+            </div>
+
+            <!-- ==================== CASE STUDY 1: CALIFORNIA ==================== -->
+            <div class="mb-5">
+                <h3 class="text-primary mb-4"><i class="fas fa-sun me-2"></i>Case Study 1: California Data Centers</h3>
+                <p class="text-muted mb-4">California hosts some of the world's largest data centers. This analysis covers environmental impact from 2019-2028 (with projections). 
+                    <a href="https://www.next10.org/publications/ai-environmental-public-health-impacts" target="_blank" class="text-primary"><i class="fas fa-external-link-alt me-1"></i>Source: Next10.org</a>
+                </p>
+                
+                <!-- California Environmental Impact -->
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-12 wow fadeIn" data-wow-delay="0.1s">
+                        <div class="bg-white p-4 rounded shadow-sm">
+                            <h5 class="mb-3">Environmental Impact Over Time</h5>
+                            <p class="text-muted mb-3">Compare carbon emissions, electricity, water usage, and health costs using the filters below.</p>
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label class="form-label fw-bold">Select Metrics:</label>
+                                    <div id="california-metric-toggles" class="d-flex flex-wrap gap-2">
+                                        <button class="btn btn-sm btn-primary active" data-metric="carbon">Carbon Emissions</button>
+                                        <button class="btn btn-sm btn-outline-primary" data-metric="electricity">Electricity</button>
+                                        <button class="btn btn-sm btn-outline-primary" data-metric="water">Water</button>
+                                        <button class="btn btn-sm btn-outline-primary" data-metric="health">Health Costs</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="california-impact-chart" style="min-height: 450px; position: relative;">
+                                <p class="text-muted text-center">Loading California impact visualization...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Efficiency & Water -->
+                <div class="row g-4">
+                    <div class="col-lg-6 wow fadeIn" data-wow-delay="0.2s">
+                        <div class="bg-white p-4 rounded shadow-sm h-100">
+                            <h5 class="mb-3">Efficiency: PUE & WUE Trends</h5>
+                            <p class="text-muted small mb-3">Power and Water Usage Effectiveness over time.</p>
+                            <div id="efficiency-metrics-chart" style="min-height: 350px; position: relative;">
+                                <p class="text-muted text-center">Loading efficiency metrics...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">
+                        <div class="bg-white p-4 rounded shadow-sm h-100">
+                            <h5 class="mb-3">Water Consumption Breakdown</h5>
+                            <p class="text-muted small mb-3">On-site cooling vs off-site (electricity generation) water use.</p>
+                            <div id="water-breakdown-chart" style="min-height: 350px; position: relative;">
+                                <p class="text-muted text-center">Loading water breakdown...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-5">
+
+            <!-- ==================== CASE STUDY 2: UCBL1 ==================== -->
+            <div>
+                <h3 class="text-primary mb-4"><i class="fas fa-university me-2"></i>Case Study 2: University Data Center (UCBL1)</h3>
+                <p class="text-muted mb-4">Real energy consumption data from a university data center reveals patterns and optimization opportunities.</p>
             </div>
 
             <!-- Tooltip for charts -->
@@ -639,7 +587,7 @@
             </div>
 
             <!-- Row 3: Water-Energy Nexus + Top Consumers -->
-            <div class="row g-4 mb-4">
+            <!-- <div class="row g-4 mb-4">
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
                     <div class="ucbl-card">
                         <div class="ucbl-card-header">
@@ -657,10 +605,10 @@
                         <div id="c6" class="ucbl-chart" style="height: 300px;"></div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <!-- Row 4: Heatmap -->
-            <div class="row g-4">
+            <!-- <div class="row g-4">
                 <div class="col-12 wow fadeIn" data-wow-delay="0.7s">
                     <div class="ucbl-card">
                         <div class="ucbl-card-header">
@@ -670,16 +618,16 @@
                         <div id="c7" class="ucbl-chart" style="height: 520px;"></div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
         </div>
     </div>
 
-    <!-- Section 7: Solutions -->
+    <!-- Section 6: Solutions -->
     <div id="solutions" class="container-xxl py-5">
         <div class="container">
              <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 800px;">
-                <p class="section-title bg-white text-center text-primary px-3">Section 7</p>
+                <p class="section-title bg-white text-center text-primary px-3">Section 6</p>
                 <h1 class="mb-5">What We Can Do: Solutions & Future Roadmap</h1>
                 <p class="fs-5 mb-4">Understanding energy consumption enables action — from individual behavior changes to infrastructure and software optimization.</p>
             </div>
@@ -796,7 +744,6 @@
 
     <!-- Custom Visualizations -->
     <script src="js/sec1.js"></script>
-    <script src="js/serversDataCenters.js"></script>
     <script src="js/d3charts.js"></script>
 
     <!-- Initialize Section 2 Visualizations -->
