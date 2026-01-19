@@ -54,7 +54,6 @@
             <div class="navbar-nav ms-auto p-4 p-lg-0">
                 <a href="#intro" class="nav-item nav-link active">Daily Lives</a>
                 <a href="#device" class="nav-item nav-link">Your Device</a>
-                <a href="#network" class="nav-item nav-link">Network</a>
                 <a href="#global" class="nav-item nav-link">Global</a>
                 <a href="#case-studies" class="nav-item nav-link">Case Studies</a>
                 <a href="#solutions" class="nav-item nav-link">Solutions</a>
@@ -239,37 +238,14 @@
         </div>
     </div> -->
 
-    <!-- Part D: Transition - Where Does the Data Go? -->
-    <div class="container-xxl py-5 bg-dark">
-        <div class="container">
-            <div class="row g-5 align-items-center">
-                <div class="col-lg-5 wow fadeIn" data-wow-delay="0.3s">
-                    <p class="section-title text-start text-secondary pe-3" style="background: transparent;">Next ?</p>
-                    <h2 class="text-white mb-4">Your Device is Only the Beginning</h2>
-                    <p class="text-white-50 mb-4 fs-6">
-                        Every message sent, video streamed, or website visited generates data that travels far beyond your screen — through routers, switches, and data centers across the globe.
-                    </p>
-                    <a href="#device" class="btn btn-secondary rounded-pill py-2 px-4">
-                        <i class="fas fa-arrow-down me-2"></i>Explore the Journey
-                    </a>
-                </div>
-                <div class="col-lg-7 wow fadeIn" data-wow-delay="0.5s">
-                    <div id="sec1-transition" style="min-height: 180px;">
-                        <!-- D3 Visualization: Data Transition Animation -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
     <!-- Section 2: Your Device -->
     <div id="device" class="container-xxl py-5 bg-light">
         <div class="container">
              <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 800px;">
                 <p class="section-title bg-white text-center text-primary px-3">Section 2</p>
                 <h1 class="mb-5">Inside Your Device: How Much Energy Does It Use?</h1>
-                <p class="fs-5 mb-4">Although personal devices appear small, each internal component consumes energy. Data-intensive tasks significantly increase this consumption.</p>
+                <p class="fs-5 mb-3">Although personal devices appear small, each internal component consumes energy. Data-intensive tasks significantly increase this consumption.</p>
+                <p class="small text-muted mb-4">📊 Source: <a href="https://boavizta.github.io/boaviztapi/" target="_blank">Boavizta API - Environmental Impact Data</a></p>
             </div>
 
             <!-- Combined Visualization: Environmental Impact Analysis with Filter
@@ -301,54 +277,14 @@
         </div>
     </div>
 
-    <!-- Section 3: Network & Cloud - When Data Leaves Your Device -->
-    <div id="network" class="container-xxl py-5">
-        <div class="container">
-            <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 800px;">
-                <p class="section-title bg-white text-center text-primary px-3">Section 3</p>
-                <h1 class="mb-4">When Data Leaves Your Device</h1>
-                <p class="fs-5 mb-5">Every click, stream, and search travels through a vast network infrastructure. Data centers and networks together consume <strong>500-700 TWh annually</strong> — equivalent to the electricity of France and Germany combined.</p>
-            </div>
-            
-            <!-- Two visualizations side by side -->
-            <div class="row g-4 align-items-stretch">
-                <div class="col-lg-5 wow fadeIn" data-wow-delay="0.2s">
-                    <div class="viz-card h-100">
-                        <h5 class="mb-3">Where Does the Energy Go? (2022)</h5>
-                        <div id="viz-energy-split" style="min-height: 300px;">
-                            <!-- D3 Visualization: Donut Chart -->
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-7 wow fadeIn" data-wow-delay="0.3s">
-                    <div class="viz-card h-100">
-                        <h5 class="mb-3">The Efficiency Miracle: 2015 → 2022</h5>
-                        <div id="viz-growth-comparison" style="min-height: 300px;">
-                            <!-- D3 Visualization: Growth Comparison -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Key insight -->
-            <div class="row mt-4">
-                <div class="col-12 wow fadeIn" data-wow-delay="0.4s">
-                    <div class="alert alert-success mb-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
-                        <span><strong>Key Finding:</strong> Internet traffic grew <span class="text-danger fw-bold">+600%</span> since 2015, but energy only increased <span class="text-success fw-bold">~40%</span>. Efficiency gains prevented an energy crisis.</span>
-                        <a href="#efficiency" class="btn btn-sm btn-outline-success">Learn More →</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Section 4: Global - Big Picture: Data Center Efficiency & Its Limits -->
+    <!-- Section 3: Global - Big Picture: Data Center Efficiency & Its Limits -->
     <div id="global" class="container-xxl py-5">
         <div class="container">
             <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 800px;">
-                <p class="section-title bg-white text-center text-primary px-3">Section 4</p>
+                <p class="section-title bg-white text-center text-primary px-3">Section 3</p>
                 <h1 class="mb-4">Data Center Efficiency: Progress & Limits</h1>
-                <p class="fs-5 mb-5">Data centers consume <strong>1-2% of global electricity</strong> (~200 TWh/year). Over 18 years, efficiency improved by 32% — but demand grows even faster.</p>
+                <p class="fs-5 mb-4">Data centers consume <strong>1-2% of global electricity</strong> (~200 TWh/year). Over 18 years, efficiency improved by 32% — but demand grows even faster.</p>
+                <p class="small text-muted mb-5">📊 Sources: <a href="https://uptimeinstitute.com/resources/research-and-reports/uptime-institute-global-data-center-survey-2023" target="_blank">Uptime Institute PUE Survey</a> | <a href="https://www.climatiq.io/" target="_blank">Climatiq Cloud Emissions Data</a></p>
             </div>
 
             <!-- PUE Timeline - compact -->
@@ -361,12 +297,12 @@
                                 <p class="text-muted small mb-3">Power Usage Effectiveness: how much energy goes to computing vs overhead. Lower is better.</p>
                                 <div class="d-flex justify-content-around">
                                     <div class="text-center">
-                                        <span class="h3 text-danger">2.0</span>
-                                        <p class="small mb-0 text-muted">2007</p>
+                                        <span class="h3 text-danger">1.98</span>
+                                        <p class="small mb-0 text-muted">2011</p>
                                     </div>
                                     <span class="h4 text-muted align-self-center">→</span>
                                     <div class="text-center">
-                                        <span class="h3 text-success">1.1</span>
+                                        <span class="h3 text-success">1.54</span>
                                         <p class="small mb-0 text-muted">2025</p>
                                     </div>
                                 </div>
@@ -382,11 +318,10 @@
             <!-- World Map -->
             <div class="row g-4">
                 <div class="col-lg-12 wow fadeIn" data-wow-delay="0.3s">
-                    <div class="viz-card">
+                    <div class="viz-card" style="position: relative;">
                         <div class="d-flex flex-wrap justify-content-between align-items-start mb-2 gap-2">
                             <div>
                                 <h5 class="mb-1">Cloud Regions: Carbon Emissions by Location</h5>
-                                <p class="text-muted small mb-0">85+ regions — Green = clean grid, Red = high emissions (gCO₂/kWh)</p>
                             </div>
                             <div class="d-flex gap-2">
                                 <label class="filter-chip"><input type="checkbox" class="form-check-input provider-filter" value="AWS" checked><span style="color:#FF9900">● AWS</span></label>
@@ -403,20 +338,19 @@
             <!-- Key insight -->
             <div class="row mt-4">
                 <div class="col-12 wow fadeIn" data-wow-delay="0.4s">
-                    <div class="alert alert-warning mb-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
-                        <span><strong>The Paradox:</strong> Efficiency improved 32%, but data demand grew 300%. Location matters — Sweden emits 140x less CO₂ than India for the same computation.</span>
-                        <a href="#case-studies" class="btn btn-sm btn-outline-dark">See Real Examples →</a>
+                    <div class="alert alert-warning mb-0">
+                        <strong>The Paradox:</strong> Efficiency improved 32%, but data demand grew 300%. Location matters — Sweden emits 140x less CO₂ than India for the same computation.
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Section 5: Case Studies -->
+    <!-- Section 4: Case Studies -->
     <div id="case-studies" class="container-xxl py-5 bg-light">
         <div class="container">
             <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 800px;">
-                <p class="section-title bg-light text-center text-primary px-3">Section 5</p>
+                <p class="section-title bg-light text-center text-primary px-3">Section 4</p>
                 <h1 class="mb-4">Real-World Case Studies</h1>
                 <p class="fs-5 mb-5">Examining real data center energy consumption patterns from California and a university data center to understand environmental impact.</p>
             </div>
@@ -583,11 +517,11 @@
         </div>
     </div>
 
-    <!-- Section 6: Solutions -->
+    <!-- Section 5: Solutions -->
     <div id="solutions" class="container-xxl py-5">
         <div class="container">
              <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 800px;">
-                <p class="section-title bg-white text-center text-primary px-3">Section 6</p>
+                <p class="section-title bg-white text-center text-primary px-3">Section 5</p>
                 <h1 class="mb-5">What We Can Do: Solutions & Future Roadmap</h1>
                 <p class="fs-5 mb-4">Understanding energy consumption enables action — from individual behavior changes to infrastructure and software optimization.</p>
             </div>
@@ -606,32 +540,6 @@
                  </div>
             </div>
 
-            <!-- Journey Recap -->
-            <div class="row mt-4">
-                <div class="col-12 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="bg-white p-4 rounded shadow-sm">
-                        <h4 class="text-center mb-4">🌍 The Journey: From Your Click to Global Impact</h4>
-                        <div id="viz-journey-recap"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Future Roadmap -->
-            <div class="row mt-4">
-                <div class="col-12 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="bg-light p-4 rounded shadow-sm">
-                        <h4 class="text-center mb-4">🚀 The Road to Sustainable Computing</h4>
-                        <div id="viz-future-roadmap"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Final CTA -->
-            <div class="row mt-4">
-                <div class="col-12 wow fadeInUp" data-wow-delay="0.5s">
-                    <div id="viz-final-cta"></div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -726,7 +634,6 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
-    <script src="js/d3charts.js"></script>
 </body>
 
 </html>

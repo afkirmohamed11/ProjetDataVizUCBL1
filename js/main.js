@@ -84,3 +84,18 @@
     
 })(jQuery);
 
+// Map zoom controls - simple slider
+function setMapZoom(level) {
+    if (window.mapSvg && window.mapZoom) {
+        var transform = d3.zoomIdentity.scale(level);
+        window.mapSvg.transition().duration(300).call(window.mapZoom.transform, transform);
+    }
+}
+
+function resetMapZoom() {
+    if (window.mapSvg && window.mapZoom) {
+        window.mapSvg.transition().duration(300).call(window.mapZoom.transform, d3.zoomIdentity);
+        document.getElementById('mapZoomRange').value = 1;
+    }
+}
+
