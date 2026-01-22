@@ -160,7 +160,33 @@
 
         // --- CHART 1: TOTAL TREND (insight_6_facility_total_trend.csv) ---
         function drawChart1(data) {
-            const filteredData = data.filter((d, i) => i >= filterState.monthStart && i <= filterState.monthEnd);
+            const filteredMonths = getFilteredMonths();
+            const filteredMonthsShort = getFilteredMonthsShort();
+            
+            let chartData;
+            let legendLabel;
+            
+            // If categories are selected, calculate sum from categoryTrends data
+            if (filterState.categories.size > 0 && rawData.categoryTrends) {
+                // Filter category trends by selected categories
+                const selectedCategories = rawData.categoryTrends.filter(d => filterState.categories.has(d.Functional_Group));
+                
+                // Calculate sum for each month from selected categories
+                chartData = filteredMonths.map(month => {
+                    let total = 0;
+                    selectedCategories.forEach(cat => {
+                        total += (+cat[month] || 0);
+                    });
+                    return { Month: month, Total_Consumption_kWh: total };
+                });
+                
+                // Create legend label from selected categories
+                legendLabel = Array.from(filterState.categories).join(' + ');
+            } else {
+                // Use original facility trend data (all categories)
+                chartData = data.filter((d, i) => i >= filterState.monthStart && i <= filterState.monthEnd);
+                legendLabel = 'Total Consumption';
+            }
             
             const id = "#c1";
             d3.select(id).selectAll("*").remove();
@@ -168,8 +194,8 @@
             const svg = d3.select(id).append("svg").attr("viewBox", `0 0 ${w+margin.left+margin.right} ${h+margin.top+margin.bottom}`)
                           .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
             
-            const x = d3.scalePoint().domain(filteredData.map(d => d.Month)).range([0, w]).padding(0.5);
-            const y = d3.scaleLinear().domain([0, d3.max(filteredData, d => +d.Total_Consumption_kWh) * 1.1]).nice().range([h, 0]);
+            const x = d3.scalePoint().domain(chartData.map(d => d.Month)).range([0, w]).padding(0.5);
+            const y = d3.scaleLinear().domain([0, d3.max(chartData, d => +d.Total_Consumption_kWh) * 1.1]).nice().range([h, 0]);
             
             // Grid lines
             svg.append("g").attr("class", "grid").selectAll("line").data(y.ticks(5)).enter()
@@ -182,29 +208,28 @@
             gradient.append("stop").attr("offset", "100%").attr("stop-color", colors.primary).attr("stop-opacity", 0.05);
             
             // Area
-            svg.append("path").datum(filteredData).attr("fill", "url(#areaGrad1)")
+            svg.append("path").datum(chartData).attr("fill", "url(#areaGrad1)")
                .attr("d", d3.area().x(d => x(d.Month)).y0(h).y1(h).curve(d3.curveMonotoneX))
                .transition().duration(1000).ease(d3.easeCubicOut)
                .attr("d", d3.area().x(d => x(d.Month)).y0(h).y1(d => y(+d.Total_Consumption_kWh)).curve(d3.curveMonotoneX));
             
             // Line with animation
-            const line1 = svg.append("path").datum(filteredData).attr("fill", "none").attr("stroke", colors.primary).attr("stroke-width", 3)
+            const line1 = svg.append("path").datum(chartData).attr("fill", "none").attr("stroke", colors.primary).attr("stroke-width", 3)
                .attr("d", d3.line().x(d => x(d.Month)).y(d => y(+d.Total_Consumption_kWh)).curve(d3.curveMonotoneX));
             const totalLength1 = line1.node().getTotalLength();
             line1.attr("stroke-dasharray", totalLength1).attr("stroke-dashoffset", totalLength1)
                  .transition().duration(1500).ease(d3.easeCubicOut).attr("stroke-dashoffset", 0);
             
             // Data points with staggered animation
-            svg.selectAll(".dot").data(filteredData).enter().append("circle")
+            svg.selectAll(".dot").data(chartData).enter().append("circle")
                .attr("class", "data-point").attr("cx", d => x(d.Month)).attr("cy", d => y(+d.Total_Consumption_kWh))
                .attr("r", 0).attr("fill", colors.primary).attr("stroke", "white").attr("stroke-width", 2)
-               .on("mouseover", (e, d) => showTooltip(e, `<div class="tooltip-title">${d.Month}</div><div class="tooltip-value">${Math.round(+d.Total_Consumption_kWh).toLocaleString()} kWh</div><div class="tooltip-label">Total Facility Consumption</div>`))
+               .on("mouseover", (e, d) => showTooltip(e, `<div class="tooltip-title">${d.Month}</div><div class="tooltip-value">${Math.round(+d.Total_Consumption_kWh).toLocaleString()} kWh</div><div class="tooltip-label">${legendLabel}</div>`))
                .on("mousemove", moveTooltip).on("mouseout", hideTooltip)
                .transition().delay((d, i) => 1000 + i * 80).duration(300).ease(d3.easeBackOut)
                .attr("r", 4);
             
             // Axes
-            const filteredMonthsShort = getFilteredMonthsShort();
             svg.append("g").attr("class", "axis").attr("transform", `translate(0,${h})`).call(d3.axisBottom(x).tickFormat((d,i) => filteredMonthsShort[i]));
             svg.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(5).tickFormat(d => d >= 1000 ? (d/1000)+"k" : d));
             
@@ -212,7 +237,7 @@
             svg.append("text").attr("class", "axis-label").attr("transform", "rotate(-90)").attr("y", -45).attr("x", -h/2).attr("text-anchor", "middle").text("Energy (kWh)");
             
             // Legend
-            d3.select("#l1").html(`<div class="legend-item"><div class="line-dot" style="background:${colors.primary}"></div>Total Consumption</div>`);
+            d3.select("#l1").html(`<div class="legend-item"><div class="line-dot" style="background:${colors.primary}"></div>${legendLabel}</div>`);
         }
         
         d3.csv("../data/ucbl1/insight_6_facility_total_trend.csv").then(data => {
