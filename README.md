@@ -26,3 +26,15 @@ To use the project:
 4. Data sources are available in the `data/` folder for further analysis or customization.
 
 No installation is required; all visualizations run in the browser. For custom data, replace or add CSV files in the `data/` directory.
+
+#### Cours du Data Vizualisation de UCBL1: [[cours](https://lyondataviz.github.io/teaching/lyon1-m2/2025)]
+### Equipe:
+- Mohamed AFKIR
+- Lokmane AKKOUH
+- Mohamed rida BEN TOUHAMI
+- Hamza MOTASSIM
+
+### Résumé en anglais
+bytes2carbon is a browser-based data visualization project that explores the environmental impact of digital infrastructure. It analyzes energy consumption and carbon emissions across servers, storage devices, cloud providers, and data centers. Using interactive visualizations built with D3.js and CSV datasets, the project helps users understand efficiency trends, regional differences, and sustainability challenges in modern computing infrastructures.
+
+
