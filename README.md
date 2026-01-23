@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="5-thumbnail.png" alt="bytes2carbon thumbnail" width="900">
+  <img src="thumbnail.png" alt="bytes2carbon thumbnail" width="900">
 </p>
 
 ## Credits
