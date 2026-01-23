@@ -1,15 +1,18 @@
 /**
- * Solutions Section: Impact of Solutions & Personal Action Score
- * Self-contained visualization with research-based data
+ * Section 5: Solutions
+ * Impact of Solutions & Personal Action Score Calculator
+ * Displays eco-friendly solutions and personal carbon footprint calculator
  * Author: Lokmane
  */
 
-(function() {
+(function () {
     'use strict';
 
-    // Inject scoped styles
+    // ==========================================
+    // Scoped Styles
+    // ==========================================
     const styles = `
-        /* ========== SOLUTIONS GRID ========== */
+        /* Solutions Grid */
         #viz-solutions-impact .solutions-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -45,7 +48,7 @@
         #viz-solutions-impact .solution-detail h5 { color: #198754; margin-bottom: 8px; font-size: 1rem; }
         #viz-solutions-impact .solution-detail p { color: #666; font-size: 0.85rem; margin: 0; }
 
-        /* ========== PERSONAL CALCULATOR ========== */
+        /* Personal Calculator */
         #viz-personal-calculator .calculator-container { text-align: center; }
         #viz-personal-calculator .score-ring { position: relative; width: 160px; height: 160px; margin: 0 auto 15px; }
         #viz-personal-calculator .score-ring svg { transform: rotate(-90deg); }
@@ -69,13 +72,14 @@
         @keyframes secSolFadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     `;
 
-    // Inject styles
+    // Inject styles into document
     const styleSheet = document.createElement('style');
     styleSheet.textContent = styles;
     document.head.appendChild(styleSheet);
 
-    // ========== DATA ==========
-    // Sources: IEA, Purdue University, The Shift Project, Carbon Trust, Greenspector
+    // ==========================================
+    // Data - Sources: IEA, Purdue University, The Shift Project, Carbon Trust, Greenspector
+    // ==========================================
     const solutions = [
         { icon: '💻', title: 'Green Coding', impact: 15, detail: 'Efficient algorithms reduce CPU cycles by up to 40%. Simple optimizations like caching and reducing loops make a real difference.', source: 'Source: Greenspector (2021) - "Digital Sobriety: A study on software energy consumption"' },
         { icon: '🌙', title: 'Dark Mode', impact: 8, detail: 'OLED screens use up to 60% less power displaying dark colors. At 100% brightness, dark mode can save 39-47% of screen power.', source: 'Source: Purdue University (2021) - "How Much Energy Does Dark Mode Save?" published in MobiCom' },
@@ -85,7 +89,7 @@
         { icon: '📱', title: 'Device Longevity', impact: 18, detail: 'Extending device life from 2 to 4 years halves manufacturing emissions. 70-80% of a smartphone\'s carbon footprint is from manufacturing.', source: 'Source: European Environmental Bureau (2019) - "Coolproducts don\'t cost the Earth"' }
     ];
 
-    // Points based on CO2 savings (1 point ≈ 1 kg CO2/year saved)
+    // Personal actions data - 1 point ≈ 1 kg CO2/year saved
     // Sources: Mike Berners-Lee "How Bad Are Bananas?", Carbon Trust, IEA
     const personalActions = [
         { text: 'Stream in SD instead of 4K', points: 12, source: 'Source: Carbon Trust (2021) - 4K streaming uses ~7g CO2/hour vs ~0.7g for SD. Saving ~12 kg CO2/year for avg viewer.' },
@@ -98,10 +102,13 @@
         { text: 'Enable device power-saving mode', points: 5, source: 'Source: Lawrence Berkeley Lab (2020) - Power-saving mode reduces device energy use by 15-30%.' }
     ];
 
-    // ========== RENDER FUNCTIONS ==========
+    // ==========================================
+    // Solutions Impact Visualization
+    // ==========================================
     function renderSolutionsImpact() {
         const container = document.getElementById('viz-solutions-impact');
         if (!container) return;
+
         container.innerHTML = `
             <div class="solutions-grid">
                 ${solutions.map((s, i) => `
@@ -118,8 +125,8 @@
                 <p>Each card shows potential energy savings from different approaches.</p>
             </div>
         `;
-        
-        // Animate bars on scroll
+
+        // Animate bars when visible
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -131,39 +138,56 @@
             });
         }, { threshold: 0.3 });
         observer.observe(container);
-        
-        // Click handler for cards
+
+        // Card click handler - show details
         container.querySelectorAll('.solution-card').forEach(card => {
-            card.addEventListener('click', function() {
+            card.addEventListener('click', function () {
                 const idx = parseInt(this.dataset.index);
                 container.querySelectorAll('.solution-card').forEach(c => c.classList.remove('active'));
                 this.classList.add('active');
+
                 const detail = document.getElementById('solution-detail');
-                detail.innerHTML = `<h5>${solutions[idx].icon} ${solutions[idx].title}</h5><p>${solutions[idx].detail}</p><p style="font-size: 0.75rem; color: #888; margin-top: 10px; font-style: italic;">${solutions[idx].source}</p>`;
+                detail.innerHTML = `
+                    <h5>${solutions[idx].icon} ${solutions[idx].title}</h5>
+                    <p>${solutions[idx].detail}</p>
+                    <p style="font-size: 0.75rem; color: #888; margin-top: 10px; font-style: italic;">${solutions[idx].source}</p>
+                `;
                 detail.classList.add('show');
             });
         });
     }
 
+    // ==========================================
+    // Personal Calculator
+    // ==========================================
     function renderPersonalCalculator() {
         const container = document.getElementById('viz-personal-calculator');
         if (!container) return;
+
         const circumference = 2 * Math.PI * 65;
         const maxPoints = personalActions.reduce((sum, a) => sum + a.points, 0);
-        
+
         container.innerHTML = `
             <div class="calculator-container">
                 <div class="score-ring">
                     <svg width="160" height="160">
-                        <defs><linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#198754"/><stop offset="100%" stop-color="#20c997"/>
-                        </linearGradient></defs>
+                        <defs>
+                            <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#198754"/>
+                                <stop offset="100%" stop-color="#20c997"/>
+                            </linearGradient>
+                        </defs>
                         <circle class="bg" cx="80" cy="80" r="65"/>
                         <circle class="progress" cx="80" cy="80" r="65" stroke-dasharray="${circumference}" stroke-dashoffset="${circumference}"/>
                     </svg>
-                    <div class="score-value"><div class="score-number" id="score-display">0</div><div class="score-label">Eco Points</div></div>
+                    <div class="score-value">
+                        <div class="score-number" id="score-display">0</div>
+                        <div class="score-label">Eco Points</div>
+                    </div>
                 </div>
-                <p style="font-size: 0.75rem; color: #666; margin-bottom: 12px;">Check actions you already take: <span style="color: #198754;">(1 point ≈ 1 kg CO₂/year saved)</span></p>
+                <p style="font-size: 0.75rem; color: #666; margin-bottom: 12px;">
+                    Check actions you already take: <span style="color: #198754;">(1 point ≈ 1 kg CO₂/year saved)</span>
+                </p>
                 <div class="actions-list">
                     ${personalActions.map((a, i) => `
                         <div class="action-item" data-index="${i}" data-points="${a.points}" data-source="${a.source}" title="Click for source info">
@@ -177,60 +201,62 @@
                 <div id="source-info" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 8px; font-size: 0.7rem; color: #666; font-style: italic; display: none; border-left: 3px solid #198754;"></div>
             </div>
         `;
-        
+
         let currentScore = 0;
         const progressCircle = container.querySelector('.progress');
         const scoreDisplay = container.querySelector('#score-display');
         const resultMessage = container.querySelector('#result-message');
         const sourceInfo = container.querySelector('#source-info');
-        
+
+        // Update score display and message
         function updateScore() {
             const pct = currentScore / maxPoints;
             progressCircle.style.strokeDashoffset = circumference - (pct * circumference);
             scoreDisplay.textContent = currentScore;
-            if (currentScore === 0) { 
-                resultMessage.textContent = 'Start checking to see your eco-score!'; 
-                resultMessage.className = 'result-message'; 
-            }
-            else if (pct < 0.3) { 
-                resultMessage.textContent = '🌱 Good start!'; 
-                resultMessage.className = 'result-message'; 
-            }
-            else if (pct < 0.6) { 
-                resultMessage.textContent = '🌿 Nice progress!'; 
-                resultMessage.className = 'result-message'; 
-            }
-            else if (pct < 0.9) { 
-                resultMessage.textContent = '🌳 Eco-warrior!'; 
-                resultMessage.className = 'result-message'; 
-            }
-            else { 
-                resultMessage.textContent = '🏆 Sustainability champion!'; 
-                resultMessage.className = 'result-message excellent'; 
+
+            // Update message based on score percentage
+            if (currentScore === 0) {
+                resultMessage.textContent = 'Start checking to see your eco-score!';
+                resultMessage.className = 'result-message';
+            } else if (pct < 0.3) {
+                resultMessage.textContent = '🌱 Good start!';
+                resultMessage.className = 'result-message';
+            } else if (pct < 0.6) {
+                resultMessage.textContent = '🌿 Nice progress!';
+                resultMessage.className = 'result-message';
+            } else if (pct < 0.9) {
+                resultMessage.textContent = '🌳 Eco-warrior!';
+                resultMessage.className = 'result-message';
+            } else {
+                resultMessage.textContent = '🏆 Sustainability champion!';
+                resultMessage.className = 'result-message excellent';
             }
         }
-        
+
+        // Action item click handler
         container.querySelectorAll('.action-item').forEach(item => {
-            item.addEventListener('click', function() {
+            item.addEventListener('click', function () {
                 const pts = parseInt(this.dataset.points);
                 const source = this.dataset.source;
-                if (this.classList.contains('checked')) { 
-                    this.classList.remove('checked'); 
-                    currentScore -= pts; 
+
+                if (this.classList.contains('checked')) {
+                    this.classList.remove('checked');
+                    currentScore -= pts;
+                } else {
+                    this.classList.add('checked');
+                    currentScore += pts;
                 }
-                else { 
-                    this.classList.add('checked'); 
-                    currentScore += pts; 
-                }
+
                 updateScore();
-                // Show source info
                 sourceInfo.textContent = source;
                 sourceInfo.style.display = 'block';
             });
         });
     }
 
-    // ========== INITIALIZE ==========
+    // ==========================================
+    // Initialize
+    // ==========================================
     function init() {
         renderSolutionsImpact();
         renderPersonalCalculator();
