@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="5-thumbnail.png" alt="bytes2carbon thumbnail" width="900">
+</p>
+
 ## Credits
 
 This project uses a template provided by [[themewagon](https://themewagon.com/themes/milky/)]. We acknowledge and thank them for their work. For more details, visit their website or repository.
