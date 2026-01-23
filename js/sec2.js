@@ -1,5 +1,3 @@
-// D3.js Visualizations - Cleaned Version
-
 // ===========================================
 // Section 2: Environmental Impact Analysis
 // ===========================================
