@@ -1,22 +1,22 @@
 /**
  * Section 3: PUE Timeline & World Map
- * Global Data Center Efficiency Visualization
  * Displays PUE historical trends and cloud provider datacenter locations
  */
 
-(function() {
+(function () {
     'use strict';
 
+    // Global variable for map filtering
+    var mapGlobalData = null;
+
     // Initialize when DOM is ready
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         if (typeof d3 === 'undefined') return;
         if (!document.getElementById('viz-pue-timeline')) return;
         initSection3Map();
     });
 
-    // Global data for map filters
-    var mapGlobalData = null;
-
+    // Load all required datasets and initialize visualizations
     function initSection3Map() {
         Promise.all([
             d3.csv('data/uptime- global average/uptime_pue_historical_2007_2025.csv'),
@@ -27,7 +27,7 @@
             d3.csv('data/climatiq/aws_region_emissions.csv'),
             d3.csv('data/climatiq/azure_region_emissions.csv'),
             d3.csv('data/climatiq/gcp_region_emissions.csv')
-        ]).then(function(datasets) {
+        ]).then(function (datasets) {
             var pueHistory = datasets[0];
             var worldData = datasets[4];
             var awsRegions = datasets[5];
@@ -36,49 +36,108 @@
 
             createPueTimelineChart(pueHistory);
             createWorldMap(awsRegions, azureRegions, gcpRegions, worldData);
-        }).catch(function(error) {
+        }).catch(function (error) {
             console.error('Error loading Section 3 data:', error);
         });
     }
 
+    // ==========================================
+    // PUE Timeline Chart
+    // Shows historical Power Usage Effectiveness trends
+    // ==========================================
     function createPueTimelineChart(data) {
         var container = document.getElementById('viz-pue-timeline');
         if (!container) return;
         container.innerHTML = '';
 
-        data.forEach(function(d) { d.Year = +d.Year; d.Average_PUE = +d.Average_PUE; });
-        // Filter from 2011 onwards (we don't have reliable data before 2011)
-        data = data.filter(function(d) { return !isNaN(d.Year) && !isNaN(d.Average_PUE) && d.Year >= 2011; });
-        data.sort(function(a, b) { return a.Year - b.Year; });
+        // Parse and filter data (2011+ has reliable data)
+        data.forEach(function (d) {
+            d.Year = +d.Year;
+            d.Average_PUE = +d.Average_PUE;
+        });
+        data = data.filter(function (d) {
+            return !isNaN(d.Year) && !isNaN(d.Average_PUE) && d.Year >= 2011;
+        });
+        data.sort(function (a, b) { return a.Year - b.Year; });
 
-        var margin = {top: 20, right: 20, bottom: 40, left: 45};
+        // Chart dimensions
+        var margin = { top: 20, right: 20, bottom: 40, left: 45 };
         var width = container.offsetWidth - margin.left - margin.right;
         var height = 250 - margin.top - margin.bottom;
 
+        // Create SVG
         var svg = d3.select(container).append('svg')
             .attr('viewBox', '0 0 ' + (width + margin.left + margin.right) + ' ' + (height + margin.top + margin.bottom))
-            .style('width', '100%').append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+            .style('width', '100%')
+            .append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-        var x = d3.scaleLinear().domain(d3.extent(data, function(d) { return d.Year; })).range([0, width]);
-        var y = d3.scaleLinear().domain([1.4, 2.1]).range([height, 0]);
+        // Scales
+        var x = d3.scaleLinear()
+            .domain(d3.extent(data, function (d) { return d.Year; }))
+            .range([0, width]);
+        var y = d3.scaleLinear()
+            .domain([1.4, 2.1])
+            .range([height, 0]);
 
-        var line = d3.line().x(function(d) { return x(d.Year); }).y(function(d) { return y(d.Average_PUE); }).curve(d3.curveMonotoneX);
-        var area = d3.area().x(function(d) { return x(d.Year); }).y0(height).y1(function(d) { return y(d.Average_PUE); }).curve(d3.curveMonotoneX);
+        // Line and area generators
+        var line = d3.line()
+            .x(function (d) { return x(d.Year); })
+            .y(function (d) { return y(d.Average_PUE); })
+            .curve(d3.curveMonotoneX);
+        var area = d3.area()
+            .x(function (d) { return x(d.Year); })
+            .y0(height)
+            .y1(function (d) { return y(d.Average_PUE); })
+            .curve(d3.curveMonotoneX);
 
-        svg.append('path').datum(data).attr('fill', 'rgba(231, 76, 60, 0.15)').attr('d', area);
-        svg.append('path').datum(data).attr('fill', 'none').attr('stroke', '#e74c3c').attr('stroke-width', 3).attr('d', line);
-        svg.selectAll('.dot').data(data).enter().append('circle').attr('cx', function(d) { return x(d.Year); }).attr('cy', function(d) { return y(d.Average_PUE); }).attr('r', 4).attr('fill', '#e74c3c');
+        // Draw area and line
+        svg.append('path').datum(data)
+            .attr('fill', 'rgba(231, 76, 60, 0.15)')
+            .attr('d', area);
+        svg.append('path').datum(data)
+            .attr('fill', 'none')
+            .attr('stroke', '#e74c3c')
+            .attr('stroke-width', 3)
+            .attr('d', line);
 
-        svg.append('g').attr('transform', 'translate(0,' + height + ')').call(d3.axisBottom(x).tickFormat(d3.format('d')).ticks(6)).selectAll('text').style('font-size', '10px');
-        svg.append('g').call(d3.axisLeft(y).ticks(5)).selectAll('text').style('font-size', '10px');
-        svg.append('text').attr('transform', 'rotate(-90)').attr('y', -35).attr('x', -height / 2).attr('text-anchor', 'middle').style('font-size', '11px').text('PUE');
+        // Draw data points
+        svg.selectAll('.dot').data(data).enter()
+            .append('circle')
+            .attr('cx', function (d) { return x(d.Year); })
+            .attr('cy', function (d) { return y(d.Average_PUE); })
+            .attr('r', 4)
+            .attr('fill', '#e74c3c');
+
+        // X-axis
+        svg.append('g')
+            .attr('transform', 'translate(0,' + height + ')')
+            .call(d3.axisBottom(x).tickFormat(d3.format('d')).ticks(6))
+            .selectAll('text').style('font-size', '10px');
+
+        // Y-axis with label
+        svg.append('g')
+            .call(d3.axisLeft(y).ticks(5))
+            .selectAll('text').style('font-size', '10px');
+        svg.append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('y', -35)
+            .attr('x', -height / 2)
+            .attr('text-anchor', 'middle')
+            .style('font-size', '11px')
+            .text('PUE');
     }
 
+    // ==========================================
+    // World Map
+    // Shows cloud provider datacenter locations
+    // ==========================================
     function createWorldMap(awsData, azureData, gcpData, worldData) {
         var container = document.getElementById('viz-pue-map');
         if (!container) return;
         container.innerHTML = '';
 
+        // Datacenter location coordinates
         var locationCoords = {
             'N. Virginia': [-77.5, 39.0], 'Virginia': [-77.5, 39.0], 'Ohio': [-83.0, 40.0],
             'N. California': [-121.5, 38.5], 'Oregon': [-121.2, 45.6], 'Iowa': [-93.6, 41.6],
@@ -102,75 +161,127 @@
             'South Africa': [25.0, -29.0], 'Chile': [-70.6, -33.4]
         };
 
+        // Convert emission factor to gCO2/kWh
         function parseEmission(value) {
             var parsed = parseFloat(value);
             return isNaN(parsed) ? null : parsed * 1000;
         }
 
+        // Combine all provider regions
         var allRegions = [];
-        awsData.forEach(function(d) { allRegions.push({ provider: 'AWS', region: d.region_name, country: d.country, emission: parseEmission(d.emission_factor) }); });
-        azureData.forEach(function(d) { allRegions.push({ provider: 'Azure', region: d.region_name, country: d.country, emission: parseEmission(d.emission_factor) }); });
-        gcpData.forEach(function(d) { allRegions.push({ provider: 'GCP', region: d.region_name, country: d.country, emission: parseEmission(d.emission_factor_raw) }); });
+        awsData.forEach(function (d) {
+            allRegions.push({ provider: 'AWS', region: d.region_name, country: d.country, emission: parseEmission(d.emission_factor) });
+        });
+        azureData.forEach(function (d) {
+            allRegions.push({ provider: 'Azure', region: d.region_name, country: d.country, emission: parseEmission(d.emission_factor) });
+        });
+        gcpData.forEach(function (d) {
+            allRegions.push({ provider: 'GCP', region: d.region_name, country: d.country, emission: parseEmission(d.emission_factor_raw) });
+        });
 
-        allRegions.forEach(function(d) { d.coords = locationCoords[d.region] || locationCoords[d.country] || null; });
-        var mappedRegions = allRegions.filter(function(d) { return d.coords !== null; });
+        // Map coordinates to regions
+        allRegions.forEach(function (d) {
+            d.coords = locationCoords[d.region] || locationCoords[d.country] || null;
+        });
+        var mappedRegions = allRegions.filter(function (d) { return d.coords !== null; });
         mapGlobalData = { regions: mappedRegions, worldData: worldData };
 
+        // Map dimensions and settings
         var width = 700, height = 380, baseRadius = 6;
-
-        var svg = d3.select(container).append('svg').attr('viewBox', '0 0 ' + width + ' ' + height).style('width', '100%').style('background', '#f8fafc');
-        var g = svg.append('g');
-
-        var projection = d3.geoMercator().scale(110).translate([width / 2, height / 1.5]);
-        var path = d3.geoPath().projection(projection);
         var providerColors = { 'AWS': '#FF9900', 'Azure': '#00A4EF', 'GCP': '#34A853' };
 
-        var countries = topojson.feature(worldData, worldData.objects.countries);
-        g.selectAll('path').data(countries.features).enter().append('path').attr('d', path).attr('fill', '#e8e8e8').attr('stroke', '#bbb').attr('stroke-width', 0.5);
+        // Create SVG
+        var svg = d3.select(container).append('svg')
+            .attr('viewBox', '0 0 ' + width + ' ' + height)
+            .style('width', '100%')
+            .style('background', '#f8fafc');
+        var g = svg.append('g');
 
-        g.selectAll('.datacenter').data(mappedRegions).enter().append('circle')
-            .attr('class', function(d) { return 'datacenter provider-' + d.provider; })
-            .attr('cx', function(d) { return projection(d.coords)[0]; })
-            .attr('cy', function(d) { return projection(d.coords)[1]; })
+        // Map projection
+        var projection = d3.geoMercator().scale(110).translate([width / 2, height / 1.5]);
+        var path = d3.geoPath().projection(projection);
+
+        // Draw countries
+        var countries = topojson.feature(worldData, worldData.objects.countries);
+        g.selectAll('path').data(countries.features).enter()
+            .append('path')
+            .attr('d', path)
+            .attr('fill', '#e8e8e8')
+            .attr('stroke', '#bbb')
+            .attr('stroke-width', 0.5);
+
+        // Create tooltip
+        var tooltip = d3.select('body').append('div')
+            .style('position', 'absolute')
+            .style('background', '#fff')
+            .style('border', '1px solid #ccc')
+            .style('padding', '8px')
+            .style('border-radius', '4px')
+            .style('font-size', '11px')
+            .style('pointer-events', 'none')
+            .style('opacity', 0)
+            .style('box-shadow', '0 2px 6px rgba(0,0,0,0.15)')
+            .style('z-index', '9999');
+
+        // Draw datacenter points
+        g.selectAll('.datacenter').data(mappedRegions).enter()
+            .append('circle')
+            .attr('class', function (d) { return 'datacenter provider-' + d.provider; })
+            .attr('cx', function (d) { return projection(d.coords)[0]; })
+            .attr('cy', function (d) { return projection(d.coords)[1]; })
             .attr('r', baseRadius)
-            .attr('fill', function(d) { return providerColors[d.provider]; })
-            .attr('stroke', '#fff').attr('stroke-width', 1).attr('opacity', 0.9).style('cursor', 'pointer')
-            .on('mouseover', function(event, d) {
+            .attr('fill', function (d) { return providerColors[d.provider]; })
+            .attr('stroke', '#fff')
+            .attr('stroke-width', 1)
+            .attr('opacity', 0.9)
+            .style('cursor', 'pointer')
+            .on('mouseover', function (event, d) {
                 d3.select(this).attr('r', baseRadius * 2).attr('opacity', 1);
                 var emissionStr = d.emission !== null ? d.emission.toFixed(0) + ' gCO₂/kWh' : 'N/A';
-                tooltip.style('opacity', 1).html('<b>' + d.provider + '</b> - ' + d.region + '<br>' + d.country + '<br>Emissions: ' + emissionStr)
-                    .style('left', (event.pageX + 10) + 'px').style('top', (event.pageY - 30) + 'px');
+                tooltip.style('opacity', 1)
+                    .html('<b>' + d.provider + '</b> - ' + d.region + '<br>' + d.country + '<br>Emissions: ' + emissionStr)
+                    .style('left', (event.pageX + 10) + 'px')
+                    .style('top', (event.pageY - 30) + 'px');
             })
-            .on('mouseout', function() {
+            .on('mouseout', function () {
                 d3.select(this).attr('r', baseRadius).attr('opacity', 0.9);
                 tooltip.style('opacity', 0);
             });
-
-        var tooltip = d3.select('body').append('div')
-            .style('position', 'absolute').style('background', '#fff').style('border', '1px solid #ccc').style('padding', '8px').style('border-radius', '4px').style('font-size', '11px').style('pointer-events', 'none').style('opacity', 0).style('box-shadow', '0 2px 6px rgba(0,0,0,0.15)').style('z-index', '9999');
 
         setupMapFilters();
         updateMapStats(mappedRegions);
     }
 
+    // Update stats display with provider counts
     function updateMapStats(regions) {
         var statsContainer = document.getElementById('viz-map-stats');
         if (!statsContainer) return;
-        var awsCount = regions.filter(function(d) { return d.provider === 'AWS'; }).length;
-        var azureCount = regions.filter(function(d) { return d.provider === 'Azure'; }).length;
-        var gcpCount = regions.filter(function(d) { return d.provider === 'GCP'; }).length;
-        statsContainer.innerHTML = '<span style="color:#FF9900">AWS: ' + awsCount + '</span> | <span style="color:#00A4EF">Azure: ' + azureCount + '</span> | <span style="color:#34A853">GCP: ' + gcpCount + '</span> | Total: ' + regions.length;
+
+        var awsCount = regions.filter(function (d) { return d.provider === 'AWS'; }).length;
+        var azureCount = regions.filter(function (d) { return d.provider === 'Azure'; }).length;
+        var gcpCount = regions.filter(function (d) { return d.provider === 'GCP'; }).length;
+
+        statsContainer.innerHTML =
+            '<span style="color:#FF9900">AWS: ' + awsCount + '</span> | ' +
+            '<span style="color:#00A4EF">Azure: ' + azureCount + '</span> | ' +
+            '<span style="color:#34A853">GCP: ' + gcpCount + '</span> | ' +
+            'Total: ' + regions.length;
     }
 
+    // Setup provider filter checkboxes
     function setupMapFilters() {
-        document.querySelectorAll('.provider-filter').forEach(function(cb) {
-            cb.addEventListener('change', function() {
+        document.querySelectorAll('.provider-filter').forEach(function (cb) {
+            cb.addEventListener('change', function () {
                 var provider = this.value;
                 var isVisible = this.checked;
                 d3.selectAll('.provider-' + provider).attr('opacity', isVisible ? 0.9 : 0);
+
                 if (mapGlobalData) {
-                    var activeProviders = Array.from(document.querySelectorAll('.provider-filter:checked')).map(function(c) { return c.value; });
-                    updateMapStats(mapGlobalData.regions.filter(function(d) { return activeProviders.includes(d.provider); }));
+                    var activeProviders = Array.from(document.querySelectorAll('.provider-filter:checked'))
+                        .map(function (c) { return c.value; });
+                    updateMapStats(mapGlobalData.regions.filter(function (d) {
+                        return activeProviders.includes(d.provider);
+                    }));
                 }
             });
         });
